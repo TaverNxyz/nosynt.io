@@ -1,5 +1,7 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/useAuth";
+import { Button } from "@/components/ui/button";
 import { 
   Shield, 
   Key, 
@@ -8,7 +10,8 @@ import {
   Lock, 
   Calculator,
   Activity,
-  ChevronRight
+  LogOut,
+  User
 } from "lucide-react";
 
 const navigation = [
@@ -26,6 +29,19 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, loading, signOut } = useAuth();
+
+  // Redirect to auth if not authenticated (except for auth page)
+  if (!loading && !user && location.pathname !== "/auth") {
+    navigate("/auth");
+    return null;
+  }
+
+  // Don't render layout for auth page
+  if (location.pathname === "/auth") {
+    return <>{children}</>;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-hero relative">
@@ -70,6 +86,23 @@ export default function Layout({ children }: LayoutProps) {
                 </Link>
               );
             })}
+            
+            {user && (
+              <div className="flex items-center space-x-2 ml-4 pl-4 border-l border-border">
+                <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                  <User className="h-4 w-4" />
+                  <span>{user.email}</span>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => signOut()}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  <LogOut className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
           </nav>
         </div>
       </header>

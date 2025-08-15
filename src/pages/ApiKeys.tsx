@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,47 +12,17 @@ import { useToast } from "@/hooks/use-toast";
 
 interface ApiKey {
   id: string;
-  service: string;
-  name: string;
-  keyPreview: string;
+  service_name: string;
+  key_name: string;
+  key_preview: string;
   status: 'active' | 'expired' | 'invalid';
-  lastUsed: string;
-  usage: number;
-  limit: number;
+  last_used: string | null;
+  usage_count: number;
+  usage_limit: number;
+  created_at: string;
 }
 
-const mockApiKeys: ApiKey[] = [
-  {
-    id: "1",
-    service: "DeHashed",
-    name: "Production Key",
-    keyPreview: "dh_1234****",
-    status: "active",
-    lastUsed: "2 hours ago",
-    usage: 145,
-    limit: 1000
-  },
-  {
-    id: "2",
-    service: "Shodan",
-    name: "Research Key",
-    keyPreview: "SHO_5678****",
-    status: "active",
-    lastUsed: "1 day ago",
-    usage: 23,
-    limit: 100
-  },
-  {
-    id: "3",
-    service: "Hunter.io",
-    name: "Email Verification",
-    keyPreview: "ht_9012****",
-    status: "expired",
-    lastUsed: "5 days ago",
-    usage: 500,
-    limit: 500
-  }
-];
+// API Key interface matches the database structure
 
 const supportedServices = [
   { name: "DeHashed", description: "Breach database lookups", cost: "$0.50/query" },
@@ -62,49 +34,109 @@ const supportedServices = [
 ];
 
 export default function ApiKeys() {
-  const [apiKeys, setApiKeys] = useState<ApiKey[]>(mockApiKeys);
+  const [apiKeys, setApiKeys] = useState<ApiKey[]>([]);
+  const [loading, setLoading] = useState(true);
   const [showKey, setShowKey] = useState<string>("");
   const [newKey, setNewKey] = useState("");
   const [selectedService, setSelectedService] = useState("");
+  const [keyName, setKeyName] = useState("");
+  const { user } = useAuth();
   const { toast } = useToast();
 
-  const handleAddKey = () => {
-    if (!newKey || !selectedService) {
+  useEffect(() => {
+    if (user) {
+      fetchApiKeys();
+    }
+  }, [user]);
+
+  const fetchApiKeys = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('api_keys')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setApiKeys((data || []).map(key => ({
+        ...key,
+        status: key.status as 'active' | 'expired' | 'invalid'
+      })));
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to fetch API keys",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAddKey = async () => {
+    if (!newKey || !selectedService || !keyName || !user) {
       toast({
         title: "Missing Information",
-        description: "Please provide both service and API key",
+        description: "Please provide service, key name, and API key",
         variant: "destructive"
       });
       return;
     }
 
-    const newApiKey: ApiKey = {
-      id: Date.now().toString(),
-      service: selectedService,
-      name: "New Key",
-      keyPreview: newKey.substring(0, 8) + "****",
-      status: "active",
-      lastUsed: "Never",
-      usage: 0,
-      limit: 1000
-    };
+    try {
+      const { error } = await supabase
+        .from('api_keys')
+        .insert({
+          user_id: user.id,
+          service_name: selectedService,
+          key_name: keyName,
+          encrypted_key: newKey, // In production, encrypt this
+          key_preview: newKey.substring(0, 8) + "****",
+          status: "active",
+          usage_count: 0,
+          usage_limit: 1000
+        });
 
-    setApiKeys([...apiKeys, newApiKey]);
-    setNewKey("");
-    setSelectedService("");
-    
-    toast({
-      title: "API Key Added",
-      description: `Successfully added ${selectedService} API key`,
-    });
+      if (error) throw error;
+
+      await fetchApiKeys();
+      setNewKey("");
+      setSelectedService("");
+      setKeyName("");
+      
+      toast({
+        title: "API Key Added",
+        description: `Successfully added ${selectedService} API key`,
+      });
+    } catch (error) {
+      toast({
+        title: "Error", 
+        description: "Failed to add API key",
+        variant: "destructive"
+      });
+    }
   };
 
-  const handleDeleteKey = (id: string) => {
-    setApiKeys(apiKeys.filter(key => key.id !== id));
-    toast({
-      title: "API Key Removed",
-      description: "The API key has been securely deleted",
-    });
+  const handleDeleteKey = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('api_keys')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      await fetchApiKeys();
+      toast({
+        title: "API Key Removed",
+        description: "The API key has been securely deleted",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete API key",
+        variant: "destructive"
+      });
+    }
   };
 
   const getStatusIcon = (status: string) => {
@@ -162,7 +194,7 @@ export default function ApiKeys() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="service">Service</Label>
                   <select
@@ -178,6 +210,16 @@ export default function ApiKeys() {
                       </option>
                     ))}
                   </select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="keyname">Key Name</Label>
+                  <Input
+                    id="keyname"
+                    type="text"
+                    value={keyName}
+                    onChange={(e) => setKeyName(e.target.value)}
+                    placeholder="e.g., Production Key"
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="apikey">API Key</Label>
@@ -210,62 +252,72 @@ export default function ApiKeys() {
 
           {/* Existing Keys */}
           <div className="grid gap-4">
-            {apiKeys.map((key) => (
-              <Card key={key.id} className="bg-gradient-card shadow-card">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                        <Key className="h-5 w-5 text-primary" />
+            {loading ? (
+              <div className="text-center py-8">
+                <p className="text-muted-foreground">Loading API keys...</p>
+              </div>
+            ) : apiKeys.length === 0 ? (
+              <div className="text-center py-8">
+                <p className="text-muted-foreground">No API keys found. Add your first key above.</p>
+              </div>
+            ) : (
+              apiKeys.map((key) => (
+                <Card key={key.id} className="bg-gradient-card shadow-card">
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-4">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                          <Key className="h-5 w-5 text-primary" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-foreground">{key.service_name}</h3>
+                          <p className="text-sm text-muted-foreground">{key.key_name}</p>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="font-semibold text-foreground">{key.service}</h3>
-                        <p className="text-sm text-muted-foreground">{key.name}</p>
+                      
+                      <div className="flex items-center space-x-4">
+                        {getStatusBadge(key.status)}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDeleteKey(key.id)}
+                          className="text-destructive hover:text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
                       </div>
                     </div>
                     
-                    <div className="flex items-center space-x-4">
-                      {getStatusBadge(key.status)}
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleDeleteKey(key.id)}
-                        className="text-destructive hover:text-destructive"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                    <div>
-                      <p className="text-muted-foreground">Key Preview</p>
-                      <p className="font-mono">{key.keyPreview}</p>
-                    </div>
-                    <div>
-                      <p className="text-muted-foreground">Last Used</p>
-                      <p>{key.lastUsed}</p>
-                    </div>
-                    <div>
-                      <p className="text-muted-foreground">Usage</p>
-                      <p>{key.usage}/{key.limit}</p>
-                    </div>
-                    <div>
-                      <p className="text-muted-foreground">Usage %</p>
-                      <div className="flex items-center space-x-2">
-                        <div className="flex-1 bg-muted rounded-full h-2">
-                          <div 
-                            className="h-2 rounded-full bg-primary" 
-                            style={{ width: `${(key.usage / key.limit) * 100}%` }}
-                          />
+                    <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                      <div>
+                        <p className="text-muted-foreground">Key Preview</p>
+                        <p className="font-mono">{key.key_preview}</p>
+                      </div>
+                      <div>
+                        <p className="text-muted-foreground">Last Used</p>
+                        <p>{key.last_used ? new Date(key.last_used).toLocaleDateString() : "Never"}</p>
+                      </div>
+                      <div>
+                        <p className="text-muted-foreground">Usage</p>
+                        <p>{key.usage_count}/{key.usage_limit}</p>
+                      </div>
+                      <div>
+                        <p className="text-muted-foreground">Usage %</p>
+                        <div className="flex items-center space-x-2">
+                          <div className="flex-1 bg-muted rounded-full h-2">
+                            <div 
+                              className="h-2 rounded-full bg-primary" 
+                              style={{ width: `${(key.usage_count / key.usage_limit) * 100}%` }}
+                            />
+                          </div>
+                          <span className="text-xs">{Math.round((key.usage_count / key.usage_limit) * 100)}%</span>
                         </div>
-                        <span className="text-xs">{Math.round((key.usage / key.limit) * 100)}%</span>
                       </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              ))
+            )}
           </div>
         </TabsContent>
 
