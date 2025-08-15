@@ -50,74 +50,48 @@ interface CommandResult {
 }
 
 const osintCommands: OSINTCommand[] = [
-  // Domain & IP Intelligence
+  // Primary OSINT Features
   {
-    id: "whois",
-    name: "WHOIS Lookup",
-    category: "Domain Intelligence",
-    description: "Domain registration and ownership information",
-    icon: Globe,
-    premium: false,
-    apiRequired: false,
-    provider: "Built-in",
-    examples: ["example.com", "192.168.1.1"]
-  },
-  {
-    id: "subdomain",
-    name: "Subdomain Enumeration",
-    category: "Domain Intelligence", 
-    description: "Discover subdomains and DNS records",
-    icon: Database,
+    id: "discord",
+    name: "Discord Intelligence",
+    category: "Social Intelligence",
+    description: "Search for Discord user information and associated IP addresses",
+    icon: User,
     premium: true,
     apiRequired: true,
-    provider: "SecurityTrails",
-    examples: ["target.com", "*.example.com"],
-    cost: "$0.10/query"
-  },
-  {
-    id: "shodan",
-    name: "Shodan Search",
-    category: "Network Intelligence",
-    description: "Internet-connected device intelligence",
-    icon: Wifi,
-    premium: true,
-    apiRequired: true,
-    provider: "Shodan",
-    examples: ["apache", "product:MySQL", "192.168.1.0/24"],
+    provider: "Discord API",
+    examples: ["username#1234", "user_id", "server_id"],
     cost: "$0.25/query"
   },
-  
-  // Email Intelligence
   {
-    id: "email-verify",
-    name: "Email Verification",
-    category: "Email Intelligence",
-    description: "Verify email existence and deliverability",
-    icon: Mail,
-    premium: false,
-    apiRequired: false,
-    provider: "Built-in",
-    examples: ["test@example.com"]
-  },
-  {
-    id: "email-breach",
-    name: "Data Breach Check",
-    category: "Email Intelligence",
-    description: "Check if email appears in known breaches",
+    id: "breach",
+    name: "Data Breach Search",
+    category: "Breach Intelligence",
+    description: "Search through compromised data from various breaches and leaks",
     icon: Shield,
     premium: true,
     apiRequired: true,
     provider: "DeHashed",
-    examples: ["victim@company.com"],
+    examples: ["email@domain.com", "username", "phone_number"],
     cost: "$0.50/query"
   },
-  
-  // Phone Intelligence
   {
-    id: "phone-lookup",
-    name: "Phone Number Lookup",
+    id: "email",
+    name: "Email Intelligence",
+    category: "Email Intelligence", 
+    description: "Discover where an email address is registered and gather intelligence",
+    icon: Mail,
+    premium: true,
+    apiRequired: true,
+    provider: "Hunter.io",
+    examples: ["target@company.com", "domain.com"],
+    cost: "$0.15/query"
+  },
+  {
+    id: "phone",
+    name: "Phone Lookup",
     category: "Phone Intelligence",
-    description: "Carrier, location, and validation data",
+    description: "Lookup and analyze a phone number for intelligence gathering",
     icon: Phone,
     premium: true,
     apiRequired: true,
@@ -125,60 +99,197 @@ const osintCommands: OSINTCommand[] = [
     examples: ["+1234567890", "555-123-4567"],
     cost: "$0.05/query"
   },
-  
-  // Social Media Intelligence
   {
-    id: "social-search",
-    name: "Social Media Search",
-    category: "Social Intelligence",
-    description: "Find social media profiles and posts",
+    id: "ip",
+    name: "IP Geolocation",
+    category: "Network Intelligence",
+    description: "Get geolocation and intelligence information for an IP address",
+    icon: Globe,
+    premium: false,
+    apiRequired: false,
+    provider: "Built-in",
+    examples: ["192.168.1.1", "8.8.8.8", "127.0.0.1"]
+  },
+  {
+    id: "npd",
+    name: "National Public Data",
+    category: "Public Records",
+    description: "Search National Public Data records using various criteria",
+    icon: Database,
+    premium: true,
+    apiRequired: true,
+    provider: "NPD",
+    examples: ["John Doe", "SSN", "Address"],
+    cost: "$1.00/query"
+  },
+  {
+    id: "github",
+    name: "GitHub Email Finder",
+    category: "Developer Intelligence",
+    description: "Find emails associated with a GitHub username",
     icon: User,
+    premium: false,
+    apiRequired: false,
+    provider: "GitHub API",
+    examples: ["github_username", "repository_name"]
+  },
+
+  // Advanced OSINT Tools
+  {
+    id: "shodan",
+    name: "Shodan Search",
+    category: "Network Intelligence",
+    description: "Internet-connected device intelligence and vulnerability scanning",
+    icon: Wifi,
     premium: true,
     apiRequired: true,
-    provider: "Social Links",
-    examples: ["@username", "john.doe"],
-    cost: "$0.15/query"
+    provider: "Shodan",
+    examples: ["apache", "product:MySQL", "192.168.1.0/24"],
+    cost: "$0.25/query"
   },
-  
-  // Business Intelligence
   {
-    id: "company-lookup",
-    name: "Company Lookup",
-    category: "Business Intelligence",
-    description: "Business registration and corporate data",
-    icon: Building,
+    id: "maltego",
+    name: "Maltego Transform",
+    category: "Link Analysis",
+    description: "Advanced link analysis and data mining",
+    icon: Globe,
     premium: true,
     apiRequired: true,
-    provider: "OpenCorporates",
-    examples: ["Apple Inc", "12345678"],
-    cost: "$0.20/query"
+    provider: "Maltego",
+    examples: ["domain.com", "email@domain.com", "phone_number"],
+    cost: "$2.00/query"
   },
-  
-  // Image Intelligence
   {
-    id: "reverse-image",
-    name: "Reverse Image Search",
+    id: "harvester",
+    name: "theHarvester",
+    category: "Domain Intelligence",
+    description: "Gather emails, subdomains, hosts, employee names",
+    icon: Database,
+    premium: false,
+    apiRequired: false,
+    provider: "Built-in",
+    examples: ["domain.com", "company_name"]
+  },
+  {
+    id: "recon-ng",
+    name: "Recon-NG",
+    category: "Reconnaissance",
+    description: "Full-featured reconnaissance framework",
+    icon: Search,
+    premium: true,
+    apiRequired: true,
+    provider: "Recon-NG",
+    examples: ["domain.com", "company_name", "person_name"],
+    cost: "$0.30/query"
+  },
+  {
+    id: "tineye",
+    name: "TinEye Reverse Search",
     category: "Image Intelligence",
-    description: "Find similar images and sources",
+    description: "Reverse image search and tracking",
     icon: Camera,
     premium: false,
     apiRequired: false,
     provider: "TinEye",
-    examples: ["Upload image file"]
+    examples: ["image_url", "Upload image file"]
   },
-  
-  // Hash Intelligence
   {
-    id: "hash-lookup",
-    name: "Hash Lookup",
-    category: "Crypto Intelligence", 
-    description: "Identify file hashes and malware",
-    icon: Hash,
+    id: "foca",
+    name: "FOCA Document Analysis",
+    category: "Document Intelligence",
+    description: "Extract metadata from documents and files",
+    icon: Database,
     premium: true,
     apiRequired: true,
-    provider: "VirusTotal",
-    examples: ["d41d8cd98f00b204e9800998ecf8427e"],
-    cost: "$0.01/query"
+    provider: "FOCA",
+    examples: ["document_url", "domain.com"],
+    cost: "$0.20/query"
+  },
+  {
+    id: "phoneinfoga",
+    name: "PhoneInfoga",
+    category: "Phone Intelligence",
+    description: "Advanced phone number reconnaissance",
+    icon: Phone,
+    premium: true,
+    apiRequired: true,
+    provider: "PhoneInfoga",
+    examples: ["+33656108576", "+1234567890"],
+    cost: "$0.10/query"
+  },
+  {
+    id: "sn0int",
+    name: "sn0int Framework",
+    category: "Semi-Automated OSINT",
+    description: "Semi-automatic OSINT framework and package manager",
+    icon: Search,
+    premium: true,
+    apiRequired: true,
+    provider: "sn0int",
+    examples: ["domain.com", "person_name", "company_name"],
+    cost: "$0.40/query"
+  },
+  {
+    id: "blackbird",
+    name: "Blackbird OSINT",
+    category: "Username Intelligence",
+    description: "Search for usernames across social networks",
+    icon: User,
+    premium: true,
+    apiRequired: true,
+    provider: "Blackbird",
+    examples: ["username", "handle"],
+    cost: "$0.15/query"
+  },
+  {
+    id: "criminalip",
+    name: "Criminal IP",
+    category: "Threat Intelligence",
+    description: "IP reputation and threat intelligence",
+    icon: Shield,
+    premium: true,
+    apiRequired: true,
+    provider: "Criminal IP",
+    examples: ["192.168.1.1", "malicious_domain.com"],
+    cost: "$0.35/query"
+  },
+  {
+    id: "social-links",
+    name: "Social Links",
+    category: "Social Intelligence",
+    description: "Advanced social media investigation",
+    icon: User,
+    premium: true,
+    apiRequired: true,
+    provider: "Social Links",
+    examples: ["@username", "profile_url", "email@domain.com"],
+    cost: "$0.75/query"
+  },
+
+  // Discord Bot Integration Commands
+  {
+    id: "discord-admin",
+    name: "Discord Admin Tools",
+    category: "Discord Integration",
+    description: "Server administration and moderation tools",
+    icon: Lock,
+    premium: true,
+    apiRequired: true,
+    provider: "Discord Bot",
+    examples: ["ban @user", "kick @user", "purge 10"],
+    cost: "Included"
+  },
+  {
+    id: "discord-lookup",
+    name: "Discord Lookup Tools",
+    category: "Discord Integration",
+    description: "Information gathering and user analysis",
+    icon: Eye,
+    premium: true,
+    apiRequired: true,
+    provider: "Discord Bot",
+    examples: ["user info @user", "server info", "token info"],
+    cost: "Included"
   }
 ];
 
@@ -242,26 +353,81 @@ export default function Commands() {
 
   const generateMockResults = (commandId: string) => {
     switch (commandId) {
-      case "whois":
+      case "discord":
         return {
-          domain: "example.com",
-          registrar: "Example Registrar",
-          created: "1995-08-14",
-          expires: "2025-08-14",
-          nameservers: ["ns1.example.com", "ns2.example.com"]
+          user_id: "123456789012345678",
+          username: "target_user#1234",
+          created_at: "2020-03-15T10:30:00Z",
+          mutual_servers: 12,
+          associated_ips: ["192.168.1.100", "10.0.0.50"],
+          last_seen: "2024-08-15T14:22:00Z"
         };
-      case "email-verify":
+      case "breach":
         return {
-          email: "test@example.com",
+          email: "victim@company.com",
+          breaches_found: 5,
+          databases: ["Collection #1", "LinkedIn 2012", "Adobe 2013"],
+          passwords: ["hashed_password_1", "hashed_password_2"],
+          first_seen: "2012-06-05"
+        };
+      case "email":
+        return {
+          email: "target@company.com",
+          domain: "company.com",
+          sources: ["LinkedIn", "Company Website", "GitHub"],
+          confidence: 95,
+          social_profiles: ["linkedin.com/in/target", "twitter.com/target"]
+        };
+      case "phone":
+        return {
+          number: "+1234567890",
+          carrier: "Verizon Wireless",
+          location: "New York, NY",
+          type: "Mobile",
           valid: true,
-          deliverable: true,
-          risk: "low"
+          country_code: "US"
+        };
+      case "ip":
+        return {
+          ip: "192.168.1.1",
+          country: "United States",
+          region: "California",
+          city: "San Francisco",
+          isp: "Example ISP",
+          threat_level: "low"
+        };
+      case "npd":
+        return {
+          name: "John Doe",
+          age: 35,
+          addresses: ["123 Main St, Anytown, ST 12345"],
+          phone_numbers: ["+1234567890"],
+          relatives: ["Jane Doe", "Bob Doe"],
+          confidence: 89
+        };
+      case "github":
+        return {
+          username: "target_user",
+          email: "dev@example.com",
+          repos: 42,
+          followers: 156,
+          public_repos: ["project1", "project2"],
+          languages: ["JavaScript", "Python", "Go"]
+        };
+      case "shodan":
+        return {
+          ip: "192.168.1.1",
+          open_ports: [22, 80, 443],
+          services: ["SSH", "HTTP", "HTTPS"],
+          vulnerabilities: ["CVE-2023-1234"],
+          last_scan: "2024-08-15"
         };
       default:
         return {
           status: "success",
           results_found: Math.floor(Math.random() * 100) + 1,
-          confidence: "high"
+          confidence: "high",
+          execution_time: `${(Math.random() * 3 + 0.5).toFixed(2)}s`
         };
     }
   };

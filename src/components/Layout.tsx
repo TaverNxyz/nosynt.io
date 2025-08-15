@@ -12,12 +12,14 @@ import {
   Activity,
   LogOut,
   User,
-  Terminal
+  Terminal,
+  BarChart3
 } from "lucide-react";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: Activity },
   { name: "Commands", href: "/commands", icon: Terminal },
+  { name: "Analytics", href: "/analytics", icon: BarChart3 },
   { name: "API Keys", href: "/api-keys", icon: Key },
   { name: "Providers", href: "/providers", icon: Database },
   { name: "Implementation", href: "/implementation", icon: Layers },

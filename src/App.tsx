@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import ApiKeys from "./pages/ApiKeys";
 import Auth from "./pages/Auth";
 import Commands from "./pages/Commands";
+import Analytics from "./pages/Analytics";
 import Providers from "./pages/Providers";
 import Implementation from "./pages/Implementation";
 import Security from "./pages/Security";
@@ -29,6 +30,7 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/commands" element={<Commands />} />
+              <Route path="/analytics" element={<Analytics />} />
               <Route path="/api-keys" element={<ApiKeys />} />
               <Route path="/providers" element={<Providers />} />
               <Route path="/implementation" element={<Implementation />} />
