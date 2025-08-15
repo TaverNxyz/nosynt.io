@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -324,65 +323,112 @@ export default function Commands() {
       return;
     }
 
+    if (selectedCommand.apiRequired) {
+      toast.error(`This command requires a ${selectedCommand.provider} API key. Please configure it in API Keys page.`);
+      return;
+    }
+
     setIsExecuting(true);
     
-    try {
-      let result;
-      
-      if (selectedCommand.id === 'shodan') {
-        // Use Shodan edge function for Shodan searches
-        const { data, error } = await supabase.functions.invoke('shodan-search', {
-          body: { 
-            query: commandInput.trim(),
-            user_id: user?.id 
-          }
-        });
-        
-        if (error) {
-          throw new Error(error.message);
-        }
-        
-        result = data;
-      } else {
-        // Use general OSINT command function for other commands
-        const { data, error } = await supabase.functions.invoke('osint-command', {
-          body: { 
-            command: selectedCommand.id,
-            input: commandInput.trim(),
-            user_id: user?.id 
-          }
-        });
-        
-        if (error) {
-          throw new Error(error.message);
-        }
-        
-        result = data.result;
-      }
-
-      const commandResult: CommandResult = {
+    // Simulate command execution
+    setTimeout(() => {
+      const mockResult: CommandResult = {
         command: `${selectedCommand.name}: ${commandInput}`,
         status: 'success',
-        data: result,
+        data: {
+          query: commandInput,
+          provider: selectedCommand.provider,
+          results: generateMockResults(selectedCommand.id),
+          cost: selectedCommand.cost || "Free"
+        },
         timestamp: new Date()
       };
       
-      setResults(prev => [commandResult, ...prev]);
+      setResults(prev => [mockResult, ...prev]);
+      setIsExecuting(false);
       setCommandInput("");
       toast.success(`${selectedCommand.name} executed successfully`);
-      
-    } catch (error: any) {
-      const errorResult: CommandResult = {
-        command: `${selectedCommand.name}: ${commandInput}`,
-        status: 'error',
-        data: { error: error.message },
-        timestamp: new Date()
-      };
-      
-      setResults(prev => [errorResult, ...prev]);
-      toast.error(`Error executing ${selectedCommand.name}: ${error.message}`);
-    } finally {
-      setIsExecuting(false);
+    }, 2000);
+  };
+
+  const generateMockResults = (commandId: string) => {
+    switch (commandId) {
+      case "discord":
+        return {
+          user_id: "123456789012345678",
+          username: "target_user#1234",
+          created_at: "2020-03-15T10:30:00Z",
+          mutual_servers: 12,
+          associated_ips: ["192.168.1.100", "10.0.0.50"],
+          last_seen: "2024-08-15T14:22:00Z"
+        };
+      case "breach":
+        return {
+          email: "victim@company.com",
+          breaches_found: 5,
+          databases: ["Collection #1", "LinkedIn 2012", "Adobe 2013"],
+          passwords: ["hashed_password_1", "hashed_password_2"],
+          first_seen: "2012-06-05"
+        };
+      case "email":
+        return {
+          email: "target@company.com",
+          domain: "company.com",
+          sources: ["LinkedIn", "Company Website", "GitHub"],
+          confidence: 95,
+          social_profiles: ["linkedin.com/in/target", "twitter.com/target"]
+        };
+      case "phone":
+        return {
+          number: "+1234567890",
+          carrier: "Verizon Wireless",
+          location: "New York, NY",
+          type: "Mobile",
+          valid: true,
+          country_code: "US"
+        };
+      case "ip":
+        return {
+          ip: "192.168.1.1",
+          country: "United States",
+          region: "California",
+          city: "San Francisco",
+          isp: "Example ISP",
+          threat_level: "low"
+        };
+      case "npd":
+        return {
+          name: "John Doe",
+          age: 35,
+          addresses: ["123 Main St, Anytown, ST 12345"],
+          phone_numbers: ["+1234567890"],
+          relatives: ["Jane Doe", "Bob Doe"],
+          confidence: 89
+        };
+      case "github":
+        return {
+          username: "target_user",
+          email: "dev@example.com",
+          repos: 42,
+          followers: 156,
+          public_repos: ["project1", "project2"],
+          languages: ["JavaScript", "Python", "Go"]
+        };
+      case "shodan":
+        return {
+          ip: "192.168.1.1",
+          open_ports: [22, 80, 443],
+          services: ["SSH", "HTTP", "HTTPS"],
+          vulnerabilities: ["CVE-2023-1234"],
+          last_scan: "2024-08-15"
+        };
+      default:
+        return {
+          status: "success",
+          results_found: Math.floor(Math.random() * 100) + 1,
+          confidence: "high",
+          execution_time: `${(Math.random() * 3 + 0.5).toFixed(2)}s`
+        };
     }
   };
 
@@ -520,12 +566,6 @@ export default function Commands() {
                 <div className="flex items-center justify-between">
                   <div className="text-sm text-muted-foreground">
                     Provider: {selectedCommand.provider} | Cost: {selectedCommand.cost || "Free"}
-                    {selectedCommand.apiRequired && (
-                      <Badge variant="outline" className="ml-2">
-                        <Key className="h-3 w-3 mr-1" />
-                        API Key Required
-                      </Badge>
-                    )}
                   </div>
                   <Button 
                     onClick={executeCommand} 
