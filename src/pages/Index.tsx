@@ -54,9 +54,9 @@ const Index = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Active Providers</p>
-                <p className="text-2xl font-bold text-security-green">23/25</p>
+                <p className="text-2xl font-bold text-[hsl(var(--security-green))]">23/25</p>
               </div>
-              <CheckCircle className="h-8 w-8 text-security-green" />
+              <CheckCircle className="h-8 w-8 text-[hsl(var(--security-green))]" />
             </div>
           </CardContent>
         </Card>
@@ -68,7 +68,7 @@ const Index = () => {
                 <p className="text-sm text-muted-foreground">Avg Response</p>
                 <p className="text-2xl font-bold text-foreground">1.2s</p>
               </div>
-              <Zap className="h-8 w-8 text-cyber-blue" />
+              <Zap className="h-8 w-8 text-[hsl(var(--cyber-blue))]" />
             </div>
           </CardContent>
         </Card>
@@ -90,9 +90,9 @@ const Index = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Security Score</p>
-                <p className="text-2xl font-bold text-security-green">95%</p>
+                <p className="text-2xl font-bold text-[hsl(var(--security-green))]">95%</p>
               </div>
-              <Shield className="h-8 w-8 text-security-green" />
+              <Shield className="h-8 w-8 text-[hsl(var(--security-green))]" />
             </div>
           </CardContent>
         </Card>
@@ -113,14 +113,14 @@ const Index = () => {
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-sm">Active API Keys</span>
-              <Badge variant="outline" className="bg-security-green/10 text-security-green border-security-green/20">
+              <Badge variant="outline" className="bg-[hsl(var(--security-green))]/10 text-[hsl(var(--security-green))] border-[hsl(var(--security-green))]/20">
                 <CheckCircle className="h-3 w-3 mr-1" />
                 3 Active
               </Badge>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm">Expired Keys</span>
-              <Badge variant="outline" className="bg-security-red/10 text-security-red border-security-red/20">
+              <Badge variant="outline" className="bg-[hsl(var(--security-red))]/10 text-[hsl(var(--security-red))] border-[hsl(var(--security-red))]/20">
                 <AlertTriangle className="h-3 w-3 mr-1" />
                 1 Expired
               </Badge>
@@ -144,13 +144,13 @@ const Index = () => {
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-sm">Operational Services</span>
-              <Badge variant="outline" className="bg-security-green/10 text-security-green border-security-green/20">
+              <Badge variant="outline" className="bg-[hsl(var(--security-green))]/10 text-[hsl(var(--security-green))] border-[hsl(var(--security-green))]/20">
                 23 Online
               </Badge>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm">Maintenance Mode</span>
-              <Badge variant="outline" className="bg-cyber-blue/10 text-cyber-blue border-cyber-blue/20">
+              <Badge variant="outline" className="bg-[hsl(var(--cyber-blue))]/10 text-[hsl(var(--cyber-blue))] border-[hsl(var(--cyber-blue))]/20">
                 <Clock className="h-3 w-3 mr-1" />
                 2 Services
               </Badge>
@@ -197,7 +197,7 @@ const Index = () => {
                 <span className="font-medium">85%</span>
               </div>
               <div className="w-full bg-muted rounded-full h-2">
-                <div className="bg-security-green h-2 rounded-full" style={{ width: '85%' }} />
+                <div className="bg-[hsl(var(--security-green))] h-2 rounded-full" style={{ width: '85%' }} />
               </div>
             </div>
             <Button asChild className="w-full mt-4" variant="outline">
