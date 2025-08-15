@@ -61,16 +61,16 @@ export default function Index() {
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-slide-in-bottom [animation-delay:400ms]">
           <Button asChild size="lg" className="bg-gradient-primary hover:shadow-glow transition-all duration-300 hover:scale-105 group relative overflow-hidden">
-            <Link to="/api-keys">
+            <Link to="/commands">
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 animate-shimmer bg-[length:200%_100%]" />
-              <Key className="mr-2 h-5 w-5 relative z-10" />
-              <span className="relative z-10">Manage API Keys</span>
+              <Search className="mr-2 h-5 w-5 relative z-10" />
+              <span className="relative z-10">Execute Commands</span>
             </Link>
           </Button>
           <Button asChild variant="outline" size="lg" className="hover:bg-secondary/50 transition-all duration-300 hover:scale-105 hover:shadow-floating group">
-            <Link to="/providers">
-              <Database className="mr-2 h-5 w-5 group-hover:animate-pulse" />
-              View Providers
+            <Link to="/api-keys">
+              <Key className="mr-2 h-5 w-5 group-hover:animate-pulse" />
+              Manage API Keys
             </Link>
           </Button>
         </div>

@@ -8,6 +8,7 @@ import Layout from "./components/Layout";
 import Index from "./pages/Index";
 import ApiKeys from "./pages/ApiKeys";
 import Auth from "./pages/Auth";
+import Commands from "./pages/Commands";
 import Providers from "./pages/Providers";
 import Implementation from "./pages/Implementation";
 import Security from "./pages/Security";
@@ -27,6 +28,7 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
+              <Route path="/commands" element={<Commands />} />
               <Route path="/api-keys" element={<ApiKeys />} />
               <Route path="/providers" element={<Providers />} />
               <Route path="/implementation" element={<Implementation />} />
