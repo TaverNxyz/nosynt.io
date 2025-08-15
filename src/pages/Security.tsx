@@ -422,21 +422,87 @@ export default function Security() {
         </TabsContent>
 
         <TabsContent value="risk" className="space-y-6">
-          <Card className="bg-gradient-card shadow-card">
-            <CardHeader>
-              <CardTitle>Risk Assessment Matrix</CardTitle>
-              <CardDescription>Security risk analysis and mitigation strategies</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="h-64 flex items-center justify-center text-muted-foreground">
-                <div className="text-center">
-                  <AlertTriangle className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                  <p>Risk assessment dashboard coming soon</p>
-                  <p className="text-sm">Comprehensive threat modeling and risk analysis</p>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card className="bg-gradient-card shadow-card">
+              <CardHeader>
+                <CardTitle>Risk Assessment Matrix</CardTitle>
+                <CardDescription>Current security risks by severity and likelihood</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {[
+                    { risk: "API Key Exposure", severity: "critical", likelihood: "low", status: "mitigated" },
+                    { risk: "Data Breach", severity: "high", likelihood: "medium", status: "monitoring" },
+                    { risk: "Service Downtime", severity: "medium", likelihood: "low", status: "accepted" },
+                    { risk: "Compliance Violation", severity: "high", likelihood: "low", status: "mitigated" }
+                  ].map((risk, index) => (
+                    <div key={index} className="p-3 border border-border rounded-lg">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-medium text-sm">{risk.risk}</span>
+                        <div className="flex space-x-1">
+                          <Badge variant="outline" className={getPriorityColor(risk.severity)}>
+                            {risk.severity}
+                          </Badge>
+                          <Badge variant="outline" className="text-xs">
+                            {risk.likelihood}
+                          </Badge>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-xs text-muted-foreground">Status:</span>
+                        <Badge variant="secondary" className="text-xs">
+                          {risk.status}
+                        </Badge>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-card shadow-card">
+              <CardHeader>
+                <CardTitle>Threat Intelligence</CardTitle>
+                <CardDescription>Latest security threats and recommendations</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="p-3 bg-security-red/10 border border-security-red/20 rounded-lg">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <AlertTriangle className="h-4 w-4 text-security-red" />
+                      <span className="font-medium text-sm">Critical Alert</span>
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      New vulnerability detected in third-party API providers. 
+                      Update API tokens immediately.
+                    </p>
+                  </div>
+                  
+                  <div className="p-3 bg-security-amber/10 border border-security-amber/20 rounded-lg">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <Clock className="h-4 w-4 text-security-amber" />
+                      <span className="font-medium text-sm">Advisory</span>
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      Scheduled security audit for SOC 2 compliance next week.
+                      Prepare documentation.
+                    </p>
+                  </div>
+                  
+                  <div className="p-3 bg-security-green/10 border border-security-green/20 rounded-lg">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <CheckCircle className="h-4 w-4 text-security-green" />
+                      <span className="font-medium text-sm">All Clear</span>
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      All security controls are functioning properly.
+                      No immediate action required.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
       </Tabs>
     </div>

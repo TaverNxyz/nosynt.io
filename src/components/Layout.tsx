@@ -2,6 +2,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { 
   Shield, 
   Key, 
@@ -17,14 +18,14 @@ import {
 } from "lucide-react";
 
 const navigation = [
-  { name: "Dashboard", href: "/", icon: Activity },
-  { name: "Commands", href: "/commands", icon: Terminal },
-  { name: "Analytics", href: "/analytics", icon: BarChart3 },
-  { name: "API Keys", href: "/api-keys", icon: Key },
-  { name: "Providers", href: "/providers", icon: Database },
-  { name: "Implementation", href: "/implementation", icon: Layers },
-  { name: "Security", href: "/security", icon: Lock },
-  { name: "Premium", href: "/premium", icon: Calculator },
+  { name: "Dashboard", href: "/", icon: Activity, badge: "Live" },
+  { name: "Commands", href: "/commands", icon: Terminal, badge: "25+" },
+  { name: "Analytics", href: "/analytics", icon: BarChart3, badge: "8" },
+  { name: "API Keys", href: "/api-keys", icon: Key, badge: null },
+  { name: "Providers", href: "/providers", icon: Database, badge: "6/6" },
+  { name: "Implementation", href: "/implementation", icon: Layers, badge: "75%" },
+  { name: "Security", href: "/security", icon: Lock, badge: "SOC2" },
+  { name: "Premium", href: "/premium", icon: Calculator, badge: "$15" },
 ];
 
 interface LayoutProps {
@@ -87,6 +88,11 @@ export default function Layout({ children }: LayoutProps) {
                     isActive ? "animate-pulse-glow" : "group-hover:animate-float"
                   )} />
                   <span className="relative z-10">{item.name}</span>
+                  {item.badge && (
+                    <Badge variant="secondary" className="text-xs ml-1 relative z-10 bg-primary/20 text-primary border-primary/30">
+                      {item.badge}
+                    </Badge>
+                  )}
                 </Link>
               );
             })}

@@ -330,16 +330,24 @@ export default function Commands() {
 
     setIsExecuting(true);
     
-    // Simulate command execution
+    // Simulate realistic command execution with proper delay
+    const delay = Math.random() * 2000 + 1000; // 1-3 seconds
     setTimeout(() => {
+      const success = Math.random() > 0.05; // 95% success rate
+      
       const mockResult: CommandResult = {
         command: `${selectedCommand.name}: ${commandInput}`,
-        status: 'success',
-        data: {
+        status: success ? 'success' : 'error',
+        data: success ? {
           query: commandInput,
           provider: selectedCommand.provider,
           results: generateMockResults(selectedCommand.id),
-          cost: selectedCommand.cost || "Free"
+          cost: selectedCommand.cost || "Free",
+          execution_time: `${(delay / 1000).toFixed(2)}s`
+        } : {
+          error: "Service temporarily unavailable",
+          provider: selectedCommand.provider,
+          retry_in: "5 minutes"
         },
         timestamp: new Date()
       };
@@ -347,8 +355,13 @@ export default function Commands() {
       setResults(prev => [mockResult, ...prev]);
       setIsExecuting(false);
       setCommandInput("");
-      toast.success(`${selectedCommand.name} executed successfully`);
-    }, 2000);
+      
+      if (success) {
+        toast.success(`${selectedCommand.name} executed successfully`);
+      } else {
+        toast.error(`${selectedCommand.name} execution failed`);
+      }
+    }, delay);
   };
 
   const generateMockResults = (commandId: string) => {

@@ -340,35 +340,139 @@ export default function Analytics() {
         </TabsContent>
 
         <TabsContent value="usage" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Usage Analytics Dashboard</CardTitle>
-              <CardDescription>Detailed analytics and insights from connected platforms</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-8 text-muted-foreground">
-                <BarChart3 className="h-16 w-16 mx-auto mb-4 opacity-50" />
-                <p>Analytics dashboards will be displayed here</p>
-                <p className="text-sm">Connect to external analytics platforms to view detailed reports</p>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card className="bg-gradient-card shadow-card">
+              <CardHeader>
+                <CardTitle>Query Volume Trends</CardTitle>
+                <CardDescription>OSINT query patterns over the last 30 days</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-3 gap-4 text-center">
+                    <div>
+                      <p className="text-2xl font-bold text-primary">15.2K</p>
+                      <p className="text-xs text-muted-foreground">Total Queries</p>
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold text-security-green">98.7%</p>
+                      <p className="text-xs text-muted-foreground">Success Rate</p>
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold text-cyber-blue">1.1s</p>
+                      <p className="text-xs text-muted-foreground">Avg Response</p>
+                    </div>
+                  </div>
+                  <div className="h-32 bg-gradient-metallic rounded-lg flex items-center justify-center">
+                    <p className="text-sm text-muted-foreground">Query trends visualization</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-card shadow-card">
+              <CardHeader>
+                <CardTitle>Provider Performance</CardTitle>
+                <CardDescription>Performance metrics across all OSINT providers</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="space-y-3">
+                    {[
+                      { name: "Shodan", usage: 85, status: "optimal" },
+                      { name: "VirusTotal", usage: 72, status: "good" },
+                      { name: "Hunter.io", usage: 68, status: "degraded" },
+                      { name: "DeHashed", usage: 91, status: "optimal" }
+                    ].map((provider) => (
+                      <div key={provider.name} className="flex items-center justify-between">
+                        <span className="text-sm font-medium">{provider.name}</span>
+                        <div className="flex items-center space-x-2">
+                          <div className="w-20 h-2 bg-muted rounded-full">
+                            <div 
+                              className={`h-2 rounded-full ${
+                                provider.status === 'optimal' ? 'bg-security-green' :
+                                provider.status === 'good' ? 'bg-cyber-blue' : 'bg-security-amber'
+                              }`}
+                              style={{ width: `${provider.usage}%` }}
+                            />
+                          </div>
+                          <span className="text-xs text-muted-foreground w-8">{provider.usage}%</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
 
         <TabsContent value="monitoring" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>System Monitoring</CardTitle>
-              <CardDescription>Real-time system performance and health monitoring</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-8 text-muted-foreground">
-                <Activity className="h-16 w-16 mx-auto mb-4 opacity-50" />
-                <p>Monitoring dashboards will be displayed here</p>
-                <p className="text-sm">Real-time metrics from Grafana, Prometheus, and Datadog</p>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card className="bg-gradient-card shadow-card">
+              <CardHeader>
+                <CardTitle>System Health</CardTitle>
+                <CardDescription>Real-time infrastructure monitoring</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center p-3 bg-gradient-metallic rounded-lg">
+                      <p className="text-lg font-bold text-security-green">99.8%</p>
+                      <p className="text-xs text-muted-foreground">Uptime</p>
+                    </div>
+                    <div className="text-center p-3 bg-gradient-metallic rounded-lg">
+                      <p className="text-lg font-bold text-cyber-blue">2.1ms</p>
+                      <p className="text-xs text-muted-foreground">Latency</p>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>CPU Usage</span>
+                      <span>23%</span>
+                    </div>
+                    <Progress value={23} className="h-2" />
+                    <div className="flex justify-between text-sm">
+                      <span>Memory</span>
+                      <span>45%</span>
+                    </div>
+                    <Progress value={45} className="h-2" />
+                    <div className="flex justify-between text-sm">
+                      <span>Storage</span>
+                      <span>67%</span>
+                    </div>
+                    <Progress value={67} className="h-2" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-card shadow-card">
+              <CardHeader>
+                <CardTitle>Alert Status</CardTitle>
+                <CardDescription>System alerts and notifications</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {[
+                    { type: "info", message: "System backup completed successfully", time: "2 min ago" },
+                    { type: "warning", message: "High memory usage detected", time: "15 min ago" },
+                    { type: "success", message: "All services operational", time: "1 hour ago" }
+                  ].map((alert, index) => (
+                    <div key={index} className="flex items-start space-x-3 p-2 rounded-lg bg-gradient-metallic">
+                      <div className={`w-2 h-2 rounded-full mt-2 ${
+                        alert.type === 'success' ? 'bg-security-green' :
+                        alert.type === 'warning' ? 'bg-security-amber' : 'bg-cyber-blue'
+                      }`} />
+                      <div className="flex-1">
+                        <p className="text-sm">{alert.message}</p>
+                        <p className="text-xs text-muted-foreground">{alert.time}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
       </Tabs>
     </div>
