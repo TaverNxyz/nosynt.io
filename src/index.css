@@ -139,4 +139,20 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  /* Ensure smooth rendering and prevent layout shifts */
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Fix potential animation performance issues */
+  .animate-float,
+  .animate-pulse-glow,
+  .animate-cosmic-orbit {
+    will-change: transform;
+  }
 }
