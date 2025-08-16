@@ -10,8 +10,8 @@ interface BootLine {
 }
 
 const bootSequence: BootLine[] = [
-  { text: "OSINT Terminal v3.14.159 (GNU/Linux)", type: 'system', delay: 50 },
-  { text: "Copyright (C) 2024 OSINT Security Platform", type: 'info', delay: 100 },
+  { text: "NoSynt.io Terminal v1.0.0 (GNU/Linux)", type: 'system', delay: 50 },
+  { text: "Copyright (C) 2024 NoSynt Intelligence Platform", type: 'info', delay: 100 },
   { text: "Initializing system...", type: 'info', delay: 150 },
   { text: "[    0.001] Memory: 32GB Available", type: 'success', delay: 200 },
   { text: "[    0.102] Network: eth0 link up", type: 'success', delay: 250 },
@@ -20,13 +20,14 @@ const bootSequence: BootLine[] = [
   { text: "[    0.678] ├── Discord Intelligence Module", type: 'success', delay: 400 },
   { text: "[    0.890] ├── Email Intelligence Module", type: 'success', delay: 450 },
   { text: "[    1.012] ├── IP Geolocation Module", type: 'success', delay: 500 },
-  { text: "[    1.234] └── Social Media Scanner", type: 'success', delay: 550 },
-  { text: "[    1.456] Database: PostgreSQL connection established", type: 'success', delay: 600 },
-  { text: "[    1.678] Authentication: Supabase ready", type: 'success', delay: 650 },
-  { text: "[    1.890] System: All services operational", type: 'success', delay: 700 },
-  { text: "", type: 'info', delay: 750 },
-  { text: "OSINT Terminal ready.", type: 'system', delay: 800 },
-  { text: "", type: 'info', delay: 850 }
+  { text: "[    1.234] ├── Social Media Scanner", type: 'success', delay: 550 },
+  { text: "[    1.456] └── Telegram Integration", type: 'success', delay: 600 },
+  { text: "[    1.678] Database: PostgreSQL connection established", type: 'success', delay: 650 },
+  { text: "[    1.890] Authentication: Supabase ready", type: 'success', delay: 700 },
+  { text: "[    2.012] System: All services operational", type: 'success', delay: 750 },
+  { text: "", type: 'info', delay: 800 },
+  { text: "NoSynt.io Terminal ready.", type: 'system', delay: 850 },
+  { text: "", type: 'info', delay: 900 }
 ];
 
 interface BootScreenProps {
@@ -112,7 +113,7 @@ export function BootScreen({ onBootComplete }: BootScreenProps) {
           
           {/* Cursor */}
           <div className="flex items-center">
-            <span className="text-terminal-green">root@osint:~# </span>
+            <span className="text-terminal-green">root@nosynt:~# </span>
             <span className={`ml-1 ${showCursor ? 'opacity-100' : 'opacity-0'} transition-opacity`}>
               █
             </span>
@@ -128,7 +129,7 @@ export function BootScreen({ onBootComplete }: BootScreenProps) {
                 <span className="text-terminal-green font-bold">SYSTEM READY</span>
               </div>
               <p className="text-muted-foreground text-xs mb-4">
-                All OSINT modules loaded successfully. Ready to execute intelligence gathering operations.
+                All NoSynt.io modules loaded successfully. Ready to execute intelligence gathering operations.
               </p>
               <div className="flex space-x-3">
                 <Button 

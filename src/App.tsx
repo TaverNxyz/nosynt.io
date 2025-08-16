@@ -1,9 +1,11 @@
+import { useState, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./hooks/useAuth";
+import { BootScreen } from "./components/BootScreen";
 import Layout from "./components/Layout";
 import Index from "./pages/Index";
 import ApiKeys from "./pages/ApiKeys";
@@ -18,32 +20,58 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <AuthProvider>
+const App = () => {
+  const [showBootScreen, setShowBootScreen] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate initial app loading time
+    const loadTimer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(loadTimer);
+  }, []);
+
+  const handleBootComplete = () => {
+    setShowBootScreen(false);
+  };
+
+  if (showBootScreen || isLoading) {
+    return (
       <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Layout>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/commands" element={<Commands />} />
-              <Route path="/analytics" element={<Analytics />} />
-              <Route path="/api-keys" element={<ApiKeys />} />
-              <Route path="/providers" element={<Providers />} />
-              <Route path="/implementation" element={<Implementation />} />
-              <Route path="/security" element={<Security />} />
-              <Route path="/premium" element={<Premium />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Layout>
-        </BrowserRouter>
+        <BootScreen onBootComplete={handleBootComplete} />
       </TooltipProvider>
-    </AuthProvider>
-  </QueryClientProvider>
-);
+    );
+  }
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Layout>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/commands" element={<Commands />} />
+                <Route path="/analytics" element={<Analytics />} />
+                <Route path="/api-keys" element={<ApiKeys />} />
+                <Route path="/providers" element={<Providers />} />
+                <Route path="/implementation" element={<Implementation />} />
+                <Route path="/security" element={<Security />} />
+                <Route path="/premium" element={<Premium />} />
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Layout>
+          </BrowserRouter>
+        </TooltipProvider>
+      </AuthProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
