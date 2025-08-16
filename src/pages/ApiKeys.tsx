@@ -342,6 +342,19 @@ export default function ApiKeys() {
     );
   };
 
+  if (!user) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground">API Key Management</h1>
+          <p className="text-muted-foreground mt-2">
+            Please log in to manage your API keys
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div>
