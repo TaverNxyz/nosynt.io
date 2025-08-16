@@ -18,7 +18,8 @@ import {
   User,
   Terminal,
   BarChart3,
-  Search
+  Search,
+  Crown
 } from "lucide-react";
 
 const navigation = [
@@ -29,7 +30,7 @@ const navigation = [
   { name: "providers", href: "/providers", icon: Database, badge: "6/6" },
   { name: "implementation", href: "/implementation", icon: Layers, badge: "75%" },
   { name: "security", href: "/security", icon: Lock, badge: "soc2" },
-  { name: "premium", href: "/premium", icon: Calculator, badge: "$15" },
+  { name: "subscriptions", href: "/subscriptions", icon: Crown, badge: "free" },
 ];
 
 interface LayoutProps {

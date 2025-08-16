@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
+import { useUsageAnalytics } from "@/hooks/useUsageAnalytics";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import { 
   BarChart3, 
   TrendingUp, 
@@ -113,16 +116,40 @@ const analyticsPlatforms: AnalyticsPlatform[] = [
   }
 ];
 
-const usageStats = {
-  totalQueries: 45621,
-  activeUsers: 1247,
-  successRate: 98.5,
-  avgResponseTime: 1.2,
-  monthlyGrowth: 23.5
-};
-
 export default function Analytics() {
+  const { user } = useAuth();
+  const { monthlyUsage, limits, loading } = useUsageAnalytics();
   const [selectedPlatform, setSelectedPlatform] = useState<AnalyticsPlatform | null>(null);
+  const [recentExecutions, setRecentExecutions] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (user) {
+      fetchRecentExecutions();
+    }
+  }, [user]);
+
+  const fetchRecentExecutions = async () => {
+    if (!user) return;
+    
+    const { data, error } = await supabase
+      .from('command_executions')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+      .limit(10);
+
+    if (!error && data) {
+      setRecentExecutions(data);
+    }
+  };
+
+  const successRate = monthlyUsage.total_commands > 0 
+    ? ((monthlyUsage.successful_commands / monthlyUsage.total_commands) * 100).toFixed(1)
+    : '0';
+
+  const avgResponseTime = recentExecutions.length > 0
+    ? (recentExecutions.reduce((acc, exec) => acc + (exec.execution_time_ms || 0), 0) / recentExecutions.length / 1000).toFixed(1)
+    : '0';
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -160,8 +187,8 @@ export default function Analytics() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Total Queries</p>
-                <p className="text-2xl font-bold text-foreground">{usageStats.totalQueries.toLocaleString()}</p>
+                <p className="text-sm text-muted-foreground">Commands This Month</p>
+                <p className="text-2xl font-bold text-foreground">{monthlyUsage.total_commands.toLocaleString()}</p>
               </div>
               <Database className="h-8 w-8 text-primary" />
             </div>
@@ -172,8 +199,8 @@ export default function Analytics() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Active Users</p>
-                <p className="text-2xl font-bold text-foreground">{usageStats.activeUsers.toLocaleString()}</p>
+                <p className="text-sm text-muted-foreground">API Cost</p>
+                <p className="text-2xl font-bold text-foreground">${monthlyUsage.total_api_cost.toFixed(2)}</p>
               </div>
               <Users className="h-8 w-8 text-blue-500" />
             </div>
@@ -185,7 +212,7 @@ export default function Analytics() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Success Rate</p>
-                <p className="text-2xl font-bold text-green-500">{usageStats.successRate}%</p>
+                <p className="text-2xl font-bold text-green-500">{successRate}%</p>
               </div>
               <CheckCircle className="h-8 w-8 text-green-500" />
             </div>
@@ -197,7 +224,7 @@ export default function Analytics() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Avg Response</p>
-                <p className="text-2xl font-bold text-foreground">{usageStats.avgResponseTime}s</p>
+                <p className="text-2xl font-bold text-foreground">{avgResponseTime}s</p>
               </div>
               <Zap className="h-8 w-8 text-yellow-500" />
             </div>
@@ -208,8 +235,10 @@ export default function Analytics() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Growth</p>
-                <p className="text-2xl font-bold text-primary">+{usageStats.monthlyGrowth}%</p>
+                <p className="text-sm text-muted-foreground">Limit Usage</p>
+                <p className="text-2xl font-bold text-primary">
+                  {limits ? `${Math.round((limits.current_commands / limits.max_commands) * 100)}%` : 'N/A'}
+                </p>
               </div>
               <TrendingUp className="h-8 w-8 text-primary" />
             </div>

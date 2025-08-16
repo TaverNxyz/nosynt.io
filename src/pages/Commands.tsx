@@ -308,17 +308,68 @@ export default function Commands() {
       return;
     }
 
+    // Check user limits
+    try {
+      const { data: limits } = await supabase.rpc('check_user_limits', { user_uuid: user?.id });
+      if (limits && limits.length > 0) {
+        const limit = limits[0];
+        if (!limit.within_command_limit) {
+          toast.error(`Monthly command limit reached (${limit.current_commands}/${limit.max_commands}). Upgrade your plan to continue.`);
+          return;
+        }
+        if (!limit.within_cost_limit) {
+          toast.error(`Monthly API cost limit reached ($${limit.current_cost}/$${limit.max_cost}). Upgrade your plan to continue.`);
+          return;
+        }
+      }
+    } catch (error) {
+      console.error('Failed to check limits:', error);
+    }
+
+    // Check for required API keys
     if (selectedCommand.apiRequired) {
-      toast.error(`This command requires a ${selectedCommand.provider} API key. Please configure it in API Keys page.`);
-      return;
+      const { data: apiKeys } = await supabase
+        .from('api_keys')
+        .select('*')
+        .eq('service_name', selectedCommand.provider)
+        .eq('status', 'active')
+        .limit(1);
+      
+      if (!apiKeys || apiKeys.length === 0) {
+        toast.error(`This command requires a ${selectedCommand.provider} API key. Please configure it in API Keys page.`);
+        return;
+      }
     }
 
     setIsExecuting(true);
+    
+    // Create execution record
+    const { data: execution, error: executionError } = await supabase
+      .from('command_executions')
+      .insert({
+        user_id: user?.id,
+        command_id: selectedCommand.id,
+        command_name: selectedCommand.name,
+        command_category: selectedCommand.category,
+        input_data: commandInput,
+        provider: selectedCommand.provider,
+        status: 'pending'
+      })
+      .select()
+      .single();
+
+    if (executionError) {
+      console.error('Failed to create execution record:', executionError);
+      setIsExecuting(false);
+      return;
+    }
     
     // Simulate realistic command execution with proper delay
     const delay = Math.random() * 2000 + 1000; // 1-3 seconds
     setTimeout(async () => {
       const success = Math.random() > 0.05; // 95% success rate
+      const mockData = success ? generateMockResults(selectedCommand.id) : null;
+      const apiCost = selectedCommand.apiRequired ? (Math.random() * 2 + 0.1) : 0;
       
       const mockResult: CommandResult = {
         command: `${selectedCommand.name}: ${commandInput}`,
@@ -326,7 +377,7 @@ export default function Commands() {
         data: success ? {
           query: commandInput,
           provider: selectedCommand.provider,
-          results: generateMockResults(selectedCommand.id),
+          results: mockData,
           execution_time: `${(delay / 1000).toFixed(2)}s`
         } : {
           error: "Service temporarily unavailable",
@@ -335,6 +386,18 @@ export default function Commands() {
         },
         timestamp: new Date()
       };
+      
+      // Update execution record
+      await supabase
+        .from('command_executions')
+        .update({
+          status: success ? 'success' : 'error',
+          output_data: mockResult.data,
+          execution_time_ms: delay,
+          api_cost: apiCost,
+          error_message: success ? null : mockResult.data.error
+        })
+        .eq('id', execution.id);
       
       setResults(prev => [mockResult, ...prev]);
       setIsExecuting(false);
