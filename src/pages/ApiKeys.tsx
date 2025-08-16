@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Eye, EyeOff, Key, Plus, Trash2, CheckCircle, AlertCircle } from "lucide-react";
+import { Eye, EyeOff, Key, Plus, Trash2, CheckCircle, AlertCircle, ExternalLink } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface ApiKey {
@@ -25,12 +25,48 @@ interface ApiKey {
 // API Key interface matches the database structure
 
 const supportedServices = [
-  { name: "DeHashed", description: "Breach database lookups", cost: "$0.50/query" },
-  { name: "Shodan", description: "Internet device scanning", cost: "$1.00/100 queries" },
-  { name: "Hunter.io", description: "Email verification & finding", cost: "$0.10/query" },
-  { name: "Twilio", description: "SMS/Voice communication", cost: "$0.0075/SMS" },
-  { name: "VirusTotal", description: "Malware & URL analysis", cost: "Free tier available" },
-  { name: "IPQualityScore", description: "IP & domain reputation", cost: "$0.004/query" }
+  { 
+    name: "DeHashed", 
+    description: "Breach database lookups", 
+    cost: "$0.50/query",
+    signupUrl: "https://www.dehashed.com/register",
+    apiDocsUrl: "https://www.dehashed.com/docs"
+  },
+  { 
+    name: "Shodan", 
+    description: "Internet device scanning", 
+    cost: "$1.00/100 queries",
+    signupUrl: "https://account.shodan.io/register",
+    apiDocsUrl: "https://developer.shodan.io/api"
+  },
+  { 
+    name: "Hunter.io", 
+    description: "Email verification & finding", 
+    cost: "$0.10/query",
+    signupUrl: "https://hunter.io/users/sign_up",
+    apiDocsUrl: "https://hunter.io/api-documentation/v2"
+  },
+  { 
+    name: "Twilio", 
+    description: "SMS/Voice communication", 
+    cost: "$0.0075/SMS",
+    signupUrl: "https://www.twilio.com/try-twilio",
+    apiDocsUrl: "https://www.twilio.com/docs/usage/api"
+  },
+  { 
+    name: "VirusTotal", 
+    description: "Malware & URL analysis", 
+    cost: "Free tier available",
+    signupUrl: "https://www.virustotal.com/gui/join-us",
+    apiDocsUrl: "https://developers.virustotal.com/reference/overview"
+  },
+  { 
+    name: "IPQualityScore", 
+    description: "IP & domain reputation", 
+    cost: "$0.004/query",
+    signupUrl: "https://www.ipqualityscore.com/create-account",
+    apiDocsUrl: "https://www.ipqualityscore.com/documentation/overview"
+  }
 ];
 
 export default function ApiKeys() {
@@ -327,9 +363,30 @@ export default function ApiKeys() {
               <Card key={service.name} className="bg-gradient-card shadow-card">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
-                    <div>
+                    <div className="flex-1">
                       <h3 className="text-lg font-semibold text-foreground">{service.name}</h3>
-                      <p className="text-muted-foreground">{service.description}</p>
+                      <p className="text-muted-foreground mb-3">{service.description}</p>
+                      <div className="flex gap-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => window.open(service.signupUrl, '_blank')}
+                          className="flex items-center gap-2"
+                        >
+                          <Key className="h-4 w-4" />
+                          Get API Key
+                          <ExternalLink className="h-3 w-3" />
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => window.open(service.apiDocsUrl, '_blank')}
+                          className="flex items-center gap-2"
+                        >
+                          API Docs
+                          <ExternalLink className="h-3 w-3" />
+                        </Button>
+                      </div>
                     </div>
                     <div className="text-right">
                       <p className="text-sm text-muted-foreground">Pricing</p>

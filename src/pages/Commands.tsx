@@ -28,7 +28,8 @@ import {
   CheckCircle,
   Clock,
   Zap,
-  Terminal
+  Terminal,
+  ExternalLink
 } from "lucide-react";
 
 interface OSINTCommand {
@@ -280,6 +281,30 @@ const osintCommands: OSINTCommand[] = [
 
 const categories = ["All", ...Array.from(new Set(osintCommands.map(cmd => cmd.category)))];
 
+// API Key URLs mapping
+const getApiKeyUrl = (provider: string) => {
+  const apiKeyUrls: Record<string, string> = {
+    "DeHashed": "https://www.dehashed.com/register",
+    "Shodan": "https://account.shodan.io/register",
+    "Hunter.io": "https://hunter.io/users/sign_up",
+    "Twilio": "https://www.twilio.com/try-twilio",
+    "VirusTotal": "https://www.virustotal.com/gui/join-us",
+    "IPQualityScore": "https://www.ipqualityscore.com/create-account",
+    "NPD": "https://www.nationalapublicdata.com/signup",
+    "Maltego": "https://www.maltego.com/ce-registration/",
+    "Recon-NG": "https://github.com/lanmaster53/recon-ng",
+    "FOCA": "https://www.elevenpaths.com/labstools/foca/",
+    "PhoneInfoga": "https://github.com/sundowndev/phoneinfoga",
+    "sn0int": "https://github.com/kpcyrd/sn0int",
+    "Blackbird": "https://blackbird-osint.herokuapp.com/",
+    "Criminal IP": "https://www.criminalip.io/register",
+    "Social Links": "https://sociallinks.io/",
+    "Discord Bot": "/api-keys",
+    "Discord API": "https://discord.com/developers/applications"
+  };
+  return apiKeyUrls[provider];
+};
+
 export default function Commands() {
   const { user } = useAuth();
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -336,7 +361,12 @@ export default function Commands() {
         .limit(1);
       
       if (!apiKeys || apiKeys.length === 0) {
-        toast.error(`This command requires a ${selectedCommand.provider} API key. Please configure it in API Keys page.`);
+        const apiKeyUrl = getApiKeyUrl(selectedCommand.provider);
+        toast.error(`This command requires a ${selectedCommand.provider} API key. Get one from their website and add it in API Keys page.`);
+        // Open API key page in new tab for convenience
+        if (apiKeyUrl) {
+          setTimeout(() => window.open(apiKeyUrl, '_blank'), 1000);
+        }
         return;
       }
     }
@@ -647,6 +677,22 @@ export default function Commands() {
                       <span>Examples: </span>
                       <span className="font-mono">{command.examples[0]}</span>
                     </div>
+                    {command.apiRequired && (
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        className="w-full mt-2 text-xs h-7"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const apiUrl = getApiKeyUrl(command.provider);
+                          if (apiUrl) window.open(apiUrl, '_blank');
+                        }}
+                      >
+                        <Key className="h-3 w-3 mr-1" />
+                        Get {command.provider} API Key
+                        <ExternalLink className="h-3 w-3 ml-1" />
+                      </Button>
+                    )}
                   </div>
                 </CardContent>
               </Card>
