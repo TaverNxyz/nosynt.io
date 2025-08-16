@@ -40,7 +40,6 @@ interface OSINTCommand {
   apiRequired: boolean;
   provider: string;
   examples: string[];
-  cost?: string;
 }
 
 interface CommandResult {
@@ -61,8 +60,7 @@ const osintCommands: OSINTCommand[] = [
     premium: true,
     apiRequired: true,
     provider: "Discord API",
-    examples: ["username#1234", "user_id", "server_id"],
-    cost: "$0.25/query"
+    examples: ["username#1234", "user_id", "server_id"]
   },
   {
     id: "breach",
@@ -73,8 +71,7 @@ const osintCommands: OSINTCommand[] = [
     premium: true,
     apiRequired: true,
     provider: "DeHashed",
-    examples: ["email@domain.com", "username", "phone_number"],
-    cost: "$0.50/query"
+    examples: ["email@domain.com", "username", "phone_number"]
   },
   {
     id: "email",
@@ -85,8 +82,7 @@ const osintCommands: OSINTCommand[] = [
     premium: true,
     apiRequired: true,
     provider: "Hunter.io",
-    examples: ["target@company.com", "domain.com"],
-    cost: "$0.15/query"
+    examples: ["target@company.com", "domain.com"]
   },
   {
     id: "phone",
@@ -97,8 +93,7 @@ const osintCommands: OSINTCommand[] = [
     premium: true,
     apiRequired: true,
     provider: "Twilio",
-    examples: ["+1234567890", "555-123-4567"],
-    cost: "$0.05/query"
+    examples: ["+1234567890", "555-123-4567"]
   },
   {
     id: "ip",
@@ -120,8 +115,7 @@ const osintCommands: OSINTCommand[] = [
     premium: true,
     apiRequired: true,
     provider: "NPD",
-    examples: ["John Doe", "SSN", "Address"],
-    cost: "$1.00/query"
+    examples: ["John Doe", "SSN", "Address"]
   },
   {
     id: "github",
@@ -145,8 +139,7 @@ const osintCommands: OSINTCommand[] = [
     premium: true,
     apiRequired: true,
     provider: "Shodan",
-    examples: ["apache", "product:MySQL", "192.168.1.0/24"],
-    cost: "$0.25/query"
+    examples: ["apache", "product:MySQL", "192.168.1.0/24"]
   },
   {
     id: "maltego",
@@ -157,8 +150,7 @@ const osintCommands: OSINTCommand[] = [
     premium: true,
     apiRequired: true,
     provider: "Maltego",
-    examples: ["domain.com", "email@domain.com", "phone_number"],
-    cost: "$2.00/query"
+    examples: ["domain.com", "email@domain.com", "phone_number"]
   },
   {
     id: "harvester",
@@ -180,8 +172,7 @@ const osintCommands: OSINTCommand[] = [
     premium: true,
     apiRequired: true,
     provider: "Recon-NG",
-    examples: ["domain.com", "company_name", "person_name"],
-    cost: "$0.30/query"
+    examples: ["domain.com", "company_name", "person_name"]
   },
   {
     id: "tineye",
@@ -203,8 +194,7 @@ const osintCommands: OSINTCommand[] = [
     premium: true,
     apiRequired: true,
     provider: "FOCA",
-    examples: ["document_url", "domain.com"],
-    cost: "$0.20/query"
+    examples: ["document_url", "domain.com"]
   },
   {
     id: "phoneinfoga",
@@ -215,8 +205,7 @@ const osintCommands: OSINTCommand[] = [
     premium: true,
     apiRequired: true,
     provider: "PhoneInfoga",
-    examples: ["+33656108576", "+1234567890"],
-    cost: "$0.10/query"
+    examples: ["+33656108576", "+1234567890"]
   },
   {
     id: "sn0int",
@@ -227,8 +216,7 @@ const osintCommands: OSINTCommand[] = [
     premium: true,
     apiRequired: true,
     provider: "sn0int",
-    examples: ["domain.com", "person_name", "company_name"],
-    cost: "$0.40/query"
+    examples: ["domain.com", "person_name", "company_name"]
   },
   {
     id: "blackbird",
@@ -239,8 +227,7 @@ const osintCommands: OSINTCommand[] = [
     premium: true,
     apiRequired: true,
     provider: "Blackbird",
-    examples: ["username", "handle"],
-    cost: "$0.15/query"
+    examples: ["username", "handle"]
   },
   {
     id: "criminalip",
@@ -251,8 +238,7 @@ const osintCommands: OSINTCommand[] = [
     premium: true,
     apiRequired: true,
     provider: "Criminal IP",
-    examples: ["192.168.1.1", "malicious_domain.com"],
-    cost: "$0.35/query"
+    examples: ["192.168.1.1", "malicious_domain.com"]
   },
   {
     id: "social-links",
@@ -263,8 +249,7 @@ const osintCommands: OSINTCommand[] = [
     premium: true,
     apiRequired: true,
     provider: "Social Links",
-    examples: ["@username", "profile_url", "email@domain.com"],
-    cost: "$0.75/query"
+    examples: ["@username", "profile_url", "email@domain.com"]
   },
 
   // Discord Bot Integration Commands
@@ -277,8 +262,7 @@ const osintCommands: OSINTCommand[] = [
     premium: true,
     apiRequired: true,
     provider: "Discord Bot",
-    examples: ["ban @user", "kick @user", "purge 10"],
-    cost: "Included"
+    examples: ["ban @user", "kick @user", "purge 10"]
   },
   {
     id: "discord-lookup",
@@ -289,8 +273,7 @@ const osintCommands: OSINTCommand[] = [
     premium: true,
     apiRequired: true,
     provider: "Discord Bot",
-    examples: ["user info @user", "server info", "token info"],
-    cost: "Included"
+    examples: ["user info @user", "server info", "token info"]
   }
 ];
 
@@ -343,7 +326,6 @@ export default function Commands() {
           query: commandInput,
           provider: selectedCommand.provider,
           results: generateMockResults(selectedCommand.id),
-          cost: selectedCommand.cost || "Free",
           execution_time: `${(delay / 1000).toFixed(2)}s`
         } : {
           error: "Service temporarily unavailable",
@@ -560,12 +542,6 @@ export default function Commands() {
                       <span className="text-muted-foreground">Provider:</span>
                       <span className="font-medium">{command.provider}</span>
                     </div>
-                    {command.cost && (
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="text-muted-foreground">Cost:</span>
-                        <span className="font-medium text-primary">{command.cost}</span>
-                      </div>
-                    )}
                     <div className="text-xs text-muted-foreground">
                       <span>Examples: </span>
                       <span className="font-mono">{command.examples[0]}</span>
@@ -598,7 +574,7 @@ export default function Commands() {
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="text-sm text-muted-foreground">
-                    Provider: {selectedCommand.provider} | Cost: {selectedCommand.cost || "Free"}
+                    Provider: {selectedCommand.provider}
                   </div>
                   <Button 
                     onClick={executeCommand} 
