@@ -9,6 +9,9 @@ import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { IntegrationGuide } from "@/components/IntegrationGuide";
 import { toast } from "sonner";
 import { 
   Settings, 
@@ -19,7 +22,11 @@ import {
   Database,
   BarChart3,
   Shield,
-  Zap
+  Zap,
+  HelpCircle,
+  CheckCircle,
+  AlertTriangle,
+  Info
 } from "lucide-react";
 
 interface NotificationSetting {
@@ -479,22 +486,31 @@ export default function SystemSettings() {
                 <Badge variant={discordSettings.auto_sync_enabled && discordSettings.discord_channel_id ? "default" : "secondary"}>
                   {discordSettings.auto_sync_enabled && discordSettings.discord_channel_id ? "Active" : "Inactive"}
                 </Badge>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant="ghost" size="sm">
+                      <HelpCircle className="h-4 w-4" />
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                    <DialogHeader>
+                      <DialogTitle>Discord Integration Setup</DialogTitle>
+                    </DialogHeader>
+                    <IntegrationGuide integration="discord" />
+                  </DialogContent>
+                </Dialog>
               </CardTitle>
               <CardDescription>
                 Automatically sync OSINT command results to Discord channels with rich embeds
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {/* Setup Instructions */}
-              <div className="p-4 bg-muted/50 rounded-lg space-y-2">
-                <h4 className="font-medium text-sm">Setup Instructions:</h4>
-                <ol className="text-sm text-muted-foreground space-y-1 list-decimal list-inside">
-                  <li>Create a Discord bot at <a href="https://discord.com/developers/applications" target="_blank" className="text-primary hover:underline">Discord Developer Portal</a></li>
-                  <li>Add the bot to your server with "Send Messages" and "Embed Links" permissions</li>
-                  <li>Right-click your target channel → "Copy Channel ID" (Developer Mode must be enabled)</li>
-                  <li>Paste the Channel ID below and enable auto-sync</li>
-                </ol>
-              </div>
+              <Alert>
+                <Info className="h-4 w-4" />
+                <AlertDescription>
+                  You need to create a Discord bot and add your bot token to API Keys. The bot requires "Send Messages" and "Embed Links" permissions.
+                </AlertDescription>
+              </Alert>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -503,11 +519,11 @@ export default function SystemSettings() {
                     id="discord-channel"
                     value={discordSettings.discord_channel_id}
                     onChange={(e) => setDiscordSettings(prev => ({ ...prev, discord_channel_id: e.target.value }))}
-                    placeholder="1234567890123456789"
+                    placeholder="1403708913332785236"
                     className={!discordSettings.discord_channel_id ? "border-yellow-500" : ""}
                   />
                   <p className="text-xs text-muted-foreground">
-                    18-19 digit number from Discord channel
+                    18-19 digit number from Discord channel (Enable Developer Mode → Right-click channel → Copy Channel ID)
                   </p>
                 </div>
                 <div className="space-y-2">
@@ -516,7 +532,7 @@ export default function SystemSettings() {
                     id="discord-webhook"
                     value={discordSettings.webhook_url}
                     onChange={(e) => setDiscordSettings(prev => ({ ...prev, webhook_url: e.target.value }))}
-                    placeholder="https://discord.com/api/webhooks/..."
+                    placeholder="https://canary.discord.com/api/webhooks/..."
                   />
                   <p className="text-xs text-muted-foreground">
                     Alternative to bot token method
@@ -551,14 +567,22 @@ export default function SystemSettings() {
                 >
                   Test Integration
                 </Button>
+                <Button 
+                  variant="ghost" 
+                  onClick={() => window.open('/api-keys', '_blank')}
+                >
+                  <ExternalLink className="h-4 w-4 mr-2" />
+                  API Keys
+                </Button>
               </div>
 
               {!discordSettings.discord_channel_id && (
-                <div className="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
-                  <p className="text-sm text-yellow-600">
-                    ⚠️ Discord Channel ID is required for the integration to work
-                  </p>
-                </div>
+                <Alert>
+                  <AlertTriangle className="h-4 w-4" />
+                  <AlertDescription>
+                    Discord Channel ID is required. Click the help button above for detailed setup instructions.
+                  </AlertDescription>
+                </Alert>
               )}
             </CardContent>
           </Card>
@@ -566,10 +590,38 @@ export default function SystemSettings() {
           {/* Telegram Integration */}
           <Card className="bg-gradient-card shadow-card">
             <CardHeader>
-              <CardTitle>Telegram Integration</CardTitle>
+              <CardTitle className="flex items-center space-x-2">
+                <div className="h-6 w-6 bg-[#229ED9] rounded-full flex items-center justify-center text-white text-xs font-bold">
+                  T
+                </div>
+                <span>Telegram Integration</span>
+                <Badge variant={telegramSettings.auto_sync_enabled && telegramSettings.telegram_chat_id ? "default" : "secondary"}>
+                  {telegramSettings.auto_sync_enabled && telegramSettings.telegram_chat_id ? "Active" : "Inactive"}
+                </Badge>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant="ghost" size="sm">
+                      <HelpCircle className="h-4 w-4" />
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                    <DialogHeader>
+                      <DialogTitle>Telegram Integration Setup</DialogTitle>
+                    </DialogHeader>
+                    <IntegrationGuide integration="telegram" />
+                  </DialogContent>
+                </Dialog>
+              </CardTitle>
               <CardDescription>Send OSINT results to Telegram chats</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
+              <Alert>
+                <Info className="h-4 w-4" />
+                <AlertDescription>
+                  Create a Telegram bot using @BotFather and add your bot token to API Keys. Then get your chat ID by messaging the bot.
+                </AlertDescription>
+              </Alert>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="telegram-chat">Telegram Chat ID</Label>
@@ -577,8 +629,11 @@ export default function SystemSettings() {
                     id="telegram-chat"
                     value={telegramSettings.telegram_chat_id}
                     onChange={(e) => setTelegramSettings(prev => ({ ...prev, telegram_chat_id: e.target.value }))}
-                    placeholder="-123456789"
+                    placeholder="voee178@gmail.com"
                   />
+                  <p className="text-xs text-muted-foreground">
+                    Your Telegram username or chat ID
+                  </p>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="telegram-token">Bot Token</Label>
@@ -587,31 +642,58 @@ export default function SystemSettings() {
                     type="password"
                     value={telegramSettings.bot_token}
                     onChange={(e) => setTelegramSettings(prev => ({ ...prev, bot_token: e.target.value }))}
-                    placeholder="123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11"
+                    placeholder="••••••••••••••••"
                   />
+                  <p className="text-xs text-muted-foreground">
+                    Set in API Keys section
+                  </p>
                 </div>
               </div>
               
-              <div className="flex items-center space-x-2">
-                <Switch
-                  checked={telegramSettings.auto_sync_enabled}
-                  onCheckedChange={(checked) => setTelegramSettings(prev => ({ ...prev, auto_sync_enabled: checked }))}
-                />
-                <Label>Auto-sync command results</Label>
-              </div>
-              
-              <div className="flex items-center space-x-2">
-                <Switch
-                  checked={telegramSettings.sync_successful_only}
-                  onCheckedChange={(checked) => setTelegramSettings(prev => ({ ...prev, sync_successful_only: checked }))}
-                />
-                <Label>Only sync successful results</Label>
+              <div className="space-y-3">
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    checked={telegramSettings.auto_sync_enabled}
+                    onCheckedChange={(checked) => setTelegramSettings(prev => ({ ...prev, auto_sync_enabled: checked }))}
+                  />
+                  <Label>Auto-sync command results</Label>
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    checked={telegramSettings.sync_successful_only}
+                    onCheckedChange={(checked) => setTelegramSettings(prev => ({ ...prev, sync_successful_only: checked }))}
+                  />
+                  <Label>Only sync successful results</Label>
+                </div>
               </div>
               
               <div className="flex space-x-2">
                 <Button onClick={updateTelegramSettings}>Save Settings</Button>
-                <Button variant="outline" onClick={testTelegramIntegration}>Test Integration</Button>
+                <Button 
+                  variant="outline" 
+                  onClick={testTelegramIntegration}
+                  disabled={!telegramSettings.telegram_chat_id}
+                >
+                  Test Integration
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  onClick={() => window.open('/api-keys', '_blank')}
+                >
+                  <ExternalLink className="h-4 w-4 mr-2" />
+                  API Keys
+                </Button>
               </div>
+
+              {!telegramSettings.telegram_chat_id && (
+                <Alert>
+                  <AlertTriangle className="h-4 w-4" />
+                  <AlertDescription>
+                    Telegram Chat ID is required. Click the help button above for detailed setup instructions.
+                  </AlertDescription>
+                </Alert>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
