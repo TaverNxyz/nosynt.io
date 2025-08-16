@@ -10,33 +10,23 @@ interface BootLine {
 }
 
 const bootSequence: BootLine[] = [
-  { text: "OSINT Terminal v3.14.159 (GNU/Linux)", type: 'system', delay: 200 },
-  { text: "Copyright (C) 2024 OSINT Security Platform", type: 'info', delay: 400 },
-  { text: "", type: 'info', delay: 600 },
-  { text: "Initializing system...", type: 'info', delay: 800 },
-  { text: "[    0.001] Linux version 6.1.0-osint", type: 'info', delay: 1000 },
-  { text: "[    0.102] CPU: Intel(R) OSINT(R) Processor", type: 'info', delay: 1200 },
-  { text: "[    0.234] Memory: 32GB Available", type: 'success', delay: 1400 },
-  { text: "[    0.456] PCI: Scanning for devices...", type: 'info', delay: 1600 },
-  { text: "[    0.678] Network: eth0 link up", type: 'success', delay: 1800 },
-  { text: "[    0.890] Security: Enhanced protection enabled", type: 'success', delay: 2000 },
-  { text: "[    1.012] Loading OSINT modules...", type: 'info', delay: 2200 },
-  { text: "[    1.234] ├── Discord Intelligence Module", type: 'success', delay: 2400 },
-  { text: "[    1.456] ├── Breach Scanner Module", type: 'success', delay: 2600 },
-  { text: "[    1.678] ├── Email Intelligence Module", type: 'success', delay: 2800 },
-  { text: "[    1.890] ├── Phone Lookup Module", type: 'success', delay: 3000 },
-  { text: "[    2.012] ├── IP Geolocation Module", type: 'success', delay: 3200 },
-  { text: "[    2.234] ├── Shodan Integration", type: 'success', delay: 3400 },
-  { text: "[    2.456] └── Social Media Scanner", type: 'success', delay: 3600 },
-  { text: "[    2.678] API Gateway: Initializing...", type: 'info', delay: 3800 },
-  { text: "[    2.890] Database: PostgreSQL connection established", type: 'success', delay: 4000 },
-  { text: "[    3.012] Authentication: Supabase ready", type: 'success', delay: 4200 },
-  { text: "[    3.234] Terminal: Command palette loaded", type: 'success', delay: 4400 },
-  { text: "[    3.456] System: All services operational", type: 'success', delay: 4600 },
-  { text: "", type: 'info', delay: 4800 },
-  { text: "OSINT Terminal ready.", type: 'system', delay: 5000 },
-  { text: "Type 'help' or press Ctrl+K for commands.", type: 'info', delay: 5200 },
-  { text: "", type: 'info', delay: 5400 }
+  { text: "OSINT Terminal v3.14.159 (GNU/Linux)", type: 'system', delay: 50 },
+  { text: "Copyright (C) 2024 OSINT Security Platform", type: 'info', delay: 100 },
+  { text: "Initializing system...", type: 'info', delay: 150 },
+  { text: "[    0.001] Memory: 32GB Available", type: 'success', delay: 200 },
+  { text: "[    0.102] Network: eth0 link up", type: 'success', delay: 250 },
+  { text: "[    0.234] Security: Enhanced protection enabled", type: 'success', delay: 300 },
+  { text: "[    0.456] Loading OSINT modules...", type: 'info', delay: 350 },
+  { text: "[    0.678] ├── Discord Intelligence Module", type: 'success', delay: 400 },
+  { text: "[    0.890] ├── Email Intelligence Module", type: 'success', delay: 450 },
+  { text: "[    1.012] ├── IP Geolocation Module", type: 'success', delay: 500 },
+  { text: "[    1.234] └── Social Media Scanner", type: 'success', delay: 550 },
+  { text: "[    1.456] Database: PostgreSQL connection established", type: 'success', delay: 600 },
+  { text: "[    1.678] Authentication: Supabase ready", type: 'success', delay: 650 },
+  { text: "[    1.890] System: All services operational", type: 'success', delay: 700 },
+  { text: "", type: 'info', delay: 750 },
+  { text: "OSINT Terminal ready.", type: 'system', delay: 800 },
+  { text: "", type: 'info', delay: 850 }
 ];
 
 interface BootScreenProps {
@@ -60,7 +50,7 @@ export function BootScreen({ onBootComplete }: BootScreenProps) {
     } else if (!isComplete) {
       setTimeout(() => {
         setIsComplete(true);
-      }, 1000);
+      }, 300);
     }
   }, [currentLine, isComplete]);
 
