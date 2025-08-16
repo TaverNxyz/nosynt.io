@@ -2,132 +2,101 @@
 @tailwind components;
 @tailwind utilities;
 
-/* OSINT Security Platform Design System - Professional Dark Theme */
+/* OSINT Terminal CLI Theme - Unix Boot Sequence */
 
 @layer base {
   :root {
-    --background: 222 84% 4.9%;
-    --foreground: 210 40% 98%;
+    /* Terminal Color Scheme */
+    --background: 0 0% 4%;
+    --foreground: 120 100% 85%;
 
-    --card: 217 32.6% 17.5%;
-    --card-foreground: 210 40% 98%;
+    --card: 0 0% 8%;
+    --card-foreground: 120 100% 85%;
 
-    --popover: 217 32.6% 17.5%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 0 0% 6%;
+    --popover-foreground: 120 100% 85%;
 
-    --primary: 199 89% 48%;
-    --primary-foreground: 222 84% 4.9%;
+    --primary: 120 100% 50%;
+    --primary-foreground: 0 0% 4%;
 
-    --secondary: 217 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 0 0% 12%;
+    --secondary-foreground: 120 100% 85%;
 
-    --muted: 215 27.9% 16.9%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 0 0% 10%;
+    --muted-foreground: 120 50% 65%;
 
-    --accent: 199 89% 48%;
-    --accent-foreground: 222 84% 4.9%;
+    --accent: 60 100% 50%;
+    --accent-foreground: 0 0% 4%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 100% 50%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 215 27.9% 16.9%;
-    --input: 215 27.9% 16.9%;
-    --ring: 199 89% 48%;
+    --border: 0 0% 15%;
+    --input: 0 0% 12%;
+    --ring: 120 100% 50%;
 
-    --radius: 0.75rem;
+    --radius: 0.25rem;
 
-    /* Security Theme Colors */
-    --security-green: 142 76% 36%;
-    --security-amber: 43 96% 56%;
-    --security-red: 0 84% 60%;
-    --cyber-blue: 217 91% 60%;
-    --cyber-purple: 271 91% 65%;
+    /* Terminal Theme Colors */
+    --terminal-green: 120 100% 50%;
+    --terminal-amber: 45 100% 50%;
+    --terminal-red: 0 100% 50%;
+    --terminal-blue: 200 100% 50%;
+    --terminal-cyan: 180 100% 50%;
+    --terminal-magenta: 300 100% 50%;
 
-    /* Gradients - Cosmic/Futuristic Theme */
-    --gradient-primary: linear-gradient(135deg, hsl(199 89% 48%) 0%, hsl(271 91% 65%) 50%, hsl(217 91% 60%) 100%);
-    --gradient-security: linear-gradient(135deg, hsl(142 76% 36%) 0%, hsl(217 91% 60%) 100%);
-    --gradient-card: linear-gradient(145deg, hsl(217 32.6% 17.5%) 0%, hsl(217 32.6% 17.5%)/60% 50%, hsl(199 89% 48%)/10% 100%);
-    --gradient-hero: linear-gradient(180deg, 
-      hsl(222 84% 4.9%) 0%, 
-      hsl(271 91% 65%)/5% 20%,
-      hsl(217 91% 60%)/5% 40%,
-      hsl(222 84% 4.9%) 100%);
-    --gradient-cosmic: radial-gradient(ellipse at top, 
-      hsl(271 91% 65%)/20% 0%, 
-      hsl(217 91% 60%)/10% 30%, 
-      transparent 70%);
-    --gradient-metallic: linear-gradient(145deg, 
-      hsl(215 27.9% 16.9%)/40% 0%, 
-      hsl(210 40% 98%)/5% 30%, 
-      hsl(217 91% 60%)/20% 70%, 
-      hsl(271 91% 65%)/10% 100%);
+    /* CLI Gradients */
+    --gradient-terminal: linear-gradient(0deg, hsl(0 0% 4%) 0%, hsl(0 0% 6%) 100%);
+    --gradient-boot: linear-gradient(90deg, hsl(120 100% 50%) 0%, hsl(60 100% 50%) 50%, hsl(0 100% 50%) 100%);
+    --gradient-matrix: linear-gradient(180deg, hsl(120 100% 50%) 0%, hsl(120 80% 40%) 50%, hsl(120 60% 30%) 100%);
 
-    /* Enhanced Shadows with Glow Effects */
-    --shadow-primary: 0 10px 30px -10px hsl(199 89% 48% / 0.4), 0 0 20px hsl(217 91% 60% / 0.1);
-    --shadow-card: 0 8px 32px -8px hsl(210 40% 98% / 0.15), 0 4px 16px hsl(271 91% 65% / 0.1);
-    --shadow-glow: 0 0 40px hsl(199 89% 48% / 0.5), 0 0 80px hsl(217 91% 60% / 0.2);
-    --shadow-cosmic: 0 0 60px hsl(271 91% 65% / 0.3), 0 20px 40px -10px hsl(210 40% 98% / 0.1);
-    --shadow-floating: 0 20px 60px -10px hsl(217 91% 60% / 0.2), 0 8px 32px hsl(210 40% 98% / 0.1);
+    /* Terminal Shadows */
+    --shadow-terminal: 0 0 20px hsl(120 100% 50% / 0.3);
+    --shadow-scan: 0 0 40px hsl(120 100% 50% / 0.5), 0 0 80px hsl(120 100% 50% / 0.2);
+    --shadow-error: 0 0 20px hsl(0 100% 50% / 0.4);
 
-    /* Advanced Transitions */
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-spring: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-    --transition-cosmic: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    --transition-float: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    /* Boot Sequence */
+    --boot-speed: 2s;
+    --scan-speed: 1s;
 
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 0 0% 6%;
+    --sidebar-foreground: 120 100% 85%;
+    --sidebar-primary: 120 100% 50%;
+    --sidebar-primary-foreground: 0 0% 4%;
+    --sidebar-accent: 0 0% 10%;
+    --sidebar-accent-foreground: 120 100% 85%;
+    --sidebar-border: 0 0% 15%;
+    --sidebar-ring: 120 100% 50%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --background: 0 0% 4%;
+    --foreground: 120 100% 85%;
+    --card: 0 0% 8%;
+    --card-foreground: 120 100% 85%;
+    --popover: 0 0% 6%;
+    --popover-foreground: 120 100% 85%;
+    --primary: 120 100% 50%;
+    --primary-foreground: 0 0% 4%;
+    --secondary: 0 0% 12%;
+    --secondary-foreground: 120 100% 85%;
+    --muted: 0 0% 10%;
+    --muted-foreground: 120 50% 65%;
+    --accent: 60 100% 50%;
+    --accent-foreground: 0 0% 4%;
+    --destructive: 0 100% 50%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 15%;
+    --input: 0 0% 12%;
+    --ring: 120 100% 50%;
+    --sidebar-background: 0 0% 6%;
+    --sidebar-foreground: 120 100% 85%;
+    --sidebar-primary: 120 100% 50%;
+    --sidebar-primary-foreground: 0 0% 4%;
+    --sidebar-accent: 0 0% 10%;
+    --sidebar-accent-foreground: 120 100% 85%;
+    --sidebar-border: 0 0% 15%;
+    --sidebar-ring: 120 100% 50%;
   }
 }
 
@@ -137,22 +106,59 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-mono;
+    background-image: 
+      radial-gradient(circle at 20% 20%, hsl(120 100% 50% / 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, hsl(60 100% 50% / 0.03) 0%, transparent 50%),
+      repeating-linear-gradient(
+        0deg,
+        transparent 0px,
+        transparent 2px,
+        hsl(120 100% 50% / 0.02) 2px,
+        hsl(120 100% 50% / 0.02) 4px
+      );
   }
 
-  /* Ensure smooth rendering and prevent layout shifts */
-  * {
-    box-sizing: border-box;
+  /* Terminal Text Effects */
+  .terminal-text {
+    font-family: 'JetBrains Mono', 'Source Code Pro', monospace;
+    text-shadow: 0 0 5px currentColor;
   }
 
-  html {
-    scroll-behavior: smooth;
+  .boot-text {
+    font-family: 'Source Code Pro', monospace;
+    font-weight: 400;
+    letter-spacing: 0.05em;
   }
 
-  /* Fix potential animation performance issues */
-  .animate-float,
-  .animate-pulse-glow,
-  .animate-cosmic-orbit {
-    will-change: transform;
+  /* Scanline Effect */
+  .scanlines::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      hsl(120 100% 50% / 0.03) 2px,
+      hsl(120 100% 50% / 0.03) 4px
+    );
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  /* Terminal Cursor */
+  .terminal-cursor::after {
+    content: '█';
+    animation: blink 1s infinite;
+    color: hsl(var(--terminal-green));
+  }
+
+  /* Screen Flicker */
+  .screen-flicker {
+    animation: flicker 0.15s infinite linear alternate;
   }
 }

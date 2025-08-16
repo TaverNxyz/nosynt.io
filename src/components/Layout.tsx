@@ -1,10 +1,11 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CommandPalette } from "@/components/CommandPalette";
+import { BootScreen } from "@/components/BootScreen";
 import { 
   Shield, 
   Key, 
@@ -21,14 +22,14 @@ import {
 } from "lucide-react";
 
 const navigation = [
-  { name: "Dashboard", href: "/", icon: Activity, badge: "Live" },
-  { name: "Commands", href: "/commands", icon: Terminal, badge: "25+" },
-  { name: "Analytics", href: "/analytics", icon: BarChart3, badge: "8" },
-  { name: "API Keys", href: "/api-keys", icon: Key, badge: null },
-  { name: "Providers", href: "/providers", icon: Database, badge: "6/6" },
-  { name: "Implementation", href: "/implementation", icon: Layers, badge: "75%" },
-  { name: "Security", href: "/security", icon: Lock, badge: "SOC2" },
-  { name: "Premium", href: "/premium", icon: Calculator, badge: "$15" },
+  { name: "terminal", href: "/", icon: Activity, badge: "live" },
+  { name: "commands", href: "/commands", icon: Terminal, badge: "25+" },
+  { name: "analytics", href: "/analytics", icon: BarChart3, badge: "8" },
+  { name: "api-keys", href: "/api-keys", icon: Key, badge: null },
+  { name: "providers", href: "/providers", icon: Database, badge: "6/6" },
+  { name: "implementation", href: "/implementation", icon: Layers, badge: "75%" },
+  { name: "security", href: "/security", icon: Lock, badge: "soc2" },
+  { name: "premium", href: "/premium", icon: Calculator, badge: "$15" },
 ];
 
 interface LayoutProps {
@@ -40,15 +41,32 @@ export default function Layout({ children }: LayoutProps) {
   const navigate = useNavigate();
   const { user, loading, signOut } = useAuth();
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
+  const [showBootScreen, setShowBootScreen] = useState(true);
+  const [bootComplete, setBootComplete] = useState(false);
+
+  // Show boot screen on first load
+  useEffect(() => {
+    const hasSeenBoot = sessionStorage.getItem('boot-complete');
+    if (hasSeenBoot) {
+      setShowBootScreen(false);
+      setBootComplete(true);
+    }
+  }, []);
+
+  const handleBootComplete = () => {
+    setShowBootScreen(false);
+    setBootComplete(true);
+    sessionStorage.setItem('boot-complete', 'true');
+  };
 
   // Redirect to auth if not authenticated (except for auth page)
   if (!loading && !user && location.pathname !== "/auth") {
     navigate("/auth", { replace: true });
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center font-mono">
         <div className="text-center">
           <div className="animate-spin h-8 w-8 border-2 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Redirecting to authentication...</p>
+          <p className="text-muted-foreground">redirecting to authentication...</p>
         </div>
       </div>
     );
@@ -59,26 +77,32 @@ export default function Layout({ children }: LayoutProps) {
     return <>{children}</>;
   }
 
+  // Show boot screen
+  if (showBootScreen && !bootComplete) {
+    return <BootScreen onBootComplete={handleBootComplete} />;
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-hero relative">
-      {/* Cosmic Background Elements */}
-      <div className="absolute inset-0 bg-gradient-cosmic pointer-events-none" />
-      <div className="absolute top-0 left-1/4 w-64 h-64 bg-gradient-primary rounded-full opacity-10 blur-3xl animate-float" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-gradient-security rounded-full opacity-5 blur-3xl animate-pulse-glow" />
+    <div className="min-h-screen bg-background relative font-mono screen-flicker">
+      {/* Scanlines Effect */}
+      <div className="scanlines absolute inset-0 z-0 pointer-events-none" />
       
-      {/* Header */}
-      <header className="border-b border-border bg-card/30 backdrop-blur-xl relative z-50 shadow-floating">
-        <div className="flex h-16 items-center px-6">
-          <div className="flex items-center space-x-3 group">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-primary shadow-glow group-hover:animate-pulse-glow transition-all duration-300">
-              <Shield className="h-5 w-5 text-primary-foreground group-hover:animate-float" />
+      {/* Terminal Header */}
+      <header className="border-b border-border bg-card/80 backdrop-blur-sm relative z-50 shadow-terminal">
+        <div className="flex h-12 items-center px-4 text-sm">
+          <div className="flex items-center space-x-2 group">
+            <div className="flex h-6 w-6 items-center justify-center rounded bg-terminal-green text-black">
+              <Terminal className="h-4 w-4" />
             </div>
-            <h1 className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent group-hover:animate-pulse">
-              OSINT Platform
-            </h1>
+            <span className="font-bold text-terminal-green terminal-text">
+              root@osint-terminal
+            </span>
+            <span className="text-muted-foreground">:</span>
+            <span className="text-terminal-cyan">~</span>
+            <span className="text-muted-foreground">#</span>
           </div>
           
-          <nav className="ml-auto flex items-center space-x-1">
+          <nav className="ml-8 flex items-center space-x-1">
             {navigation.map((item, index) => {
               const isActive = location.pathname === item.href;
               return (
@@ -86,21 +110,16 @@ export default function Layout({ children }: LayoutProps) {
                   key={item.name}
                   to={item.href}
                   className={cn(
-                    "flex items-center space-x-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 group relative overflow-hidden",
+                    "flex items-center space-x-2 px-3 py-1 text-xs font-mono transition-all duration-200",
                     isActive
-                      ? "bg-gradient-primary/20 text-primary shadow-glow"
-                      : "text-muted-foreground hover:text-foreground hover:bg-gradient-metallic hover:shadow-floating hover:scale-105"
+                      ? "text-terminal-green shadow-terminal bg-terminal-green/10 border border-terminal-green/30"
+                      : "text-muted-foreground hover:text-terminal-green hover:bg-terminal-green/5"
                   )}
-                  style={{ animationDelay: `${index * 100}ms` }}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-                  <item.icon className={cn(
-                    "h-4 w-4 relative z-10 transition-all duration-300",
-                    isActive ? "animate-pulse-glow" : "group-hover:animate-float"
-                  )} />
-                  <span className="relative z-10">{item.name}</span>
+                  <item.icon className="h-3 w-3" />
+                  <span>{item.name}</span>
                   {item.badge && (
-                    <Badge variant="secondary" className="text-xs ml-1 relative z-10 bg-primary/20 text-primary border-primary/30">
+                    <Badge variant="outline" className="text-[10px] h-4 px-1 border-terminal-green/30 text-terminal-green">
                       {item.badge}
                     </Badge>
                   )}
@@ -113,26 +132,28 @@ export default function Layout({ children }: LayoutProps) {
               variant="outline"
               size="sm"
               onClick={() => setCommandPaletteOpen(true)}
-              className="flex items-center space-x-2 bg-gradient-metallic border-primary/20 hover:bg-gradient-primary/10 hover:border-primary/40 shadow-glow"
+              className="ml-4 h-8 px-3 text-xs font-mono border-terminal-green/30 text-terminal-green hover:bg-terminal-green/10"
             >
-              <Search className="h-4 w-4" />
-              <span>Search commands...</span>
-              <Badge variant="secondary" className="text-xs font-mono ml-2">⌘K</Badge>
+              <Search className="h-3 w-3 mr-2" />
+              search...
+              <Badge variant="outline" className="text-[10px] h-4 px-1 ml-2 border-terminal-amber/30 text-terminal-amber">
+                ^k
+              </Badge>
             </Button>
             
             {user && (
               <div className="flex items-center space-x-2 ml-4 pl-4 border-l border-border">
-                <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                  <User className="h-4 w-4" />
-                  <span>{user.email}</span>
+                <div className="flex items-center space-x-2 text-xs text-muted-foreground">
+                  <User className="h-3 w-3" />
+                  <span className="font-mono">{user.email}</span>
                 </div>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => signOut()}
-                  className="text-muted-foreground hover:text-foreground"
+                  className="h-6 w-6 p-0 text-muted-foreground hover:text-terminal-red"
                 >
-                  <LogOut className="h-4 w-4" />
+                  <LogOut className="h-3 w-3" />
                 </Button>
               </div>
             )}
@@ -141,7 +162,7 @@ export default function Layout({ children }: LayoutProps) {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 p-6 relative z-10">
+      <main className="p-4 relative z-10">
         {children}
       </main>
       
