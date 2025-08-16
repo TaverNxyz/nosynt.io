@@ -95,26 +95,18 @@ export function BootScreen({ onBootComplete }: BootScreenProps) {
 
   return (
     <div className="min-h-screen bg-black text-green-400 font-mono text-sm relative overflow-hidden">
-      {/* Dark Terminal Background with Subtle Noise */}
-      <div className="absolute inset-0 bg-black">
-        <div className="absolute inset-0 opacity-5">
-          <div className="w-full h-full bg-gradient-to-br from-green-900/10 via-transparent to-green-900/5"></div>
-        </div>
-      </div>
+      {/* Imgur Background Image */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: "url('https://i.imgur.com/DOAjwH7.png')"
+        }}
+      ></div>
 
-      {/* Subtle Scanlines */}
-      <div className="absolute inset-0 z-10 pointer-events-none">
-        <div className="h-full w-full bg-gradient-to-b from-transparent via-green-400/2 to-transparent bg-[length:100%_4px] animate-pulse"></div>
-      </div>
-      
+      {/* Dark Overlay for Terminal Text Visibility */}
+      <div className="absolute inset-0 bg-black/50 z-10"></div>
       {/* Terminal Screen */}
       <div className="p-6 max-w-4xl mx-auto relative z-20">
-        {/* Green Cursor Indicator (like in the image) */}
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30">
-          <div className="w-8 h-8 border-2 border-green-400 rounded-lg animate-pulse opacity-60">
-            <div className="w-full h-full bg-green-400/20 rounded-md"></div>
-          </div>
-        </div>
 
         <div className="space-y-1">
           {displayedLines.map((line, index) => (
