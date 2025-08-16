@@ -10,8 +10,8 @@ interface BootLine {
 }
 
 const bootSequence: BootLine[] = [
-  { text: "NoSynt.io Terminal v1.0.0 (GNU/Linux)", type: 'system', delay: 50 },
-  { text: "Copyright (C) 2024 NoSynt Intelligence Platform", type: 'info', delay: 100 },
+  { text: "deaddrop.io Terminal v1.0.0 (GNU/Linux)", type: 'system', delay: 50 },
+  { text: "Copyright (C) 2024 deaddrop Intelligence Platform", type: 'info', delay: 100 },
   { text: "Initializing system...", type: 'info', delay: 150 },
   { text: "[    0.001] Memory: 32GB Available", type: 'success', delay: 200 },
   { text: "[    0.102] Network: eth0 link up", type: 'success', delay: 250 },
@@ -26,7 +26,7 @@ const bootSequence: BootLine[] = [
   { text: "[    1.890] Authentication: Supabase ready", type: 'success', delay: 700 },
   { text: "[    2.012] System: All services operational", type: 'success', delay: 750 },
   { text: "", type: 'info', delay: 800 },
-  { text: "NoSynt.io Terminal ready.", type: 'system', delay: 850 },
+  { text: "deaddrop.io Terminal ready.", type: 'system', delay: 850 },
   { text: "", type: 'info', delay: 900 }
 ];
 
@@ -121,7 +121,7 @@ export function BootScreen({ onBootComplete }: BootScreenProps) {
           
           {/* Terminal Cursor */}
           <div className="flex items-center">
-            <span className="text-green-400">root@nosynt:~# </span>
+            <span className="text-green-400">root@deaddrop:~# </span>
             <span className={`ml-1 ${showCursor ? 'opacity-100' : 'opacity-0'} transition-opacity text-green-400`}>
               █
             </span>
@@ -137,7 +137,7 @@ export function BootScreen({ onBootComplete }: BootScreenProps) {
                 <span className="text-green-400 font-bold">SYSTEM READY</span>
               </div>
               <p className="text-green-300/70 text-xs mb-4">
-                All NoSynt.io modules loaded successfully. Ready to execute intelligence gathering operations.
+                All deaddrop.io modules loaded successfully. Ready to execute intelligence gathering operations.
               </p>
               <div className="flex space-x-3">
                 <Button 
