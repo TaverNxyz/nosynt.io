@@ -132,6 +132,36 @@ export default {
 				'scan-line': {
 					'0%': { transform: 'translateY(-2px)' },
 					'100%': { transform: 'translateY(100vh)' }
+				},
+				'glitch': {
+					'0%': {
+						transform: 'translate(0)',
+						textShadow: '2px 0 #ff0000, -2px 0 #00ff00, 0 0 #0000ff'
+					},
+					'2%': {
+						transform: 'translate(-2px, 1px)',
+						textShadow: '3px 0 #ff0000, -3px 0 #00ff00, 0 0 #0000ff'
+					},
+					'4%': {
+						transform: 'translate(-1px, -1px)',
+						textShadow: '1px 0 #ff0000, -1px 0 #00ff00, 0 0 #0000ff'
+					},
+					'6%': {
+						transform: 'translate(2px, 1px)',
+						textShadow: '2px 0 #ff0000, -2px 0 #00ff00, 0 0 #0000ff'
+					},
+					'8%': {
+						transform: 'translate(-1px, -1px)',
+						textShadow: '3px 0 #ff0000, -3px 0 #00ff00, 0 0 #0000ff'
+					},
+					'10%': {
+						transform: 'translate(1px, 2px)',
+						textShadow: '1px 0 #ff0000, -1px 0 #00ff00, 0 0 #0000ff'
+					},
+					'100%': {
+						transform: 'translate(0)',
+						textShadow: '2px 0 #ff0000, -2px 0 #00ff00, 0 0 #0000ff'
+					}
 				}
 			},
 			animation: {
@@ -143,7 +173,8 @@ export default {
 				'boot-scan': 'boot-scan 3s ease-in-out infinite',
 				'matrix-rain': 'matrix-rain 3s linear infinite',
 				'terminal-glow': 'terminal-glow 2s ease-in-out infinite',
-				'scan-line': 'scan-line 2s linear infinite'
+				'scan-line': 'scan-line 2s linear infinite',
+				'glitch': 'glitch 2s ease-in-out infinite'
 			}
 		}
 	},

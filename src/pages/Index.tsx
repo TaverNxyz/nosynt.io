@@ -53,7 +53,7 @@ export default function Index() {
               OSINT Intelligence Platform
             </div>
           </div>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto animate-slide-in-bottom [animation-delay:200ms]">
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto animate-slide-in-bottom [animation-delay:200ms] animate-glitch hover:animate-none transition-all duration-300">
             Professional Open Source Intelligence gathering and analysis platform. 
             Aggregate data from 25+ premium OSINT services with enterprise-grade security.
           </p>
