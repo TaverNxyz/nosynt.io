@@ -83,37 +83,60 @@ serve(async (req) => {
       
       case 'domain-search':
         apiUrl += 'domain-search'
-        if (params.domain) urlParams.append('domain', params.domain)
+        if (!params.domain) {
+          throw new Error('Domain parameter is required for domain-search')
+        }
+        urlParams.append('domain', params.domain)
         if (params.limit) urlParams.append('limit', params.limit.toString())
         if (params.offset) urlParams.append('offset', params.offset.toString())
         break
       
       case 'email-finder':
         apiUrl += 'email-finder'
-        if (params.domain) urlParams.append('domain', params.domain)
+        if (!params.domain) {
+          throw new Error('Domain parameter is required for email-finder')
+        }
+        urlParams.append('domain', params.domain)
         if (params.first_name) urlParams.append('first_name', params.first_name)
         if (params.last_name) urlParams.append('last_name', params.last_name)
         if (params.full_name) urlParams.append('full_name', params.full_name)
+        
+        // Check if we have required name parameters
+        if (!params.first_name && !params.last_name && !params.full_name) {
+          throw new Error('At least one of first_name, last_name, or full_name is required for email-finder')
+        }
         break
       
       case 'email-verifier':
         apiUrl += 'email-verifier'
-        if (params.email) urlParams.append('email', params.email)
+        if (!params.email) {
+          throw new Error('Email parameter is required for email-verifier')
+        }
+        urlParams.append('email', params.email)
         break
       
       case 'company-enrichment':
         apiUrl += 'companies/find'
-        if (params.domain) urlParams.append('domain', params.domain)
+        if (!params.domain) {
+          throw new Error('Domain parameter is required for company-enrichment')
+        }
+        urlParams.append('domain', params.domain)
         break
       
       case 'person-enrichment':
         apiUrl += 'people/find'
-        if (params.email) urlParams.append('email', params.email)
+        if (!params.email) {
+          throw new Error('Email parameter is required for person-enrichment')
+        }
+        urlParams.append('email', params.email)
         break
       
       case 'combined-enrichment':
         apiUrl += 'combined/find'
-        if (params.email) urlParams.append('email', params.email)
+        if (!params.email) {
+          throw new Error('Email parameter is required for combined-enrichment')
+        }
+        urlParams.append('email', params.email)
         break
       
       default:

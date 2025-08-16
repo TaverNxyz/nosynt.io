@@ -552,9 +552,10 @@ export default function Commands() {
   // Helper function to parse command input into API parameters
   const parseCommandInput = (commandId: string, input: string): any => {
     const params: any = {};
+    const hunterCommand = getHunterCommand(commandId);
     
-    switch (commandId) {
-      case 'email':
+    switch (hunterCommand) {
+      case 'email-finder':
         // Parse "John Doe at stripe.com" or "domain:stripe.com first:John last:Doe"
         if (input.includes(' at ')) {
           const [name, domain] = input.split(' at ');
@@ -562,7 +563,7 @@ export default function Commands() {
           params.domain = domain.trim();
           params.first_name = nameParts[0];
           if (nameParts.length > 1) params.last_name = nameParts[nameParts.length - 1];
-        } else {
+        } else if (input.includes('domain:') || input.includes('first:') || input.includes('last:')) {
           // Parse structured input
           const domainMatch = input.match(/domain:([^\s]+)/);
           const firstMatch = input.match(/first:([^\s]+)/);
@@ -571,6 +572,12 @@ export default function Commands() {
           if (domainMatch) params.domain = domainMatch[1];
           if (firstMatch) params.first_name = firstMatch[1];
           if (lastMatch) params.last_name = lastMatch[1];
+        } else {
+          // Default: treat as domain for basic email finding
+          params.domain = input.trim();
+          // For domain-only search, we need at least first_name and last_name
+          // or we should default to domain-search instead
+          return { domain: input.trim() }; // This will be handled by domain-search
         }
         break;
         
@@ -578,7 +585,7 @@ export default function Commands() {
         params.domain = input.trim();
         break;
         
-      case 'email-verification':
+      case 'email-verifier':
         params.email = input.trim();
         break;
         
@@ -591,9 +598,16 @@ export default function Commands() {
         params.email = input.trim();
         break;
         
+      case 'discover':
+        // For discover endpoint, we can pass the domain
+        params.domain = input.trim();
+        break;
+        
       default:
-        // For other commands, pass input as domain if it looks like a domain
-        if (input.includes('.')) {
+        // For other commands, determine based on input format
+        if (input.includes('@')) {
+          params.email = input.trim();
+        } else if (input.includes('.')) {
           params.domain = input.trim();
         } else {
           params.query = input.trim();
@@ -681,10 +695,19 @@ export default function Commands() {
     // Execute actual command if it's Hunter.io
     if (selectedCommand.provider === 'Hunter.io' && commandInput) {
       try {
+        const parsedParams = parseCommandInput(selectedCommand.id, commandInput);
+        let hunterCommand = getHunterCommand(selectedCommand.id);
+        
+        // Auto-adjust command based on available parameters
+        if (hunterCommand === 'email-finder' && (!parsedParams.first_name || !parsedParams.last_name)) {
+          console.log('Switching to domain-search since first_name/last_name not provided');
+          hunterCommand = 'domain-search';
+        }
+        
         const { data, error } = await supabase.functions.invoke('hunter-io', {
           body: {
-            command: getHunterCommand(selectedCommand.id),
-            params: parseCommandInput(selectedCommand.id, commandInput)
+            command: hunterCommand,
+            params: parsedParams
           }
         });
 
