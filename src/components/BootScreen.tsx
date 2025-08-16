@@ -97,9 +97,11 @@ export function BootScreen({ onBootComplete }: BootScreenProps) {
     <div className="min-h-screen bg-black text-green-400 font-mono text-sm relative overflow-hidden">
       {/* Imgur Background Image */}
       <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0"
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0 animate-[glitch_0.3s_ease-in-out_5s_infinite]"
         style={{
-          backgroundImage: "url('https://i.imgur.com/9XRCUPu.gif')"
+          backgroundImage: "url('https://i.imgur.com/9XRCUPu.gif')",
+          animationIterationCount: "1, infinite",
+          animationDelay: "0s, 5s"
         }}
       ></div>
 
