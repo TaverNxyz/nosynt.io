@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CommandPalette } from "@/components/CommandPalette";
-import { BootScreen } from "@/components/BootScreen";
+
 import { 
   Shield, 
   Key, 
@@ -44,23 +44,6 @@ export default function Layout({ children }: LayoutProps) {
   const navigate = useNavigate();
   const { user, loading, signOut } = useAuth();
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
-  const [showBootScreen, setShowBootScreen] = useState(true);
-  const [bootComplete, setBootComplete] = useState(false);
-
-  // Show boot screen on first load
-  useEffect(() => {
-    const hasSeenBoot = sessionStorage.getItem('boot-complete');
-    if (hasSeenBoot) {
-      setShowBootScreen(false);
-      setBootComplete(true);
-    }
-  }, []);
-
-  const handleBootComplete = () => {
-    setShowBootScreen(false);
-    setBootComplete(true);
-    sessionStorage.setItem('boot-complete', 'true');
-  };
 
   // Redirect to auth if not authenticated (except for auth page)
   if (!loading && !user && location.pathname !== "/auth") {
@@ -78,11 +61,6 @@ export default function Layout({ children }: LayoutProps) {
   // Don't render layout for auth page
   if (location.pathname === "/auth") {
     return <>{children}</>;
-  }
-
-  // Show boot screen
-  if (showBootScreen && !bootComplete) {
-    return <BootScreen onBootComplete={handleBootComplete} />;
   }
 
   return (
