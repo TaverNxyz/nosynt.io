@@ -66,13 +66,13 @@ export function BootScreen({ onBootComplete }: BootScreenProps) {
   const getLineIcon = (type: string) => {
     switch (type) {
       case 'success':
-        return <CheckCircle className="h-3 w-3 text-terminal-green inline mr-2" />;
+        return <CheckCircle className="h-3 w-3 text-green-400 inline mr-2" />;
       case 'warning':
-        return <AlertTriangle className="h-3 w-3 text-terminal-amber inline mr-2" />;
+        return <AlertTriangle className="h-3 w-3 text-yellow-400 inline mr-2" />;
       case 'error':
-        return <AlertTriangle className="h-3 w-3 text-terminal-red inline mr-2" />;
+        return <AlertTriangle className="h-3 w-3 text-red-400 inline mr-2" />;
       case 'system':
-        return <Terminal className="h-3 w-3 text-terminal-cyan inline mr-2" />;
+        return <Terminal className="h-3 w-3 text-green-400 inline mr-2" />;
       default:
         return null;
     }
@@ -81,25 +81,41 @@ export function BootScreen({ onBootComplete }: BootScreenProps) {
   const getLineColor = (type: string) => {
     switch (type) {
       case 'success':
-        return 'text-terminal-green';
+        return 'text-green-400';
       case 'warning':
-        return 'text-terminal-amber';
+        return 'text-yellow-400';
       case 'error':
-        return 'text-terminal-red';
+        return 'text-red-400';
       case 'system':
-        return 'text-terminal-cyan';
+        return 'text-green-400';
       default:
-        return 'text-foreground';
+        return 'text-green-300';
     }
   };
 
   return (
-    <div className="min-h-screen bg-background font-mono text-sm relative overflow-hidden">
-      {/* Scanlines Effect */}
-      <div className="scanlines absolute inset-0 z-10 pointer-events-none" />
+    <div className="min-h-screen bg-black text-green-400 font-mono text-sm relative overflow-hidden">
+      {/* Dark Terminal Background with Subtle Noise */}
+      <div className="absolute inset-0 bg-black">
+        <div className="absolute inset-0 opacity-5">
+          <div className="w-full h-full bg-gradient-to-br from-green-900/10 via-transparent to-green-900/5"></div>
+        </div>
+      </div>
+
+      {/* Subtle Scanlines */}
+      <div className="absolute inset-0 z-10 pointer-events-none">
+        <div className="h-full w-full bg-gradient-to-b from-transparent via-green-400/2 to-transparent bg-[length:100%_4px] animate-pulse"></div>
+      </div>
       
       {/* Terminal Screen */}
       <div className="p-6 max-w-4xl mx-auto relative z-20">
+        {/* Green Cursor Indicator (like in the image) */}
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30">
+          <div className="w-8 h-8 border-2 border-green-400 rounded-lg animate-pulse opacity-60">
+            <div className="w-full h-full bg-green-400/20 rounded-md"></div>
+          </div>
+        </div>
+
         <div className="space-y-1">
           {displayedLines.map((line, index) => (
             <div 
@@ -111,10 +127,10 @@ export function BootScreen({ onBootComplete }: BootScreenProps) {
             </div>
           ))}
           
-          {/* Cursor */}
+          {/* Terminal Cursor */}
           <div className="flex items-center">
-            <span className="text-terminal-green">root@nosynt:~# </span>
-            <span className={`ml-1 ${showCursor ? 'opacity-100' : 'opacity-0'} transition-opacity`}>
+            <span className="text-green-400">root@nosynt:~# </span>
+            <span className={`ml-1 ${showCursor ? 'opacity-100' : 'opacity-0'} transition-opacity text-green-400`}>
               █
             </span>
           </div>
@@ -123,18 +139,18 @@ export function BootScreen({ onBootComplete }: BootScreenProps) {
         {/* Boot Complete Actions */}
         {isComplete && (
           <div className="mt-8 space-y-4 animate-fade-in">
-            <div className="border border-terminal-green/30 bg-card/50 p-4 rounded">
+            <div className="border border-green-400/30 bg-black/80 p-4 rounded backdrop-blur-sm">
               <div className="flex items-center space-x-3 mb-3">
-                <Terminal className="h-5 w-5 text-terminal-green" />
-                <span className="text-terminal-green font-bold">SYSTEM READY</span>
+                <Terminal className="h-5 w-5 text-green-400" />
+                <span className="text-green-400 font-bold">SYSTEM READY</span>
               </div>
-              <p className="text-muted-foreground text-xs mb-4">
+              <p className="text-green-300/70 text-xs mb-4">
                 All NoSynt.io modules loaded successfully. Ready to execute intelligence gathering operations.
               </p>
               <div className="flex space-x-3">
                 <Button 
                   onClick={onBootComplete}
-                  className="bg-terminal-green text-black hover:bg-terminal-green/80 font-mono text-xs"
+                  className="bg-green-400 text-black hover:bg-green-300 font-mono text-xs"
                 >
                   <Zap className="h-3 w-3 mr-1" />
                   ENTER SYSTEM
@@ -142,7 +158,7 @@ export function BootScreen({ onBootComplete }: BootScreenProps) {
                 <Button 
                   variant="outline" 
                   size="sm"
-                  className="border-terminal-green/30 text-terminal-green hover:bg-terminal-green/10 font-mono text-xs"
+                  className="border-green-400/30 text-green-400 hover:bg-green-400/10 font-mono text-xs bg-transparent"
                   onClick={() => window.location.reload()}
                 >
                   <Loader2 className="h-3 w-3 mr-1" />
@@ -154,16 +170,16 @@ export function BootScreen({ onBootComplete }: BootScreenProps) {
         )}
       </div>
 
-      {/* Matrix Rain Effect (Subtle) */}
-      <div className="absolute inset-0 pointer-events-none opacity-10">
-        {[...Array(20)].map((_, i) => (
+      {/* Matrix Rain Effect */}
+      <div className="absolute inset-0 pointer-events-none opacity-20 z-10">
+        {[...Array(30)].map((_, i) => (
           <div
             key={i}
-            className="absolute text-terminal-green text-xs font-mono animate-matrix-rain"
+            className="absolute text-green-400 text-xs font-mono animate-pulse"
             style={{
-              left: `${i * 5}%`,
-              animationDelay: `${i * 0.2}s`,
-              animationDuration: `${3 + (i % 3)}s`
+              left: `${(i * 3.33) % 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${i * 0.1}s`,
             }}
           >
             {Math.random() > 0.5 ? '1' : '0'}
