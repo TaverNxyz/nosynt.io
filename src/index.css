@@ -6,24 +6,24 @@
 
 @layer base {
   :root {
-    /* Terminal Color Scheme - White on Black */
-    --background: 0 0% 0%;
-    --foreground: 0 0% 95%;
+    /* Terminal Color Scheme - High Contrast */
+    --background: 0 0% 5%;
+    --foreground: 0 0% 98%;
 
-    --card: 0 0% 3%;
-    --card-foreground: 0 0% 95%;
+    --card: 0 0% 8%;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 0 0% 2%;
-    --popover-foreground: 0 0% 95%;
+    --popover: 0 0% 6%;
+    --popover-foreground: 0 0% 98%;
 
-    --primary: 0 0% 85%;
-    --primary-foreground: 0 0% 0%;
+    --primary: 0 0% 95%;
+    --primary-foreground: 0 0% 8%;
 
-    --secondary: 0 0% 8%;
-    --secondary-foreground: 0 0% 90%;
+    --secondary: 0 0% 12%;
+    --secondary-foreground: 0 0% 95%;
 
-    --muted: 0 0% 5%;
-    --muted-foreground: 0 0% 70%;
+    --muted: 0 0% 10%;
+    --muted-foreground: 0 0% 80%;
 
     --accent: 0 0% 80%;
     --accent-foreground: 0 0% 0%;
@@ -31,9 +31,9 @@
     --destructive: 0 100% 60%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 0 0% 15%;
-    --input: 0 0% 8%;
-    --ring: 0 0% 85%;
+    --border: 0 0% 20%;
+    --input: 0 0% 12%;
+    --ring: 0 0% 90%;
 
     --radius: 0.25rem;
 
