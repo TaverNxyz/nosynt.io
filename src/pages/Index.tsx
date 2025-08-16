@@ -47,10 +47,10 @@ export default function Index() {
         <div className="space-y-4 animate-slide-in-bottom">
           <div className="relative inline-block">
             <h1 className="text-4xl md:text-6xl font-bold bg-gradient-primary bg-clip-text text-transparent relative z-10">
-              OSINT Intelligence Platform
+              NoSynt.io
             </h1>
             <div className="absolute inset-0 bg-gradient-primary bg-clip-text text-transparent blur-sm opacity-50 animate-pulse-glow">
-              OSINT Intelligence Platform
+              NoSynt.io
             </div>
           </div>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto animate-slide-in-bottom [animation-delay:200ms] animate-glitch hover:animate-none transition-all duration-300">
