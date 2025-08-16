@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 import { 
   Search, 
   Globe, 
@@ -316,7 +317,7 @@ export default function Commands() {
     
     // Simulate realistic command execution with proper delay
     const delay = Math.random() * 2000 + 1000; // 1-3 seconds
-    setTimeout(() => {
+    setTimeout(async () => {
       const success = Math.random() > 0.05; // 95% success rate
       
       const mockResult: CommandResult = {
@@ -340,11 +341,38 @@ export default function Commands() {
       setCommandInput("");
       
       if (success) {
-        toast.success(`${selectedCommand.name} executed successfully`);
+        // Auto-sync to Discord
+        try {
+          await syncToDiscord(selectedCommand, mockResult.data);
+          toast.success(`${selectedCommand.name} executed & synced to Discord`);
+        } catch (error) {
+          toast.success(`${selectedCommand.name} executed (Discord sync failed)`);
+          console.error('Discord sync error:', error);
+        }
       } else {
         toast.error(`${selectedCommand.name} execution failed`);
       }
     }, delay);
+  };
+
+  // Discord sync function
+  const syncToDiscord = async (command: any, results: any) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('discord-sync', {
+        body: {
+          command: command,
+          results: results,
+          channelId: '1234567890123456789', // Replace with your Discord channel ID
+          userId: user?.id || 'anonymous'
+        }
+      });
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Discord sync failed:', error);
+      throw error;
+    }
   };
 
   const generateMockResults = (commandId: string) => {
