@@ -99,7 +99,7 @@ export function BootScreen({ onBootComplete }: BootScreenProps) {
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0"
         style={{
-          backgroundImage: "url('https://i.imgur.com/DOAjwH7.png')"
+          backgroundImage: "url('https://i.imgur.com/9XRCUPu.gif')"
         }}
       ></div>
 
