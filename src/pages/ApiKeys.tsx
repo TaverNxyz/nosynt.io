@@ -25,6 +25,7 @@ interface ApiKey {
 // API Key interface matches the database structure
 
 const supportedServices = [
+  // Core OSINT Services
   { 
     name: "DeHashed", 
     description: "Breach database lookups", 
@@ -66,6 +67,136 @@ const supportedServices = [
     cost: "$0.004/query",
     signupUrl: "https://www.ipqualityscore.com/create-account",
     apiDocsUrl: "https://www.ipqualityscore.com/documentation/overview"
+  },
+  
+  // Advanced OSINT Tools
+  { 
+    name: "Criminal IP", 
+    description: "IP reputation and threat intelligence", 
+    cost: "$0.02/query",
+    signupUrl: "https://www.criminalip.io/register",
+    apiDocsUrl: "https://www.criminalip.io/developer/api/get-started"
+  },
+  { 
+    name: "Social Links", 
+    description: "Advanced social media investigation", 
+    cost: "Enterprise pricing",
+    signupUrl: "https://sociallinks.io/contact",
+    apiDocsUrl: "https://sociallinks.io/products/api"
+  },
+  { 
+    name: "Maltego", 
+    description: "Advanced link analysis and data mining", 
+    cost: "$999/year",
+    signupUrl: "https://www.maltego.com/ce-registration/",
+    apiDocsUrl: "https://docs.maltego.com/"
+  },
+  { 
+    name: "AlienVault", 
+    description: "Threat intelligence and security research", 
+    cost: "Enterprise pricing",
+    signupUrl: "https://otx.alienvault.com/signup",
+    apiDocsUrl: "https://otx.alienvault.com/api"
+  },
+  { 
+    name: "NexVision", 
+    description: "Advanced threat detection and analysis", 
+    cost: "Contact for pricing",
+    signupUrl: "https://www.nexvision.com/contact",
+    apiDocsUrl: "https://docs.nexvision.com/"
+  },
+  { 
+    name: "BinGoo", 
+    description: "Binary analysis and malware research", 
+    cost: "Free/Premium tiers",
+    signupUrl: "https://www.bingoo.com/register",
+    apiDocsUrl: "https://docs.bingoo.com/api"
+  },
+  { 
+    name: "Datasploit", 
+    description: "Automated OSINT framework", 
+    cost: "Open source",
+    signupUrl: "https://github.com/DataSploit/datasploit",
+    apiDocsUrl: "https://github.com/DataSploit/datasploit/wiki"
+  },
+  { 
+    name: "Metagoofil", 
+    description: "Metadata extraction from documents", 
+    cost: "Open source",
+    signupUrl: "https://github.com/laramies/metagoofil",
+    apiDocsUrl: "https://github.com/laramies/metagoofil"
+  },
+  { 
+    name: "Prying Deep", 
+    description: "Deep web intelligence gathering", 
+    cost: "Premium service",
+    signupUrl: "https://www.pryingdeep.com/signup",
+    apiDocsUrl: "https://docs.pryingdeep.com/"
+  },
+
+  // Analytics & Monitoring Services
+  { 
+    name: "PostHog", 
+    description: "Product analytics and user tracking", 
+    cost: "Free tier + usage",
+    signupUrl: "https://app.posthog.com/signup",
+    apiDocsUrl: "https://posthog.com/docs/api"
+  },
+  { 
+    name: "Matomo", 
+    description: "Privacy-focused web analytics", 
+    cost: "Free/Premium tiers",
+    signupUrl: "https://matomo.org/start-free-analytics-trial/",
+    apiDocsUrl: "https://developer.matomo.org/api-reference"
+  },
+  { 
+    name: "Plausible Analytics", 
+    description: "Simple privacy-focused analytics", 
+    cost: "$9/month+",
+    signupUrl: "https://plausible.io/register",
+    apiDocsUrl: "https://plausible.io/docs/stats-api"
+  },
+  { 
+    name: "Countly", 
+    description: "Product analytics and APM", 
+    cost: "Free tier + paid",
+    signupUrl: "https://accounts.countly.com/signup",
+    apiDocsUrl: "https://api.count.ly/"
+  },
+  { 
+    name: "Datadog", 
+    description: "Infrastructure monitoring and analytics", 
+    cost: "$15/host/month+",
+    signupUrl: "https://app.datadoghq.com/signup",
+    apiDocsUrl: "https://docs.datadoghq.com/api/"
+  },
+  { 
+    name: "Prometheus", 
+    description: "Time series monitoring system", 
+    cost: "Open source",
+    signupUrl: "https://prometheus.io/download/",
+    apiDocsUrl: "https://prometheus.io/docs/prometheus/latest/querying/api/"
+  },
+  { 
+    name: "Grafana", 
+    description: "Monitoring and observability platform", 
+    cost: "Free + cloud tiers",
+    signupUrl: "https://grafana.com/auth/sign-up/create-user",
+    apiDocsUrl: "https://grafana.com/docs/grafana/latest/http_api/"
+  },
+  { 
+    name: "Netdata", 
+    description: "Real-time performance monitoring", 
+    cost: "Free + cloud tiers",
+    signupUrl: "https://app.netdata.cloud/sign-up",
+    apiDocsUrl: "https://learn.netdata.cloud/docs/agent/web/api"
+  },
+  { 
+    name: "SigNoz", 
+    description: "Application monitoring and observability", 
+    cost: "Open source + cloud",
+    signupUrl: "https://signoz.io/teams/",
+    apiDocsUrl: "https://signoz.io/docs/"
   }
 ];
 

@@ -254,6 +254,197 @@ const osintCommands: OSINTCommand[] = [
     examples: ["@username", "profile_url", "email@domain.com"]
   },
 
+  // New Advanced OSINT Tools
+  {
+    id: "alienvault",
+    name: "AlienVault OTX",
+    category: "Threat Intelligence",
+    description: "Open threat exchange for security research",
+    icon: Shield,
+    premium: true,
+    apiRequired: true,
+    provider: "AlienVault",
+    examples: ["domain.com", "ip_address", "file_hash"]
+  },
+  {
+    id: "nexvision",
+    name: "NexVision",
+    category: "Threat Detection",
+    description: "Advanced threat detection and analysis platform",
+    icon: Eye,
+    premium: true,
+    apiRequired: true,
+    provider: "NexVision",
+    examples: ["threat_indicator", "malware_hash", "domain.com"]
+  },
+  {
+    id: "bingoo",
+    name: "BinGoo",
+    category: "Binary Analysis",
+    description: "Binary analysis and malware research tools",
+    icon: Database,
+    premium: true,
+    apiRequired: true,
+    provider: "BinGoo",
+    examples: ["binary_hash", "malware_sample", "executable_file"]
+  },
+  {
+    id: "datasploit",
+    name: "Datasploit",
+    category: "Automated OSINT",
+    description: "Automated OSINT framework for reconnaissance",
+    icon: Search,
+    premium: false,
+    apiRequired: false,
+    provider: "Datasploit",
+    examples: ["domain.com", "username", "email@domain.com"]
+  },
+  {
+    id: "google-dorks",
+    name: "Google Dorks",
+    category: "Search Intelligence",
+    description: "Advanced Google search operators for information gathering",
+    icon: Search,
+    premium: false,
+    apiRequired: false,
+    provider: "Built-in",
+    examples: ["site:target.com filetype:pdf", "inurl:admin", "intitle:index of"]
+  },
+  {
+    id: "metagoofil",
+    name: "Metagoofil",
+    category: "Document Intelligence",
+    description: "Extract metadata from public documents",
+    icon: Database,
+    premium: false,
+    apiRequired: false,
+    provider: "Metagoofil",
+    examples: ["domain.com", "filetype:pdf", "filetype:doc"]
+  },
+  {
+    id: "osint-framework",
+    name: "OSINT Framework",
+    category: "Framework Tools",
+    description: "Collection of OSINT tools and resources",
+    icon: Database,
+    premium: false,
+    apiRequired: false,
+    provider: "OSINT Framework",
+    examples: ["category_search", "tool_lookup", "resource_finder"]
+  },
+  {
+    id: "prying-deep",
+    name: "Prying Deep",
+    category: "Deep Web Intelligence",
+    description: "Deep web and dark web intelligence gathering",
+    icon: Search,
+    premium: true,
+    apiRequired: true,
+    provider: "Prying Deep",
+    examples: ["deep_search", "onion_link", "hidden_service"]
+  },
+
+  // Analytics & Monitoring Commands
+  {
+    id: "posthog",
+    name: "PostHog Analytics",
+    category: "Analytics Intelligence",
+    description: "Product analytics and user behavior tracking",
+    icon: Database,
+    premium: true,
+    apiRequired: true,
+    provider: "PostHog",
+    examples: ["project_id", "user_session", "event_tracking"]
+  },
+  {
+    id: "matomo",
+    name: "Matomo Analytics",
+    category: "Analytics Intelligence",
+    description: "Privacy-focused web analytics intelligence",
+    icon: Database,
+    premium: true,
+    apiRequired: true,
+    provider: "Matomo",
+    examples: ["site_id", "visitor_data", "analytics_report"]
+  },
+  {
+    id: "plausible",
+    name: "Plausible Analytics",
+    category: "Analytics Intelligence",
+    description: "Simple privacy-focused analytics data",
+    icon: Database,
+    premium: true,
+    apiRequired: true,
+    provider: "Plausible Analytics",
+    examples: ["domain.com", "page_views", "visitor_stats"]
+  },
+  {
+    id: "countly",
+    name: "Countly Analytics",
+    category: "Analytics Intelligence",
+    description: "Product analytics and performance monitoring",
+    icon: Database,
+    premium: true,
+    apiRequired: true,
+    provider: "Countly",
+    examples: ["app_key", "user_behavior", "crash_reports"]
+  },
+  {
+    id: "datadog",
+    name: "Datadog Monitoring",
+    category: "Infrastructure Intelligence",
+    description: "Infrastructure monitoring and log analysis",
+    icon: Database,
+    premium: true,
+    apiRequired: true,
+    provider: "Datadog",
+    examples: ["host_metrics", "log_query", "apm_trace"]
+  },
+  {
+    id: "grafana",
+    name: "Grafana Metrics",
+    category: "Infrastructure Intelligence",
+    description: "Monitoring and observability platform data",
+    icon: Database,
+    premium: true,
+    apiRequired: true,
+    provider: "Grafana",
+    examples: ["dashboard_id", "metric_query", "alert_rules"]
+  },
+  {
+    id: "prometheus",
+    name: "Prometheus Metrics",
+    category: "Infrastructure Intelligence",
+    description: "Time series monitoring and alerting",
+    icon: Database,
+    premium: false,
+    apiRequired: false,
+    provider: "Prometheus",
+    examples: ["metric_name", "query_range", "alert_manager"]
+  },
+  {
+    id: "netdata",
+    name: "Netdata Monitoring",
+    category: "Infrastructure Intelligence",
+    description: "Real-time performance monitoring",
+    icon: Database,
+    premium: true,
+    apiRequired: true,
+    provider: "Netdata",
+    examples: ["node_metrics", "system_stats", "performance_data"]
+  },
+  {
+    id: "signoz",
+    name: "SigNoz APM",
+    category: "Infrastructure Intelligence",
+    description: "Application performance monitoring and tracing",
+    icon: Database,
+    premium: true,
+    apiRequired: true,
+    provider: "SigNoz",
+    examples: ["trace_id", "service_metrics", "error_tracking"]
+  },
+
   // Discord Bot Integration Commands
   {
     id: "discord-admin",
@@ -284,6 +475,7 @@ const categories = ["All", ...Array.from(new Set(osintCommands.map(cmd => cmd.ca
 // API Key URLs mapping
 const getApiKeyUrl = (provider: string) => {
   const apiKeyUrls: Record<string, string> = {
+    // Core OSINT Services
     "DeHashed": "https://www.dehashed.com/register",
     "Shodan": "https://account.shodan.io/register",
     "Hunter.io": "https://hunter.io/users/sign_up",
@@ -291,6 +483,8 @@ const getApiKeyUrl = (provider: string) => {
     "VirusTotal": "https://www.virustotal.com/gui/join-us",
     "IPQualityScore": "https://www.ipqualityscore.com/create-account",
     "NPD": "https://www.nationalapublicdata.com/signup",
+    
+    // Advanced OSINT Tools
     "Maltego": "https://www.maltego.com/ce-registration/",
     "Recon-NG": "https://github.com/lanmaster53/recon-ng",
     "FOCA": "https://www.elevenpaths.com/labstools/foca/",
@@ -298,7 +492,26 @@ const getApiKeyUrl = (provider: string) => {
     "sn0int": "https://github.com/kpcyrd/sn0int",
     "Blackbird": "https://blackbird-osint.herokuapp.com/",
     "Criminal IP": "https://www.criminalip.io/register",
-    "Social Links": "https://sociallinks.io/",
+    "Social Links": "https://sociallinks.io/contact",
+    "AlienVault": "https://otx.alienvault.com/signup",
+    "NexVision": "https://www.nexvision.com/contact",
+    "BinGoo": "https://www.bingoo.com/register",
+    "Datasploit": "https://github.com/DataSploit/datasploit",
+    "Metagoofil": "https://github.com/laramies/metagoofil",
+    "Prying Deep": "https://www.pryingdeep.com/signup",
+    
+    // Analytics & Monitoring
+    "PostHog": "https://app.posthog.com/signup",
+    "Matomo": "https://matomo.org/start-free-analytics-trial/",
+    "Plausible Analytics": "https://plausible.io/register",
+    "Countly": "https://accounts.countly.com/signup",
+    "Datadog": "https://app.datadoghq.com/signup",
+    "Grafana": "https://grafana.com/auth/sign-up/create-user",
+    "Prometheus": "https://prometheus.io/download/",
+    "Netdata": "https://app.netdata.cloud/sign-up",
+    "SigNoz": "https://signoz.io/teams/",
+    
+    // Integrations
     "Discord Bot": "/api-keys",
     "Discord API": "https://discord.com/developers/applications"
   };
