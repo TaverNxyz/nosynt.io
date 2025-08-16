@@ -166,7 +166,7 @@ export default function Auth() {
               <Shield className="h-8 w-8 text-primary-foreground" />
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-foreground">PownSint</h1>
+          <h1 className="text-3xl font-bold text-foreground">nosynt.io</h1>
           <p className="text-muted-foreground mt-2">
             Secure OSINT Intelligence Platform
           </p>
