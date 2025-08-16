@@ -630,14 +630,14 @@ export default function Commands() {
         timestamp: new Date()
       };
       
-      // Update execution record
+      // Update execution record with proper integer value
       await supabase
         .from('command_executions')
         .update({
           status: success ? 'success' : 'error',
           output_data: mockResult.data,
-          execution_time_ms: delay,
-          api_cost: apiCost,
+          execution_time_ms: Math.round(delay), // Ensure integer value
+          api_cost: Math.round(apiCost * 100) / 100, // Round to 2 decimal places
           error_message: success ? null : mockResult.data.error
         })
         .eq('id', execution.id);
@@ -647,13 +647,13 @@ export default function Commands() {
       setCommandInput("");
       
       if (success) {
-        // Auto-sync to Discord
+        // Auto-sync to Discord only if enabled
         try {
           await syncToDiscord(selectedCommand, mockResult.data);
-          toast.success(`${selectedCommand.name} executed & synced to Discord`);
+          toast.success(`${selectedCommand.name} executed successfully`);
         } catch (error) {
-          toast.success(`${selectedCommand.name} executed (Discord sync failed)`);
           console.error('Discord sync error:', error);
+          toast.success(`${selectedCommand.name} executed (Discord sync disabled)`);
         }
       } else {
         toast.error(`${selectedCommand.name} execution failed`);
@@ -664,12 +664,25 @@ export default function Commands() {
   // Discord sync function
   const syncToDiscord = async (command: any, results: any) => {
     try {
+      // Only sync if user has Discord settings configured
+      const { data: discordSettings } = await supabase
+        .from('discord_settings')
+        .select('*')
+        .eq('user_id', user?.id)
+        .eq('auto_sync_enabled', true)
+        .single();
+
+      if (!discordSettings || !discordSettings.discord_channel_id) {
+        console.log('Discord sync skipped - no configuration found');
+        return;
+      }
+
       const { data, error } = await supabase.functions.invoke('discord-sync', {
         body: {
           command: command,
           results: results,
-          channelId: '1234567890123456789', // Replace with your Discord channel ID
-          userId: user?.id || 'anonymous'
+          channelId: discordSettings.discord_channel_id,
+          userId: discordSettings.discord_user_id || 'anonymous'
         }
       });
 
