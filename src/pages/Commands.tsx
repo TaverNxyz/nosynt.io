@@ -454,19 +454,19 @@ export default function Commands() {
           </h1>
         </div>
         <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
-          Execute intelligence gathering commands across 25+ premium OSINT services. 
+          Execute intelligence gathering commands across 150+ premium OSINT services. 
           Use <kbd className="px-2 py-1 bg-muted rounded text-sm font-mono">⌘K</kbd> to open the command palette anywhere.
         </p>
         <div className="flex items-center justify-center space-x-4 mt-6">
-          <Badge variant="secondary" className="bg-gradient-security/20 text-security-green border-security-green/30">
+          <Badge variant="secondary" className="bg-muted/50 text-foreground border-border">
             <CheckCircle className="h-3 w-3 mr-1" />
-            25+ Commands Available
+            150+ Commands Available
           </Badge>
-          <Badge variant="secondary" className="bg-gradient-primary/20 text-cyber-blue border-cyber-blue/30">
+          <Badge variant="secondary" className="bg-muted/50 text-foreground border-border">
             <Zap className="h-3 w-3 mr-1" />
             Instant Execution
           </Badge>
-          <Badge variant="secondary" className="bg-gradient-metallic/20 text-cyber-purple border-cyber-purple/30">
+          <Badge variant="secondary" className="bg-muted/50 text-foreground border-border">
             <Key className="h-3 w-3 mr-1" />
             API Integration
           </Badge>
@@ -480,34 +480,44 @@ export default function Commands() {
         </TabsList>
 
         <TabsContent value="commands" className="space-y-6">
-          {/* Search and Filters */}
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search commands..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
-              />
+          <div className="flex gap-6">
+            {/* Left Sidebar - Categories */}
+            <div className="w-64 space-y-4">
+              <h3 className="text-lg font-semibold">Categories</h3>
+              <div className="space-y-2">
+                {categories.map((category) => (
+                  <Button
+                    key={category}
+                    variant={selectedCategory === category ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => setSelectedCategory(category)}
+                    className="w-full justify-start text-left h-auto py-2 px-3"
+                  >
+                    {category}
+                  </Button>
+                ))}
+              </div>
+              
+              {/* Search */}
+              <div className="space-y-2">
+                <h4 className="text-sm font-medium">Search Commands</h4>
+                <div className="relative">
+                  <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Filter commands..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
             </div>
-            <div className="flex flex-wrap gap-2">
-              {categories.map((category) => (
-                <Button
-                  key={category}
-                  variant={selectedCategory === category ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setSelectedCategory(category)}
-                  className="whitespace-nowrap"
-                >
-                  {category}
-                </Button>
-              ))}
-            </div>
-          </div>
+
+            {/* Main Content Area */}
+            <div className="flex-1 space-y-4">
 
           {/* Commands Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             {filteredCommands.map((command) => (
               <Card 
                 key={command.id} 
@@ -551,6 +561,8 @@ export default function Commands() {
               </Card>
             ))}
           </div>
+        </div>
+      </div>
 
           {/* Command Execution */}
           {selectedCommand && (
