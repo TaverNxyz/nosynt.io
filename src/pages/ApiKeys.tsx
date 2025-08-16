@@ -240,7 +240,10 @@ export default function ApiKeys() {
   };
 
   const handleAddKey = async () => {
+    console.log("handleAddKey called", { newKey, selectedService, keyName, user });
+    
     if (!newKey || !selectedService || !keyName || !user) {
+      console.log("Missing information:", { newKey: !!newKey, selectedService: !!selectedService, keyName: !!keyName, user: !!user });
       toast({
         title: "Missing Information",
         description: "Please provide service, key name, and API key",
@@ -250,6 +253,7 @@ export default function ApiKeys() {
     }
 
     try {
+      console.log("Attempting to insert API key...");
       const { error } = await supabase
         .from('api_keys')
         .insert({
@@ -263,8 +267,12 @@ export default function ApiKeys() {
           usage_limit: 1000
         });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Supabase error:", error);
+        throw error;
+      }
 
+      console.log("API key inserted successfully");
       await fetchApiKeys();
       setNewKey("");
       setSelectedService("");
@@ -275,6 +283,7 @@ export default function ApiKeys() {
         description: `Successfully added ${selectedService} API key`,
       });
     } catch (error) {
+      console.error("Error adding API key:", error);
       toast({
         title: "Error", 
         description: "Failed to add API key",
