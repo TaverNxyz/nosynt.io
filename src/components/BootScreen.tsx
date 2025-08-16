@@ -97,14 +97,12 @@ export function BootScreen({ onBootComplete }: BootScreenProps) {
     <div className="min-h-screen bg-black text-green-400 font-mono text-sm relative overflow-hidden">
       {/* Imgur Background Image */}
       <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0"
         style={{
           backgroundImage: "url('https://i.imgur.com/DOAjwH7.png')"
         }}
       ></div>
 
-      {/* Dark Overlay for Terminal Text Visibility */}
-      <div className="absolute inset-0 bg-black/50 z-10"></div>
       {/* Terminal Screen */}
       <div className="p-6 max-w-4xl mx-auto relative z-20">
 
