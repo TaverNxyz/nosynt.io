@@ -60,11 +60,11 @@ export default function Index() {
         </div>
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-slide-in-bottom [animation-delay:400ms]">
-          <Button asChild size="lg" className="bg-gradient-primary hover:shadow-glow transition-all duration-300 hover:scale-105 group relative overflow-hidden">
+          <Button asChild size="lg" className="bg-gradient-primary hover:shadow-glow transition-all duration-300 hover:scale-105 group relative overflow-hidden text-white">
             <Link to="/commands">
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 animate-shimmer bg-[length:200%_100%]" />
-              <Search className="mr-2 h-5 w-5 relative z-10" />
-              <span className="relative z-10">Execute Commands</span>
+              <Search className="mr-2 h-5 w-5 relative z-10 text-white" />
+              <span className="relative z-10 text-white">Execute Commands</span>
             </Link>
           </Button>
           <Button asChild variant="outline" size="lg" className="hover:bg-secondary/50 transition-all duration-300 hover:scale-105 hover:shadow-floating group">
