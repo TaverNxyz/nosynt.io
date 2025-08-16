@@ -24,22 +24,12 @@ const queryClient = new QueryClient();
 
 const App = () => {
   const [showBootScreen, setShowBootScreen] = useState(true);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    // Simulate initial app loading time
-    const loadTimer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-
-    return () => clearTimeout(loadTimer);
-  }, []);
 
   const handleBootComplete = () => {
     setShowBootScreen(false);
   };
 
-  if (showBootScreen || isLoading) {
+  if (showBootScreen) {
     return (
       <TooltipProvider>
         <BootScreen onBootComplete={handleBootComplete} />
