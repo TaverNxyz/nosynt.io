@@ -535,6 +535,74 @@ export default function Commands() {
     return matchesCategory && matchesSearch;
   });
 
+  // Helper function to map command IDs to Hunter.io API commands
+  const getHunterCommand = (commandId: string): string => {
+    const hunterCommands: Record<string, string> = {
+      'email': 'email-finder',
+      'domain-search': 'domain-search',
+      'email-verification': 'email-verifier',
+      'company-enrichment': 'company-enrichment',
+      'person-enrichment': 'person-enrichment',
+      'combined-enrichment': 'combined-enrichment',
+      'discover': 'discover'
+    };
+    return hunterCommands[commandId] || 'domain-search';
+  };
+
+  // Helper function to parse command input into API parameters
+  const parseCommandInput = (commandId: string, input: string): any => {
+    const params: any = {};
+    
+    switch (commandId) {
+      case 'email':
+        // Parse "John Doe at stripe.com" or "domain:stripe.com first:John last:Doe"
+        if (input.includes(' at ')) {
+          const [name, domain] = input.split(' at ');
+          const nameParts = name.trim().split(' ');
+          params.domain = domain.trim();
+          params.first_name = nameParts[0];
+          if (nameParts.length > 1) params.last_name = nameParts[nameParts.length - 1];
+        } else {
+          // Parse structured input
+          const domainMatch = input.match(/domain:([^\s]+)/);
+          const firstMatch = input.match(/first:([^\s]+)/);
+          const lastMatch = input.match(/last:([^\s]+)/);
+          
+          if (domainMatch) params.domain = domainMatch[1];
+          if (firstMatch) params.first_name = firstMatch[1];
+          if (lastMatch) params.last_name = lastMatch[1];
+        }
+        break;
+        
+      case 'domain-search':
+        params.domain = input.trim();
+        break;
+        
+      case 'email-verification':
+        params.email = input.trim();
+        break;
+        
+      case 'company-enrichment':
+        params.domain = input.trim();
+        break;
+        
+      case 'person-enrichment':
+      case 'combined-enrichment':
+        params.email = input.trim();
+        break;
+        
+      default:
+        // For other commands, pass input as domain if it looks like a domain
+        if (input.includes('.')) {
+          params.domain = input.trim();
+        } else {
+          params.query = input.trim();
+        }
+    }
+    
+    return params;
+  };
+
   const executeCommand = async () => {
     if (!selectedCommand || !commandInput.trim()) {
       toast.error("Please select a command and provide input");
@@ -607,12 +675,78 @@ export default function Commands() {
       return;
     }
     
-    // Simulate realistic command execution with proper delay
+    let results;
+    let apiCost = 0;
+
+    // Execute actual command if it's Hunter.io
+    if (selectedCommand.provider === 'Hunter.io' && commandInput) {
+      try {
+        const { data, error } = await supabase.functions.invoke('hunter-io', {
+          body: {
+            command: getHunterCommand(selectedCommand.id),
+            params: parseCommandInput(selectedCommand.id, commandInput)
+          }
+        });
+
+        if (error) throw error;
+        if (!data.success) throw new Error(data.error);
+
+        results = data.data;
+        apiCost = data.api_cost || 0;
+        
+        const mockResult: CommandResult = {
+          command: `${selectedCommand.name}: ${commandInput}`,
+          status: 'success',
+          data: {
+            query: commandInput,
+            provider: selectedCommand.provider,
+            results: results,
+            execution_time: `${(2000 / 1000).toFixed(2)}s`,
+            api_cost: `$${apiCost.toFixed(2)}`
+          },
+          timestamp: new Date()
+        };
+        
+        // Update execution record
+        await supabase
+          .from('command_executions')
+          .update({
+            status: 'success',
+            output_data: mockResult.data,
+            execution_time_ms: 2000,
+            api_cost: apiCost
+          })
+          .eq('id', execution.id);
+        
+        setResults(prev => [mockResult, ...prev]);
+        setIsExecuting(false);
+        setCommandInput("");
+        
+        toast.success(`${selectedCommand.name} executed successfully`);
+        
+        // Auto-sync to Discord if enabled
+        try {
+          await syncToDiscord(selectedCommand, mockResult.data);
+        } catch (error) {
+          console.error('Discord sync error:', error);
+        }
+        return;
+        
+      } catch (hunterError) {
+        console.error('Hunter.io API error:', hunterError);
+        toast.error(`Hunter.io API error: ${hunterError.message}`);
+        // Don't fall back to mock data for real API failures
+        setIsExecuting(false);
+        return;
+      }
+    }
+    
+    // Simulate realistic command execution with proper delay for other commands
     const delay = Math.random() * 2000 + 1000; // 1-3 seconds
     setTimeout(async () => {
       const success = Math.random() > 0.05; // 95% success rate
       const mockData = success ? generateMockResults(selectedCommand.id) : null;
-      const apiCost = selectedCommand.apiRequired ? (Math.random() * 2 + 0.1) : 0;
+      apiCost = selectedCommand.apiRequired ? (Math.random() * 2 + 0.1) : 0;
       
       const mockResult: CommandResult = {
         command: `${selectedCommand.name}: ${commandInput}`,
@@ -647,6 +781,7 @@ export default function Commands() {
       setCommandInput("");
       
       if (success) {
+        toast.success(`${selectedCommand.name} executed successfully`);
         // Auto-sync to Discord only if enabled
         try {
           await syncToDiscord(selectedCommand, mockResult.data);
