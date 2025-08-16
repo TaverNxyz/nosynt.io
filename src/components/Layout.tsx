@@ -1,8 +1,10 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { CommandPalette } from "@/components/CommandPalette";
 import { 
   Shield, 
   Key, 
@@ -14,7 +16,8 @@ import {
   LogOut,
   User,
   Terminal,
-  BarChart3
+  BarChart3,
+  Search
 } from "lucide-react";
 
 const navigation = [
@@ -36,6 +39,7 @@ export default function Layout({ children }: LayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, loading, signOut } = useAuth();
+  const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
 
   // Redirect to auth if not authenticated (except for auth page)
   if (!loading && !user && location.pathname !== "/auth") {
@@ -104,6 +108,18 @@ export default function Layout({ children }: LayoutProps) {
               );
             })}
             
+            {/* Command Palette Trigger */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCommandPaletteOpen(true)}
+              className="flex items-center space-x-2 bg-gradient-metallic border-primary/20 hover:bg-gradient-primary/10 hover:border-primary/40 shadow-glow"
+            >
+              <Search className="h-4 w-4" />
+              <span>Search commands...</span>
+              <Badge variant="secondary" className="text-xs font-mono ml-2">⌘K</Badge>
+            </Button>
+            
             {user && (
               <div className="flex items-center space-x-2 ml-4 pl-4 border-l border-border">
                 <div className="flex items-center space-x-2 text-sm text-muted-foreground">
@@ -128,6 +144,9 @@ export default function Layout({ children }: LayoutProps) {
       <main className="flex-1 p-6 relative z-10">
         {children}
       </main>
+      
+      {/* Command Palette */}
+      <CommandPalette open={commandPaletteOpen} onOpenChange={setCommandPaletteOpen} />
     </div>
   );
 }

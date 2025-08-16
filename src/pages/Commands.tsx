@@ -26,7 +26,8 @@ import {
   AlertTriangle,
   CheckCircle,
   Clock,
-  Zap
+  Zap,
+  Terminal
 } from "lucide-react";
 
 interface OSINTCommand {
@@ -462,13 +463,32 @@ export default function Commands() {
     <div className="space-y-6">
       {/* Header */}
       <div className="text-center space-y-4">
-        <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-          OSINT Command Center
-        </h1>
-        <p className="text-muted-foreground max-w-2xl mx-auto">
+        <div className="flex items-center justify-center space-x-3 mb-4">
+          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-primary shadow-glow">
+            <Terminal className="h-6 w-6 text-primary-foreground" />
+          </div>
+          <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+            OSINT Command Center
+          </h1>
+        </div>
+        <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
           Execute intelligence gathering commands across 25+ premium OSINT services. 
-          Bring your own API keys for premium features.
+          Use <kbd className="px-2 py-1 bg-muted rounded text-sm font-mono">⌘K</kbd> to open the command palette anywhere.
         </p>
+        <div className="flex items-center justify-center space-x-4 mt-6">
+          <Badge variant="secondary" className="bg-gradient-security/20 text-security-green border-security-green/30">
+            <CheckCircle className="h-3 w-3 mr-1" />
+            25+ Commands Available
+          </Badge>
+          <Badge variant="secondary" className="bg-gradient-primary/20 text-cyber-blue border-cyber-blue/30">
+            <Zap className="h-3 w-3 mr-1" />
+            Instant Execution
+          </Badge>
+          <Badge variant="secondary" className="bg-gradient-metallic/20 text-cyber-purple border-cyber-purple/30">
+            <Key className="h-3 w-3 mr-1" />
+            API Integration
+          </Badge>
+        </div>
       </div>
 
       <Tabs defaultValue="commands" className="space-y-6">
