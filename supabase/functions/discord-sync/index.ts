@@ -15,13 +15,28 @@ serve(async (req) => {
   try {
     const { command, results, channelId, userId } = await req.json();
     
+    console.log('Discord sync request:', { command: command?.name, channelId, userId });
+    
     const discordToken = Deno.env.get('DISCORD_BOT_TOKEN');
     if (!discordToken) {
+      console.error('Discord bot token not configured');
       throw new Error('Discord bot token not configured');
+    }
+
+    if (!channelId || channelId.trim() === '') {
+      console.error('Channel ID is empty or missing');
+      throw new Error('Discord channel ID is required. Please configure it in Settings > Integrations.');
+    }
+
+    if (!command || !command.name) {
+      console.error('Command data is missing');
+      throw new Error('Command data is required');
     }
 
     // Format the command results for Discord
     const formattedMessage = formatResultsForDiscord(command, results);
+    
+    console.log('Sending message to Discord channel:', channelId);
     
     // Send to Discord channel
     const discordResponse = await fetch(`https://discord.com/api/v10/channels/${channelId}/messages`, {

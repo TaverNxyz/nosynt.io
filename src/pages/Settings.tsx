@@ -471,19 +471,44 @@ export default function SystemSettings() {
           {/* Discord Integration */}
           <Card className="bg-gradient-card shadow-card">
             <CardHeader>
-              <CardTitle>Discord Integration</CardTitle>
-              <CardDescription>Sync OSINT results to Discord channels</CardDescription>
+              <CardTitle className="flex items-center space-x-2">
+                <div className="h-6 w-6 bg-[#5865F2] rounded-full flex items-center justify-center text-white text-xs font-bold">
+                  D
+                </div>
+                <span>Discord Integration</span>
+                <Badge variant={discordSettings.auto_sync_enabled && discordSettings.discord_channel_id ? "default" : "secondary"}>
+                  {discordSettings.auto_sync_enabled && discordSettings.discord_channel_id ? "Active" : "Inactive"}
+                </Badge>
+              </CardTitle>
+              <CardDescription>
+                Automatically sync OSINT command results to Discord channels with rich embeds
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
+              {/* Setup Instructions */}
+              <div className="p-4 bg-muted/50 rounded-lg space-y-2">
+                <h4 className="font-medium text-sm">Setup Instructions:</h4>
+                <ol className="text-sm text-muted-foreground space-y-1 list-decimal list-inside">
+                  <li>Create a Discord bot at <a href="https://discord.com/developers/applications" target="_blank" className="text-primary hover:underline">Discord Developer Portal</a></li>
+                  <li>Add the bot to your server with "Send Messages" and "Embed Links" permissions</li>
+                  <li>Right-click your target channel → "Copy Channel ID" (Developer Mode must be enabled)</li>
+                  <li>Paste the Channel ID below and enable auto-sync</li>
+                </ol>
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="discord-channel">Discord Channel ID</Label>
+                  <Label htmlFor="discord-channel">Discord Channel ID *</Label>
                   <Input
                     id="discord-channel"
                     value={discordSettings.discord_channel_id}
                     onChange={(e) => setDiscordSettings(prev => ({ ...prev, discord_channel_id: e.target.value }))}
-                    placeholder="123456789012345678"
+                    placeholder="1234567890123456789"
+                    className={!discordSettings.discord_channel_id ? "border-yellow-500" : ""}
                   />
+                  <p className="text-xs text-muted-foreground">
+                    18-19 digit number from Discord channel
+                  </p>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="discord-webhook">Webhook URL (Optional)</Label>
@@ -493,29 +518,48 @@ export default function SystemSettings() {
                     onChange={(e) => setDiscordSettings(prev => ({ ...prev, webhook_url: e.target.value }))}
                     placeholder="https://discord.com/api/webhooks/..."
                   />
+                  <p className="text-xs text-muted-foreground">
+                    Alternative to bot token method
+                  </p>
                 </div>
               </div>
               
-              <div className="flex items-center space-x-2">
-                <Switch
-                  checked={discordSettings.auto_sync_enabled}
-                  onCheckedChange={(checked) => setDiscordSettings(prev => ({ ...prev, auto_sync_enabled: checked }))}
-                />
-                <Label>Auto-sync command results</Label>
-              </div>
-              
-              <div className="flex items-center space-x-2">
-                <Switch
-                  checked={discordSettings.sync_successful_only}
-                  onCheckedChange={(checked) => setDiscordSettings(prev => ({ ...prev, sync_successful_only: checked }))}
-                />
-                <Label>Only sync successful results</Label>
+              <div className="space-y-3">
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    checked={discordSettings.auto_sync_enabled}
+                    onCheckedChange={(checked) => setDiscordSettings(prev => ({ ...prev, auto_sync_enabled: checked }))}
+                  />
+                  <Label>Auto-sync command results</Label>
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    checked={discordSettings.sync_successful_only}
+                    onCheckedChange={(checked) => setDiscordSettings(prev => ({ ...prev, sync_successful_only: checked }))}
+                  />
+                  <Label>Only sync successful results</Label>
+                </div>
               </div>
               
               <div className="flex space-x-2">
                 <Button onClick={updateDiscordSettings}>Save Settings</Button>
-                <Button variant="outline" onClick={testDiscordIntegration}>Test Integration</Button>
+                <Button 
+                  variant="outline" 
+                  onClick={testDiscordIntegration}
+                  disabled={!discordSettings.discord_channel_id}
+                >
+                  Test Integration
+                </Button>
               </div>
+
+              {!discordSettings.discord_channel_id && (
+                <div className="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+                  <p className="text-sm text-yellow-600">
+                    ⚠️ Discord Channel ID is required for the integration to work
+                  </p>
+                </div>
+              )}
             </CardContent>
           </Card>
 

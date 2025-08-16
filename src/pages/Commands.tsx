@@ -677,12 +677,14 @@ export default function Commands() {
         return;
       }
 
+      console.log('Attempting Discord sync with channel:', discordSettings.discord_channel_id);
+
       const { data, error } = await supabase.functions.invoke('discord-sync', {
         body: {
           command: command,
           results: results,
           channelId: discordSettings.discord_channel_id,
-          userId: discordSettings.discord_user_id || 'anonymous'
+          userId: user?.id || 'anonymous'
         }
       });
 
