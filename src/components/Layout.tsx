@@ -19,7 +19,8 @@ import {
   Terminal,
   BarChart3,
   Search,
-  Crown
+  Crown,
+  Settings as SettingsIcon
 } from "lucide-react";
 
 const navigation = [
@@ -31,6 +32,7 @@ const navigation = [
   { name: "implementation", href: "/implementation", icon: Layers, badge: "75%" },
   { name: "security", href: "/security", icon: Lock, badge: "soc2" },
   { name: "subscriptions", href: "/subscriptions", icon: Crown, badge: "free" },
+  { name: "settings", href: "/settings", icon: SettingsIcon, badge: null },
 ];
 
 interface LayoutProps {

@@ -354,11 +354,36 @@ export default function Analytics() {
                 </div>
                 
                 <div className="flex gap-2">
-                  <Button variant="outline" className="flex-1">
+                  <Button 
+                    variant="outline" 
+                    className="flex-1"
+                    onClick={() => {
+                      // Open platform configuration modal/page
+                      window.open(`https://${selectedPlatform.name.toLowerCase().replace(/\s+/g, '')}.com/dashboard`, '_blank');
+                    }}
+                  >
                     <Settings className="mr-2 h-4 w-4" />
                     Configure
                   </Button>
-                  <Button variant="outline" className="flex-1">
+                  <Button 
+                    variant="outline" 
+                    className="flex-1"
+                    onClick={() => {
+                      // Open platform dashboard
+                      const dashboardUrls: Record<string, string> = {
+                        'PostHog': 'https://app.posthog.com',
+                        'Matomo': 'https://matomo.org/demo',
+                        'Metabase': 'https://demo.metabase.com',
+                        'Plausible Analytics': 'https://plausible.io/demo',
+                        'Apache Superset': 'https://superset.apache.org/demo',
+                        'Grafana': 'https://play.grafana.org',
+                        'Datadog': 'https://app.datadoghq.com',
+                        'Prometheus': 'https://demo.prometheus.io'
+                      };
+                      const url = dashboardUrls[selectedPlatform.name] || `https://${selectedPlatform.name.toLowerCase().replace(/\s+/g, '')}.com`;
+                      window.open(url, '_blank');
+                    }}
+                  >
                     <Eye className="mr-2 h-4 w-4" />
                     View Dashboard
                   </Button>

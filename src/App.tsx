@@ -17,6 +17,7 @@ import Implementation from "./pages/Implementation";
 import Security from "./pages/Security";
 import Premium from "./pages/Premium";
 import Subscriptions from "./pages/Subscriptions";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -64,6 +65,7 @@ const App = () => {
                 <Route path="/implementation" element={<Implementation />} />
                 <Route path="/security" element={<Security />} />
                 <Route path="/subscriptions" element={<Subscriptions />} />
+                <Route path="/settings" element={<Settings />} />
                 <Route path="/premium" element={<Premium />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />

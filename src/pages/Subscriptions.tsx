@@ -136,9 +136,20 @@ export default function Subscriptions() {
     return currentSubscription?.plan_id === planId;
   };
 
-  const handleUpgrade = (planId: string) => {
+  const handleUpgrade = async (planId: string, planName: string) => {
     // In a real app, this would integrate with Stripe
-    toast.success("Upgrade functionality would integrate with Stripe payment processing");
+    try {
+      // Simulate subscription creation
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Show success message
+      toast.success(`Redirecting to payment for ${planName} plan...`);
+      
+      // In production, redirect to Stripe Checkout
+      window.open('https://stripe.com/checkout', '_blank');
+    } catch (error) {
+      toast.error('Failed to initiate upgrade process');
+    }
   };
 
   if (!user) {
@@ -283,7 +294,7 @@ export default function Subscriptions() {
                   className="w-full"
                   variant={isCurrent ? "outline" : "default"}
                   disabled={isCurrent}
-                  onClick={() => handleUpgrade(plan.id)}
+                  onClick={() => handleUpgrade(plan.id, plan.name)}
                 >
                   {isCurrent ? "Current Plan" : `Upgrade to ${plan.name}`}
                 </Button>
