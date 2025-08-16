@@ -59,6 +59,93 @@ export type Database = {
         }
         Relationships: []
       }
+      command_executions: {
+        Row: {
+          api_cost: number | null
+          command_category: string
+          command_id: string
+          command_name: string
+          created_at: string
+          error_message: string | null
+          execution_time_ms: number | null
+          id: string
+          input_data: string
+          output_data: Json | null
+          provider: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          api_cost?: number | null
+          command_category: string
+          command_id: string
+          command_name: string
+          created_at?: string
+          error_message?: string | null
+          execution_time_ms?: number | null
+          id?: string
+          input_data: string
+          output_data?: Json | null
+          provider: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          api_cost?: number | null
+          command_category?: string
+          command_id?: string
+          command_name?: string
+          created_at?: string
+          error_message?: string | null
+          execution_time_ms?: number | null
+          id?: string
+          input_data?: string
+          output_data?: Json | null
+          provider?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      discord_settings: {
+        Row: {
+          auto_sync_enabled: boolean | null
+          created_at: string
+          discord_channel_id: string | null
+          discord_user_id: string | null
+          id: string
+          sync_successful_only: boolean | null
+          updated_at: string
+          user_id: string
+          webhook_url: string | null
+        }
+        Insert: {
+          auto_sync_enabled?: boolean | null
+          created_at?: string
+          discord_channel_id?: string | null
+          discord_user_id?: string | null
+          id?: string
+          sync_successful_only?: boolean | null
+          updated_at?: string
+          user_id: string
+          webhook_url?: string | null
+        }
+        Update: {
+          auto_sync_enabled?: boolean | null
+          created_at?: string
+          discord_channel_id?: string | null
+          discord_user_id?: string | null
+          id?: string
+          sync_successful_only?: boolean | null
+          updated_at?: string
+          user_id?: string
+          webhook_url?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -92,12 +179,225 @@ export type Database = {
         }
         Relationships: []
       }
+      subscription_plans: {
+        Row: {
+          active: boolean | null
+          created_at: string
+          description: string | null
+          features: Json | null
+          id: string
+          max_api_cost_per_month: number | null
+          max_commands_per_month: number | null
+          name: string
+          price_monthly: number
+          price_yearly: number | null
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean | null
+          created_at?: string
+          description?: string | null
+          features?: Json | null
+          id?: string
+          max_api_cost_per_month?: number | null
+          max_commands_per_month?: number | null
+          name: string
+          price_monthly: number
+          price_yearly?: number | null
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean | null
+          created_at?: string
+          description?: string | null
+          features?: Json | null
+          id?: string
+          max_api_cost_per_month?: number | null
+          max_commands_per_month?: number | null
+          name?: string
+          price_monthly?: number
+          price_yearly?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      system_notifications: {
+        Row: {
+          action_url: string | null
+          created_at: string
+          id: string
+          message: string
+          read: boolean | null
+          title: string
+          type: string
+          user_id: string | null
+        }
+        Insert: {
+          action_url?: string | null
+          created_at?: string
+          id?: string
+          message: string
+          read?: boolean | null
+          title: string
+          type?: string
+          user_id?: string | null
+        }
+        Update: {
+          action_url?: string | null
+          created_at?: string
+          id?: string
+          message?: string
+          read?: boolean | null
+          title?: string
+          type?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      telegram_settings: {
+        Row: {
+          auto_sync_enabled: boolean | null
+          bot_token: string | null
+          created_at: string
+          id: string
+          sync_successful_only: boolean | null
+          telegram_chat_id: string | null
+          telegram_user_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          auto_sync_enabled?: boolean | null
+          bot_token?: string | null
+          created_at?: string
+          id?: string
+          sync_successful_only?: boolean | null
+          telegram_chat_id?: string | null
+          telegram_user_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          auto_sync_enabled?: boolean | null
+          bot_token?: string | null
+          created_at?: string
+          id?: string
+          sync_successful_only?: boolean | null
+          telegram_chat_id?: string | null
+          telegram_user_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      usage_analytics: {
+        Row: {
+          categories_used: Json | null
+          created_at: string
+          date: string
+          failed_commands: number | null
+          id: string
+          providers_used: Json | null
+          successful_commands: number | null
+          total_api_cost: number | null
+          total_commands: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          categories_used?: Json | null
+          created_at?: string
+          date?: string
+          failed_commands?: number | null
+          id?: string
+          providers_used?: Json | null
+          successful_commands?: number | null
+          total_api_cost?: number | null
+          total_commands?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          categories_used?: Json | null
+          created_at?: string
+          date?: string
+          failed_commands?: number | null
+          id?: string
+          providers_used?: Json | null
+          successful_commands?: number | null
+          total_api_cost?: number | null
+          total_commands?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_subscriptions: {
+        Row: {
+          cancel_at_period_end: boolean | null
+          created_at: string
+          current_period_end: string
+          current_period_start: string
+          id: string
+          plan_id: string
+          status: string
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cancel_at_period_end?: boolean | null
+          created_at?: string
+          current_period_end: string
+          current_period_start?: string
+          id?: string
+          plan_id: string
+          status?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cancel_at_period_end?: boolean | null
+          created_at?: string
+          current_period_end?: string
+          current_period_start?: string
+          id?: string
+          plan_id?: string
+          status?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_subscriptions_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "subscription_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      check_user_limits: {
+        Args: { api_cost_to_add?: number; user_uuid: string }
+        Returns: {
+          current_commands: number
+          current_cost: number
+          max_commands: number
+          max_cost: number
+          within_command_limit: boolean
+          within_cost_limit: boolean
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
