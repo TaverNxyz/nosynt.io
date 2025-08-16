@@ -432,7 +432,11 @@ export default function ApiKeys() {
                   </div>
                 </div>
               </div>
-              <Button onClick={handleAddKey} className="bg-gradient-primary shadow-primary">
+              <Button 
+                onClick={handleAddKey} 
+                className="w-full bg-primary text-primary-foreground hover:bg-primary/90 font-semibold py-2 px-4 rounded-md"
+                size="lg"
+              >
                 <Key className="h-4 w-4 mr-2" />
                 Add API Key
               </Button>
