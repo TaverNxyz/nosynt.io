@@ -46,7 +46,7 @@ export default function Index() {
       <div className="text-center space-y-6 py-12 relative z-10">
         <div className="space-y-4 animate-slide-in-bottom">
           <div className="relative inline-block">
-            <h1 className="text-4xl md:text-6xl font-bold bg-gradient-primary bg-clip-text text-transparent relative z-10">
+            <h1 className="text-4xl md:text-6xl font-bold text-white relative z-10">
               NoSynt.io
             </h1>
             <div className="absolute inset-0 bg-gradient-primary bg-clip-text text-transparent blur-sm opacity-50 animate-pulse-glow">
