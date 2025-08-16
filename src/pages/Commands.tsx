@@ -591,7 +591,7 @@ export default function Commands() {
                   <Button 
                     onClick={executeCommand} 
                     disabled={isExecuting || !commandInput.trim()}
-                    className="bg-gradient-primary hover:shadow-glow"
+                    className="bg-gradient-primary hover:shadow-glow text-white"
                   >
                     {isExecuting ? (
                       <>
