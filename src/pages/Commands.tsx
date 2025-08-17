@@ -764,59 +764,35 @@ export default function Commands() {
       }
     }
     
-    // Simulate realistic command execution with proper delay for other commands
-    const delay = Math.random() * 2000 + 1000; // 1-3 seconds
-    setTimeout(async () => {
-      const success = Math.random() > 0.05; // 95% success rate
-      const mockData = success ? generateMockResults(selectedCommand.id) : null;
-      apiCost = selectedCommand.apiRequired ? (Math.random() * 2 + 0.1) : 0;
-      
-      const mockResult: CommandResult = {
-        command: `${selectedCommand.name}: ${commandInput}`,
-        status: success ? 'success' : 'error',
-        data: success ? {
-          query: commandInput,
-          provider: selectedCommand.provider,
-          results: mockData,
-          execution_time: `${(delay / 1000).toFixed(2)}s`
-        } : {
-          error: "Service temporarily unavailable",
-          provider: selectedCommand.provider,
-          retry_in: "5 minutes"
-        },
-        timestamp: new Date()
-      };
-      
-      // Update execution record with proper integer value
-      await supabase
-        .from('command_executions')
-        .update({
-          status: success ? 'success' : 'error',
-          output_data: mockResult.data,
-          execution_time_ms: Math.round(delay), // Ensure integer value
-          api_cost: Math.round(apiCost * 100) / 100, // Round to 2 decimal places
-          error_message: success ? null : mockResult.data.error
-        })
-        .eq('id', execution.id);
-      
-      setResults(prev => [mockResult, ...prev]);
-      setIsExecuting(false);
-      setCommandInput("");
-      
-      if (success) {
-        toast.success(`${selectedCommand.name} executed successfully`);
-        // Auto-sync to Discord only if enabled
-        try {
-          await syncToDiscord(selectedCommand, mockResult.data);
-          toast.success(`${selectedCommand.name} executed successfully`);
-        } catch (error) {
-          console.error('Discord sync error:', error);
-          toast.success(`${selectedCommand.name} executed (Discord sync disabled)`);
-        }
-      } else {
-        toast.error(`${selectedCommand.name} execution failed`);
-      }
-    }, delay);
+    // For commands without real API integration, show error
+    const errorResult: CommandResult = {
+      command: `${selectedCommand.name}: ${commandInput}`,
+      status: 'error',
+      data: {
+        error: `${selectedCommand.name} requires proper API integration - this command is not yet implemented`,
+        provider: selectedCommand.provider,
+        help: "Configure the required API keys and integration in Settings"
+      },
+      timestamp: new Date()
+    };
+    
+    // Update execution record
+    await supabase
+      .from('command_executions')
+      .update({
+        status: 'error',
+        output_data: errorResult.data,
+        execution_time_ms: 100,
+        api_cost: 0,
+        error_message: errorResult.data.error
+      })
+      .eq('id', execution.id);
+    
+    setResults(prev => [errorResult, ...prev]);
+    setIsExecuting(false);
+    setCommandInput("");
+    
+    toast.error(`${selectedCommand.name} - Integration not implemented`);
   };
 
   // Discord sync function
@@ -854,86 +830,7 @@ export default function Commands() {
     }
   };
 
-  const generateMockResults = (commandId: string) => {
-    switch (commandId) {
-      case "discord":
-        return {
-          user_id: "123456789012345678",
-          username: "target_user#1234",
-          created_at: "2020-03-15T10:30:00Z",
-          mutual_servers: 12,
-          associated_ips: ["192.168.1.100", "10.0.0.50"],
-          last_seen: "2024-08-15T14:22:00Z"
-        };
-      case "breach":
-        return {
-          email: "victim@company.com",
-          breaches_found: 5,
-          databases: ["Collection #1", "LinkedIn 2012", "Adobe 2013"],
-          passwords: ["hashed_password_1", "hashed_password_2"],
-          first_seen: "2012-06-05"
-        };
-      case "email":
-        return {
-          email: "target@company.com",
-          domain: "company.com",
-          sources: ["LinkedIn", "Company Website", "GitHub"],
-          confidence: 95,
-          social_profiles: ["linkedin.com/in/target", "twitter.com/target"]
-        };
-      case "phone":
-        return {
-          number: "+1234567890",
-          carrier: "Verizon Wireless",
-          location: "New York, NY",
-          type: "Mobile",
-          valid: true,
-          country_code: "US"
-        };
-      case "ip":
-        return {
-          ip: "192.168.1.1",
-          country: "United States",
-          region: "California",
-          city: "San Francisco",
-          isp: "Example ISP",
-          threat_level: "low"
-        };
-      case "npd":
-        return {
-          name: "John Doe",
-          age: 35,
-          addresses: ["123 Main St, Anytown, ST 12345"],
-          phone_numbers: ["+1234567890"],
-          relatives: ["Jane Doe", "Bob Doe"],
-          confidence: 89
-        };
-      case "github":
-        return {
-          username: "target_user",
-          email: "dev@example.com",
-          repos: 42,
-          followers: 156,
-          public_repos: ["project1", "project2"],
-          languages: ["JavaScript", "Python", "Go"]
-        };
-      case "shodan":
-        return {
-          ip: "192.168.1.1",
-          open_ports: [22, 80, 443],
-          services: ["SSH", "HTTP", "HTTPS"],
-          vulnerabilities: ["CVE-2023-1234"],
-          last_scan: "2024-08-15"
-        };
-      default:
-        return {
-          status: "success",
-          results_found: Math.floor(Math.random() * 100) + 1,
-          confidence: "high",
-          execution_time: `${(Math.random() * 3 + 0.5).toFixed(2)}s`
-        };
-    }
-  };
+  // Removed mock data generation - all commands should use real integrations
 
   if (!user) {
     return (
