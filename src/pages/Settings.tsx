@@ -174,6 +174,24 @@ export default function SystemSettings() {
     }
   };
 
+  // Internal function for auto-saving Discord settings
+  const updateDiscordSettingsInternal = async (settings: typeof discordSettings) => {
+    if (!user) return;
+
+    try {
+      const { error } = await supabase
+        .from('discord_settings')
+        .upsert({
+          user_id: user.id,
+          ...settings
+        });
+
+      if (error) throw error;
+    } catch (error) {
+      console.error('Failed to auto-save Discord settings:', error);
+    }
+  };
+
   const updateTelegramSettings = async () => {
     if (!user) return;
 
@@ -191,6 +209,24 @@ export default function SystemSettings() {
     } catch (error) {
       console.error('Failed to update Telegram settings:', error);
       toast.error('Failed to update Telegram settings');
+    }
+  };
+
+  // Internal function for auto-saving Telegram settings
+  const updateTelegramSettingsInternal = async (settings: typeof telegramSettings) => {
+    if (!user) return;
+
+    try {
+      const { error } = await supabase
+        .from('telegram_settings')
+        .upsert({
+          user_id: user.id,
+          ...settings
+        });
+
+      if (error) throw error;
+    } catch (error) {
+      console.error('Failed to auto-save Telegram settings:', error);
     }
   };
 
@@ -540,11 +576,16 @@ export default function SystemSettings() {
                 </div>
               </div>
               
-              <div className="space-y-3">
+               <div className="space-y-3">
                 <div className="flex items-center space-x-2">
                   <Switch
                     checked={discordSettings.auto_sync_enabled}
-                    onCheckedChange={(checked) => setDiscordSettings(prev => ({ ...prev, auto_sync_enabled: checked }))}
+                    onCheckedChange={(checked) => {
+                      const newSettings = { ...discordSettings, auto_sync_enabled: checked };
+                      setDiscordSettings(newSettings);
+                      // Auto-save when changed
+                      updateDiscordSettingsInternal(newSettings);
+                    }}
                   />
                   <Label>Auto-sync command results</Label>
                 </div>
@@ -552,7 +593,12 @@ export default function SystemSettings() {
                 <div className="flex items-center space-x-2">
                   <Switch
                     checked={discordSettings.sync_successful_only}
-                    onCheckedChange={(checked) => setDiscordSettings(prev => ({ ...prev, sync_successful_only: checked }))}
+                    onCheckedChange={(checked) => {
+                      const newSettings = { ...discordSettings, sync_successful_only: checked };
+                      setDiscordSettings(newSettings);
+                      // Auto-save when changed
+                      updateDiscordSettingsInternal(newSettings);
+                    }}
                   />
                   <Label>Only sync successful results</Label>
                 </div>
@@ -650,11 +696,16 @@ export default function SystemSettings() {
                 </div>
               </div>
               
-              <div className="space-y-3">
+               <div className="space-y-3">
                 <div className="flex items-center space-x-2">
                   <Switch
                     checked={telegramSettings.auto_sync_enabled}
-                    onCheckedChange={(checked) => setTelegramSettings(prev => ({ ...prev, auto_sync_enabled: checked }))}
+                    onCheckedChange={(checked) => {
+                      const newSettings = { ...telegramSettings, auto_sync_enabled: checked };
+                      setTelegramSettings(newSettings);
+                      // Auto-save when changed
+                      updateTelegramSettingsInternal(newSettings);
+                    }}
                   />
                   <Label>Auto-sync command results</Label>
                 </div>
@@ -662,7 +713,12 @@ export default function SystemSettings() {
                 <div className="flex items-center space-x-2">
                   <Switch
                     checked={telegramSettings.sync_successful_only}
-                    onCheckedChange={(checked) => setTelegramSettings(prev => ({ ...prev, sync_successful_only: checked }))}
+                    onCheckedChange={(checked) => {
+                      const newSettings = { ...telegramSettings, sync_successful_only: checked };
+                      setTelegramSettings(newSettings);
+                      // Auto-save when changed
+                      updateTelegramSettingsInternal(newSettings);
+                    }}
                   />
                   <Label>Only sync successful results</Label>
                 </div>

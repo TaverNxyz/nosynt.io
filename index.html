@@ -6,16 +6,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>deaddrop.io</title>
     <script>
-      // Animated tab title with rotational colors
+      // Animated tab title with rapid color flashing
       (function() {
-        const colors = ['🔴', '🟠', '🟡', '🟢', '🔵', '🟣', '⚫', '⚪'];
+        const colors = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF', '#FFFFFF', '#FF8000'];
         const baseTitle = 'deaddrop.io';
         let colorIndex = 0;
         
+        // Create style element for title color changes
+        const style = document.createElement('style');
+        document.head.appendChild(style);
+        
         setInterval(() => {
-          document.title = colors[colorIndex] + ' ' + baseTitle + ' ' + colors[colorIndex];
+          const color = colors[colorIndex];
+          style.textContent = `title { color: ${color} !important; }`;
+          document.title = baseTitle;
           colorIndex = (colorIndex + 1) % colors.length;
-        }, 500);
+        }, 150); // Faster flashing - 150ms intervals
       })();
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
