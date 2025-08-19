@@ -202,22 +202,64 @@ class KeyForgeAPITester:
             self.log_test("POST /api/api-keys - Unauthenticated", False, f"Error: {str(e)}")
 
     def test_osint_integrations_mock_auth(self):
-        """Test OSINT integrations with mock authentication"""
-        print("🔍 Testing OSINT Integrations (Mock Auth)")
+        """Test OSINT integrations - PRODUCTION VERSION: Real APIs or proper 503 errors"""
+        print("🔍 Testing OSINT Integrations - NO MOCK DATA")
         print("-" * 30)
         
-        # Create a mock JWT token for testing
+        # Create a mock JWT token for testing (will fail auth but test error handling)
         mock_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IlRlc3QgVXNlciIsImlhdCI6MTUxNjIzOTAyMn0.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
         headers = {"Authorization": f"Bearer {mock_token}"}
         
-        osint_tests = [
-            ("virustotal", "Domain Reputation Check", "Domain Analysis", self.test_domain, "VirusTotal Domain"),
-            ("hunter.io", "Email Verification", "Email Analysis", self.test_email, "Hunter.io Email"),
-            ("shodan", "IP Lookup", "IP Analysis", self.test_ip, "Shodan IP"),
-            ("unknown_provider", "Generic Test", "Test Category", "test_input", "Generic Mock")
+        # Test VirusTotal (should work with real API key)
+        print("   🦠 Testing VirusTotal (Real API)")
+        try:
+            payload = {
+                "command_name": "Domain Reputation Check",
+                "command_category": "Domain Analysis", 
+                "provider": "virustotal",
+                "input_data": self.test_domain
+            }
+            response = self.session.post(f"{self.base_url}/commands/execute", json=payload, headers=headers, timeout=30)
+            
+            if response.status_code == 200:
+                data = response.json()
+                self.log_test(
+                    "VirusTotal Domain Check - Real API", 
+                    True, 
+                    f"Success: {data.get('success')}, Time: {data.get('execution_time_ms')}ms"
+                )
+            elif response.status_code in [401, 403]:
+                self.log_test(
+                    "VirusTotal Domain Check - Real API", 
+                    True, 
+                    "Authentication properly enforced (expected with mock token)"
+                )
+            elif response.status_code == 503:
+                self.log_test(
+                    "VirusTotal Domain Check - Real API", 
+                    False, 
+                    "VirusTotal API key should be configured but got 503"
+                )
+            else:
+                self.log_test(
+                    "VirusTotal Domain Check - Real API", 
+                    False, 
+                    f"Status: {response.status_code}",
+                    response.json() if response.content else None
+                )
+        except Exception as e:
+            self.log_test("VirusTotal Domain Check - Real API", False, f"Error: {str(e)}")
+
+        # Test services that should return 503 errors (no API keys configured)
+        missing_api_tests = [
+            ("hunter.io", "Email Verification", "Email Analysis", self.test_email, "Hunter.io API key not configured"),
+            ("shodan", "IP Lookup", "IP Analysis", self.test_ip, "Shodan API key not configured"), 
+            ("criminal ip", "IP Reputation", "IP Analysis", self.test_ip, "Criminal IP API key not configured"),
+            ("ipqualityscore", "IP Quality Check", "IP Analysis", self.test_ip, "IPQualityScore API key not configured")
         ]
         
-        for provider, command_name, category, input_data, test_label in osint_tests:
+        print("   🚫 Testing Missing API Key Error Handling")
+        for provider, command_name, category, input_data, expected_error in missing_api_tests:
             try:
                 payload = {
                     "command_name": command_name,
@@ -227,28 +269,78 @@ class KeyForgeAPITester:
                 }
                 response = self.session.post(f"{self.base_url}/commands/execute", json=payload, headers=headers, timeout=30)
                 
-                if response.status_code == 200:
+                if response.status_code == 503:
                     data = response.json()
-                    self.log_test(
-                        f"{test_label} - Mock Auth", 
-                        True, 
-                        f"Success: {data.get('success')}, Time: {data.get('execution_time_ms')}ms"
-                    )
+                    error_msg = data.get('detail', '')
+                    if expected_error.lower() in error_msg.lower():
+                        self.log_test(
+                            f"{provider.title()} - Missing API Key Error", 
+                            True, 
+                            f"Correct 503 error: {error_msg}"
+                        )
+                    else:
+                        self.log_test(
+                            f"{provider.title()} - Missing API Key Error", 
+                            False, 
+                            f"Wrong error message. Expected: {expected_error}, Got: {error_msg}"
+                        )
                 elif response.status_code in [401, 403]:
                     self.log_test(
-                        f"{test_label} - Mock Auth", 
+                        f"{provider.title()} - Missing API Key Error", 
                         True, 
                         "Authentication properly enforced (expected with mock token)"
                     )
                 else:
                     self.log_test(
-                        f"{test_label} - Mock Auth", 
+                        f"{provider.title()} - Missing API Key Error", 
                         False, 
-                        f"Status: {response.status_code}",
+                        f"Expected 503 for missing API key, got {response.status_code}",
                         response.json() if response.content else None
                     )
             except Exception as e:
-                self.log_test(f"{test_label} - Mock Auth", False, f"Error: {str(e)}")
+                self.log_test(f"{provider.title()} - Missing API Key Error", False, f"Error: {str(e)}")
+
+        # Test unknown provider (should return 501)
+        print("   ❓ Testing Unknown Provider")
+        try:
+            payload = {
+                "command_name": "Generic Test",
+                "command_category": "Test Category", 
+                "provider": "unknown_provider",
+                "input_data": "test_input"
+            }
+            response = self.session.post(f"{self.base_url}/commands/execute", json=payload, headers=headers, timeout=30)
+            
+            if response.status_code == 501:
+                data = response.json()
+                error_msg = data.get('detail', '')
+                if 'not implemented yet' in error_msg.lower():
+                    self.log_test(
+                        "Unknown Provider - Not Implemented Error", 
+                        True, 
+                        f"Correct 501 error: {error_msg}"
+                    )
+                else:
+                    self.log_test(
+                        "Unknown Provider - Not Implemented Error", 
+                        False, 
+                        f"Wrong error message: {error_msg}"
+                    )
+            elif response.status_code in [401, 403]:
+                self.log_test(
+                    "Unknown Provider - Not Implemented Error", 
+                    True, 
+                    "Authentication properly enforced (expected with mock token)"
+                )
+            else:
+                self.log_test(
+                    "Unknown Provider - Not Implemented Error", 
+                    False, 
+                    f"Expected 501 for unknown provider, got {response.status_code}",
+                    response.json() if response.content else None
+                )
+        except Exception as e:
+            self.log_test("Unknown Provider - Not Implemented Error", False, f"Error: {str(e)}")
 
     def test_error_handling(self):
         """Test error handling for invalid requests"""
