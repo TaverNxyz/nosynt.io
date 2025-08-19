@@ -471,6 +471,7 @@ class KeyForgeAPITester:
         self.test_captcha_endpoint()
         self.test_unauthenticated_command_execution()
         self.test_unauthenticated_api_key_endpoints()
+        self.test_osint_integrations_mock_auth()
         self.test_cors_headers()
         self.test_error_handling()
         self.test_response_formats()
