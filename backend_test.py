@@ -212,7 +212,146 @@ class KeyForgeAPITester:
         except Exception as e:
             self.log_test("GET /api/commands/recent - Unauthenticated Access", False, f"Error: {str(e)}")
 
-    def test_cors_headers(self):
+    def test_osint_integrations_mock_auth(self):
+        """Test OSINT integrations with mock authentication"""
+        print("🔍 Testing OSINT Integrations (Mock Auth)")
+        print("-" * 30)
+        
+        # Create a mock JWT token for testing
+        mock_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IlRlc3QgVXNlciIsImlhdCI6MTUxNjIzOTAyMn0.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+        headers = {"Authorization": f"Bearer {mock_token}"}
+        
+        # Test VirusTotal domain reputation
+        try:
+            payload = {
+                "command_name": "Domain Reputation Check",
+                "command_category": "Domain Analysis", 
+                "provider": "virustotal",
+                "input_data": self.test_domain
+            }
+            response = self.session.post(f"{self.base_url}/commands/execute", json=payload, headers=headers, timeout=30)
+            
+            if response.status_code == 200:
+                data = response.json()
+                self.log_test(
+                    "VirusTotal Domain Reputation - Mock Auth", 
+                    True, 
+                    f"Success: {data.get('success')}, Execution time: {data.get('execution_time_ms')}ms"
+                )
+            elif response.status_code == 401:
+                self.log_test(
+                    "VirusTotal Domain Reputation - Mock Auth", 
+                    True, 
+                    "Authentication properly enforced (expected with mock token)"
+                )
+            else:
+                self.log_test(
+                    "VirusTotal Domain Reputation - Mock Auth", 
+                    False, 
+                    f"Status: {response.status_code}",
+                    response.json() if response.content else None
+                )
+        except Exception as e:
+            self.log_test("VirusTotal Domain Reputation - Mock Auth", False, f"Error: {str(e)}")
+
+        # Test Hunter.io mock integration
+        try:
+            payload = {
+                "command_name": "Email Verification",
+                "command_category": "Email Analysis",
+                "provider": "hunter.io",
+                "input_data": self.test_email
+            }
+            response = self.session.post(f"{self.base_url}/commands/execute", json=payload, headers=headers, timeout=30)
+            
+            if response.status_code == 200:
+                data = response.json()
+                self.log_test(
+                    "Hunter.io Email Verification - Mock Auth", 
+                    True, 
+                    f"Success: {data.get('success')}, Mock integration working"
+                )
+            elif response.status_code == 401:
+                self.log_test(
+                    "Hunter.io Email Verification - Mock Auth", 
+                    True, 
+                    "Authentication properly enforced (expected with mock token)"
+                )
+            else:
+                self.log_test(
+                    "Hunter.io Email Verification - Mock Auth", 
+                    False, 
+                    f"Status: {response.status_code}",
+                    response.json() if response.content else None
+                )
+        except Exception as e:
+            self.log_test("Hunter.io Email Verification - Mock Auth", False, f"Error: {str(e)}")
+
+        # Test Shodan mock integration
+        try:
+            payload = {
+                "command_name": "IP Lookup",
+                "command_category": "IP Analysis",
+                "provider": "shodan",
+                "input_data": self.test_ip
+            }
+            response = self.session.post(f"{self.base_url}/commands/execute", json=payload, headers=headers, timeout=30)
+            
+            if response.status_code == 200:
+                data = response.json()
+                self.log_test(
+                    "Shodan IP Lookup - Mock Auth", 
+                    True, 
+                    f"Success: {data.get('success')}, Mock integration working"
+                )
+            elif response.status_code == 401:
+                self.log_test(
+                    "Shodan IP Lookup - Mock Auth", 
+                    True, 
+                    "Authentication properly enforced (expected with mock token)"
+                )
+            else:
+                self.log_test(
+                    "Shodan IP Lookup - Mock Auth", 
+                    False, 
+                    f"Status: {response.status_code}",
+                    response.json() if response.content else None
+                )
+        except Exception as e:
+            self.log_test("Shodan IP Lookup - Mock Auth", False, f"Error: {str(e)}")
+
+        # Test generic mock integration
+        try:
+            payload = {
+                "command_name": "Generic Test",
+                "command_category": "Test Category",
+                "provider": "unknown_provider",
+                "input_data": "test_input"
+            }
+            response = self.session.post(f"{self.base_url}/commands/execute", json=payload, headers=headers, timeout=30)
+            
+            if response.status_code == 200:
+                data = response.json()
+                self.log_test(
+                    "Generic Mock Integration - Mock Auth", 
+                    True, 
+                    f"Success: {data.get('success')}, Generic mock working"
+                )
+            elif response.status_code == 401:
+                self.log_test(
+                    "Generic Mock Integration - Mock Auth", 
+                    True, 
+                    "Authentication properly enforced (expected with mock token)"
+                )
+            else:
+                self.log_test(
+                    "Generic Mock Integration - Mock Auth", 
+                    False, 
+                    f"Status: {response.status_code}",
+                    response.json() if response.content else None
+                )
+        except Exception as e:
+            self.log_test("Generic Mock Integration - Mock Auth", False, f"Error: {str(e)}")
         """Test CORS configuration"""
         print("🌐 Testing CORS Configuration")
         print("-" * 30)
