@@ -150,7 +150,7 @@ class OSINTService:
                         'country': data.get('country', 'Unknown'),
                         'asn': data.get('asn', 'Unknown'),
                         'as_owner': data.get('as_owner', 'Unknown'),
-                        'detected_urls': data.get('detected_urls', [])[:5,
+                        'detected_urls': data.get('detected_urls', [])[:5],
                         'detected_communicating_samples': len(data.get('detected_communicating_samples', [])),
                         'reputation_score': len(data.get('detected_urls', [])),
                         'last_analysis_date': data.get('scan_date', 'N/A')
