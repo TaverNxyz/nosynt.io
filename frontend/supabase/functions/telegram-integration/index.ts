@@ -1,164 +1,131 @@
-import "https://deno.land/x/xhr@0.1.0/mod.ts";
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response('ok', { headers: corsHeaders })
   }
 
   try {
-    const { action, data } = await req.json();
+    const { executionId, userId } = await req.json()
     
-    switch (action) {
-      case 'send_command_results':
-        return await sendCommandResults(data);
-      case 'setup_payment_tracking':
-        return await setupPaymentTracking(data);
-      case 'verify_payment':
-        return await verifyPayment(data);
-      case 'collect_user_info':
-        return await collectUserInfo(data);
-      default:
-        throw new Error('Invalid action specified');
+    // Initialize Supabase client
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    )
+
+    // Get execution details
+    const { data: execution, error: execError } = await supabaseClient
+      .from('command_executions')
+      .select('*')
+      .eq('id', executionId)
+      .single()
+
+    if (execError || !execution) {
+      throw new Error('Execution not found')
     }
 
+    // Get user's Telegram settings
+    const { data: telegramSettings, error: settingsError } = await supabaseClient
+      .from('telegram_settings')
+      .select('*')
+      .eq('user_id', userId)
+      .single()
+
+    if (settingsError || !telegramSettings || !telegramSettings.bot_token || !telegramSettings.telegram_chat_id) {
+      throw new Error('Telegram bot not configured')
+    }
+
+    // Check if auto-sync is enabled and if we should sync this execution
+    if (!telegramSettings.auto_sync_enabled) {
+      return new Response(
+        JSON.stringify({ success: false, message: 'Auto-sync disabled' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    if (telegramSettings.sync_successful_only && execution.status !== 'success') {
+      return new Response(
+        JSON.stringify({ success: false, message: 'Sync only successful executions' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    // Prepare Telegram message
+    const statusEmoji = execution.status === 'success' ? '✅' : execution.status === 'error' ? '❌' : '⏳'
+    
+    let message = `${statusEmoji} *OSINT Command Executed*\n\n`
+    message += `🔧 *Command:* ${execution.command_name}\n`
+    message += `🏢 *Provider:* ${execution.provider}\n`
+    message += `📊 *Status:* ${execution.status.toUpperCase()}\n`
+    message += `🎯 *Input:* \`${execution.input_data}\`\n`
+    message += `⏱️ *Time:* ${execution.execution_time_ms || 0}ms\n`
+    message += `💰 *Cost:* $${execution.api_cost || 0}\n`
+    message += `📅 *Date:* ${new Date(execution.created_at).toLocaleString()}\n\n`
+
+    if (execution.status === 'success' && execution.output_data) {
+      const outputPreview = JSON.stringify(execution.output_data, null, 2).substring(0, 800)
+      message += `📋 *Results:*\n\`\`\`json\n${outputPreview}${outputPreview.length >= 800 ? '\n...' : ''}\n\`\`\`\n`
+    }
+
+    if (execution.status === 'error' && execution.error_message) {
+      message += `🚨 *Error:* ${execution.error_message.substring(0, 500)}\n`
+    }
+
+    message += `\n🔗 *KeyForge OSINT Hub*`
+
+    // Send to Telegram
+    const telegramUrl = `https://api.telegram.org/bot${telegramSettings.bot_token}/sendMessage`
+    
+    const telegramResponse = await fetch(telegramUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        chat_id: telegramSettings.telegram_chat_id,
+        text: message,
+        parse_mode: 'Markdown',
+        disable_web_page_preview: true
+      })
+    })
+
+    const telegramResult = await telegramResponse.json()
+
+    if (!telegramResponse.ok) {
+      throw new Error(`Telegram API failed: ${telegramResult.description || telegramResponse.status}`)
+    }
+
+    return new Response(
+      JSON.stringify({ 
+        success: true, 
+        message: 'Successfully synced to Telegram',
+        telegram_message_id: telegramResult.result.message_id
+      }),
+      {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200,
+      },
+    )
+
   } catch (error) {
-    console.error('Error in telegram-integration function:', error);
-    return new Response(JSON.stringify({ 
-      error: error.message,
-      success: false 
-    }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    console.error('Telegram sync error:', error)
+
+    return new Response(
+      JSON.stringify({ 
+        success: false, 
+        error: error.message 
+      }),
+      {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 400,
+      },
+    )
   }
-});
-
-async function sendCommandResults(data: any) {
-  const { command, results, chatId, telegramBotToken } = data;
-  
-  if (!telegramBotToken) {
-    throw new Error('Telegram bot token not provided');
-  }
-
-  const message = formatResultsForTelegram(command, results);
-  
-  const response = await fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      chat_id: chatId,
-      text: message,
-      parse_mode: 'Markdown',
-    }),
-  });
-
-  if (!response.ok) {
-    throw new Error(`Telegram API error: ${response.status}`);
-  }
-
-  return new Response(JSON.stringify({ 
-    success: true,
-    message: 'Results sent to Telegram'
-  }), {
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-  });
-}
-
-async function setupPaymentTracking(data: any) {
-  const { paymentHash, userId, serviceRequest } = data;
-  
-  // This would integrate with your crypto payment processor
-  // For now, we'll return a mock response
-  
-  console.log(`Setting up payment tracking for hash: ${paymentHash}`);
-  
-  return new Response(JSON.stringify({ 
-    success: true,
-    trackingId: paymentHash,
-    status: 'pending',
-    message: 'Payment tracking initialized'
-  }), {
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-  });
-}
-
-async function verifyPayment(data: any) {
-  const { paymentHash, expectedAmount } = data;
-  
-  // This would check the blockchain for the payment
-  // For now, we'll return a mock verification
-  
-  console.log(`Verifying payment for hash: ${paymentHash}`);
-  
-  // Mock verification logic - replace with actual blockchain verification
-  const isValid = true; // This should check the actual blockchain
-  
-  return new Response(JSON.stringify({ 
-    success: true,
-    verified: isValid,
-    amount: expectedAmount,
-    confirmations: 6,
-    message: isValid ? 'Payment verified' : 'Payment not found'
-  }), {
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-  });
-}
-
-async function collectUserInfo(data: any) {
-  const { userId, requiredFields, telegramBotToken, chatId } = data;
-  
-  // Send interactive form to collect user info via Telegram
-  const keyboard = {
-    inline_keyboard: [
-      [{ text: "📝 Start Info Collection", callback_data: "start_collection" }],
-      [{ text: "❌ Cancel", callback_data: "cancel_collection" }]
-    ]
-  };
-
-  const response = await fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      chat_id: chatId,
-      text: "🔐 **Information Collection Required**\n\nPlease provide the required information for your OSINT request:",
-      parse_mode: 'Markdown',
-      reply_markup: keyboard
-    }),
-  });
-
-  if (!response.ok) {
-    throw new Error(`Telegram API error: ${response.status}`);
-  }
-
-  return new Response(JSON.stringify({ 
-    success: true,
-    message: 'User info collection initiated'
-  }), {
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-  });
-}
-
-function formatResultsForTelegram(command: any, results: any): string {
-  const truncatedResults = JSON.stringify(results, null, 2);
-  
-  return `🔍 **OSINT Command Executed**
-
-**Command:** ${command.name}
-**Category:** ${command.category}
-**Provider:** ${command.provider}
-
-**Results:**
-\`\`\`json
-${truncatedResults.slice(0, 3000)}${truncatedResults.length > 3000 ? '\n... (truncated)' : ''}
-\`\`\``;
-}
+})
