@@ -26,6 +26,10 @@ supabase: Client = create_client(supabase_url, supabase_key)
 
 # OSINT API Keys
 VIRUSTOTAL_API_KEY = os.environ.get('VIRUSTOTAL_API_KEY')
+HUNTER_API_KEY = os.environ.get('HUNTER_API_KEY')
+SHODAN_API_KEY = os.environ.get('SHODAN_API_KEY')
+CRIMINAL_IP_API_KEY = os.environ.get('CRIMINAL_IP_API_KEY')
+IPQUALITYSCORE_API_KEY = os.environ.get('IPQUALITYSCORE_API_KEY')
 TURNSTILE_SECRET_KEY = os.environ.get('TURNSTILE_SECRET_KEY')
 
 # Create the main app
@@ -73,13 +77,16 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
         logger.error(f"Auth error: {e}")
         raise HTTPException(status_code=401, detail="Invalid authentication")
 
-# OSINT Service Integrations
+# OSINT Service Integrations - REAL APIs ONLY
 class OSINTService:
     @staticmethod
     async def virustotal_domain_reputation(domain: str) -> Dict[str, Any]:
-        """VirusTotal domain reputation check"""
+        """VirusTotal domain reputation check - REAL API"""
         if not VIRUSTOTAL_API_KEY:
-            raise HTTPException(status_code=500, detail="VirusTotal API key not configured")
+            raise HTTPException(
+                status_code=503, 
+                detail="VirusTotal API key not configured. Please add your VirusTotal API key to environment variables."
+            )
         
         url = f"https://www.virustotal.com/vtapi/v2/domain/report"
         params = {
@@ -88,19 +95,30 @@ class OSINTService:
         }
         
         async with httpx.AsyncClient() as client:
-            response = await client.get(url, params=params)
+            response = await client.get(url, params=params, timeout=30)
             if response.status_code == 200:
                 data = response.json()
                 return {
                     'success': True,
                     'data': {
                         'domain': domain,
-                        'detected_urls': data.get('detected_urls', [])[:5],  # Limit to 5 results
+                        'detected_urls': data.get('detected_urls', [])[:5],
                         'categories': data.get('categories', []),
-                        'subdomains': data.get('subdomains', [])[:10],  # Limit to 10 results
-                        'resolutions': data.get('resolutions', [])[:5],  # Limit to 5 results
+                        'subdomains': data.get('subdomains', [])[:10],
+                        'resolutions': data.get('resolutions', [])[:5],
                         'reputation_score': len(data.get('detected_urls', [])),
-                        'last_analysis_date': data.get('scan_date', 'N/A')
+                        'last_analysis_date': data.get('scan_date', 'N/A'),
+                        'whois': data.get('whois', 'No WHOIS data available')
+                    }
+                }
+            elif response.status_code == 204:
+                return {
+                    'success': True,
+                    'data': {
+                        'domain': domain,
+                        'status': 'No data available for this domain',
+                        'reputation_score': 0,
+                        'message': 'Domain not found in VirusTotal database'
                     }
                 }
             else:
@@ -108,9 +126,12 @@ class OSINTService:
 
     @staticmethod
     async def virustotal_ip_reputation(ip: str) -> Dict[str, Any]:
-        """VirusTotal IP reputation check"""
+        """VirusTotal IP reputation check - REAL API"""
         if not VIRUSTOTAL_API_KEY:
-            raise HTTPException(status_code=500, detail="VirusTotal API key not configured")
+            raise HTTPException(
+                status_code=503, 
+                detail="VirusTotal API key not configured. Please add your VirusTotal API key to environment variables."
+            )
         
         url = f"https://www.virustotal.com/vtapi/v2/ip-address/report"
         params = {
@@ -119,7 +140,7 @@ class OSINTService:
         }
         
         async with httpx.AsyncClient() as client:
-            response = await client.get(url, params=params)
+            response = await client.get(url, params=params, timeout=30)
             if response.status_code == 200:
                 data = response.json()
                 return {
@@ -129,68 +150,165 @@ class OSINTService:
                         'country': data.get('country', 'Unknown'),
                         'asn': data.get('asn', 'Unknown'),
                         'as_owner': data.get('as_owner', 'Unknown'),
-                        'detected_urls': data.get('detected_urls', [])[:5],
+                        'detected_urls': data.get('detected_urls', [])[:5,
                         'detected_communicating_samples': len(data.get('detected_communicating_samples', [])),
                         'reputation_score': len(data.get('detected_urls', [])),
                         'last_analysis_date': data.get('scan_date', 'N/A')
+                    }
+                }
+            elif response.status_code == 204:
+                return {
+                    'success': True,
+                    'data': {
+                        'ip': ip,
+                        'status': 'No data available for this IP',
+                        'reputation_score': 0,
+                        'message': 'IP not found in VirusTotal database'
                     }
                 }
             else:
                 raise HTTPException(status_code=400, detail=f"VirusTotal API error: {response.text}")
 
     @staticmethod
-    async def mock_hunter_email_verify(email: str) -> Dict[str, Any]:
-        """Mock Hunter.io email verification"""
-        await asyncio.sleep(1)  # Simulate API call delay
+    async def hunter_email_verify(email: str) -> Dict[str, Any]:
+        """Hunter.io email verification - REAL API ONLY"""
+        if not HUNTER_API_KEY:
+            raise HTTPException(
+                status_code=503,
+                detail="Hunter.io API key not configured. Please add your Hunter.io API key to use email verification services."
+            )
         
-        # Generate realistic mock data
-        email_parts = email.split('@')
-        domain = email_parts[1] if len(email_parts) > 1 else 'unknown.com'
-        
-        return {
-            'success': True,
-            'data': {
-                'email': email,
-                'result': 'deliverable' if '@gmail.com' in email or '@yahoo.com' in email else 'risky',
-                'score': 85 if '@gmail.com' in email else 65,
-                'regexp': True,
-                'gibberish': False,
-                'disposable': False,
-                'webmail': '@gmail.com' in email or '@yahoo.com' in email,
-                'mx_records': True,
-                'smtp_server': True,
-                'smtp_check': True,
-                'accept_all': False,
-                'block': False,
-                'domain': domain,
-                'sources': ['hunter_api_mock']
-            }
+        url = "https://api.hunter.io/v2/email-verifier"
+        params = {
+            'email': email,
+            'api_key': HUNTER_API_KEY
         }
+        
+        async with httpx.AsyncClient() as client:
+            response = await client.get(url, params=params, timeout=30)
+            if response.status_code == 200:
+                data = response.json()
+                email_data = data.get('data', {})
+                return {
+                    'success': True,
+                    'data': {
+                        'email': email,
+                        'result': email_data.get('result', 'unknown'),
+                        'score': email_data.get('score', 0),
+                        'regexp': email_data.get('regexp', False),
+                        'gibberish': email_data.get('gibberish', True),
+                        'disposable': email_data.get('disposable', True),
+                        'webmail': email_data.get('webmail', False),
+                        'mx_records': email_data.get('mx_records', False),
+                        'smtp_server': email_data.get('smtp_server', False),
+                        'smtp_check': email_data.get('smtp_check', False),
+                        'accept_all': email_data.get('accept_all', False),
+                        'block': email_data.get('block', True),
+                        'sources': email_data.get('sources', [])
+                    }
+                }
+            else:
+                raise HTTPException(status_code=400, detail=f"Hunter.io API error: {response.text}")
 
     @staticmethod
-    async def mock_shodan_ip_lookup(ip: str) -> Dict[str, Any]:
-        """Mock Shodan IP lookup"""
-        await asyncio.sleep(1)  # Simulate API call delay
+    async def shodan_ip_lookup(ip: str) -> Dict[str, Any]:
+        """Shodan IP lookup - REAL API ONLY"""
+        if not SHODAN_API_KEY:
+            raise HTTPException(
+                status_code=503,
+                detail="Shodan API key not configured. Please add your Shodan API key to use IP intelligence services."
+            )
         
-        return {
-            'success': True,
-            'data': {
-                'ip': ip,
-                'city': 'San Francisco',
-                'country_name': 'United States',
-                'country_code': 'US',
-                'latitude': 37.7749,
-                'longitude': -122.4194,
-                'org': 'Example Organization',
-                'isp': 'Example ISP',
-                'ports': [22, 80, 443, 8080],
-                'hostnames': [f'host-{ip.replace(".", "-")}.example.com'],
-                'domains': ['example.com'],
-                'tags': ['cloud', 'hosting'],
-                'vulns': ['CVE-2021-44228'] if '192.168' not in ip else [],
-                'last_update': datetime.now().isoformat()
-            }
-        }
+        url = f"https://api.shodan.io/shodan/host/{ip}"
+        params = {'key': SHODAN_API_KEY}
+        
+        async with httpx.AsyncClient() as client:
+            response = await client.get(url, params=params, timeout=30)
+            if response.status_code == 200:
+                data = response.json()
+                return {
+                    'success': True,
+                    'data': {
+                        'ip': ip,
+                        'city': data.get('city', 'Unknown'),
+                        'country_name': data.get('country_name', 'Unknown'),
+                        'country_code': data.get('country_code', 'XX'),
+                        'latitude': data.get('latitude'),
+                        'longitude': data.get('longitude'),
+                        'org': data.get('org', 'Unknown'),
+                        'isp': data.get('isp', 'Unknown'),
+                        'ports': data.get('ports', []),
+                        'hostnames': data.get('hostnames', []),
+                        'domains': data.get('domains', []),
+                        'tags': data.get('tags', []),
+                        'vulns': list(data.get('vulns', [])),
+                        'last_update': data.get('last_update'),
+                        'os': data.get('os'),
+                        'asn': data.get('asn')
+                    }
+                }
+            elif response.status_code == 404:
+                return {
+                    'success': True,
+                    'data': {
+                        'ip': ip,
+                        'status': 'No data available for this IP',
+                        'message': 'IP not found in Shodan database'
+                    }
+                }
+            else:
+                raise HTTPException(status_code=400, detail=f"Shodan API error: {response.text}")
+
+    @staticmethod
+    async def criminal_ip_lookup(ip: str) -> Dict[str, Any]:
+        """Criminal IP lookup - REAL API ONLY"""
+        if not CRIMINAL_IP_API_KEY:
+            raise HTTPException(
+                status_code=503,
+                detail="Criminal IP API key not configured. Please add your Criminal IP API key to use threat intelligence services."
+            )
+        
+        url = f"https://api.criminalip.io/v1/ip/reputation"
+        headers = {'x-api-key': CRIMINAL_IP_API_KEY}
+        params = {'ip': ip}
+        
+        async with httpx.AsyncClient() as client:
+            response = await client.get(url, headers=headers, params=params, timeout=30)
+            if response.status_code == 200:
+                data = response.json()
+                return {
+                    'success': True,
+                    'data': data
+                }
+            else:
+                raise HTTPException(status_code=400, detail=f"Criminal IP API error: {response.text}")
+
+    @staticmethod
+    async def ipqualityscore_check(target: str, check_type: str = 'ip') -> Dict[str, Any]:
+        """IPQualityScore check - REAL API ONLY"""
+        if not IPQUALITYSCORE_API_KEY:
+            raise HTTPException(
+                status_code=503,
+                detail="IPQualityScore API key not configured. Please add your IPQualityScore API key to use reputation services."
+            )
+        
+        if check_type == 'ip':
+            url = f"https://ipqualityscore.com/api/json/ip/{IPQUALITYSCORE_API_KEY}/{target}"
+        elif check_type == 'email':
+            url = f"https://ipqualityscore.com/api/json/email/{IPQUALITYSCORE_API_KEY}/{target}"
+        else:
+            url = f"https://ipqualityscore.com/api/json/url/{IPQUALITYSCORE_API_KEY}/{target}"
+        
+        async with httpx.AsyncClient() as client:
+            response = await client.get(url, timeout=30)
+            if response.status_code == 200:
+                data = response.json()
+                return {
+                    'success': True,
+                    'data': data
+                }
+            else:
+                raise HTTPException(status_code=400, detail=f"IPQualityScore API error: {response.text}")
 
 # API Routes
 @api_router.get("/")
@@ -199,18 +317,25 @@ async def root():
 
 @api_router.get("/health")
 async def health_check():
+    services = {
+        "supabase": "connected" if supabase_url and supabase_key else "not_configured",
+        "virustotal": "configured" if VIRUSTOTAL_API_KEY else "not_configured",
+        "hunter_io": "configured" if HUNTER_API_KEY else "not_configured",
+        "shodan": "configured" if SHODAN_API_KEY else "not_configured",
+        "criminal_ip": "configured" if CRIMINAL_IP_API_KEY else "not_configured",
+        "ipqualityscore": "configured" if IPQUALITYSCORE_API_KEY else "not_configured"
+    }
+    
     return {
         "status": "healthy",
         "timestamp": datetime.utcnow().isoformat(),
-        "services": {
-            "supabase": "connected",
-            "virustotal": "configured" if VIRUSTOTAL_API_KEY else "not_configured"
-        }
+        "services": services,
+        "message": "Add missing API keys to environment variables to enable all services"
     }
 
 @api_router.post("/commands/execute")
 async def execute_command(request: CommandRequest, user=Depends(get_current_user)):
-    """Execute OSINT command"""
+    """Execute OSINT command - REAL APIs ONLY"""
     try:
         logger.info(f"Executing command: {request.command_name} for user: {user.id}")
         
@@ -230,7 +355,7 @@ async def execute_command(request: CommandRequest, user=Depends(get_current_user
         
         start_time = datetime.now()
         
-        # Execute based on provider and command
+        # Execute based on provider and command - REAL APIs ONLY
         try:
             if request.provider.lower() == 'virustotal':
                 if 'domain' in request.command_name.lower():
@@ -240,22 +365,24 @@ async def execute_command(request: CommandRequest, user=Depends(get_current_user
                 else:
                     api_result = await OSINTService.virustotal_domain_reputation(request.input_data)
             elif request.provider.lower() == 'hunter.io':
-                api_result = await OSINTService.mock_hunter_email_verify(request.input_data)
+                api_result = await OSINTService.hunter_email_verify(request.input_data)
             elif request.provider.lower() == 'shodan':
-                api_result = await OSINTService.mock_shodan_ip_lookup(request.input_data)
+                api_result = await OSINTService.shodan_ip_lookup(request.input_data)
+            elif request.provider.lower() == 'criminal ip':
+                api_result = await OSINTService.criminal_ip_lookup(request.input_data)
+            elif request.provider.lower() == 'ipqualityscore':
+                if 'email' in request.command_name.lower():
+                    api_result = await OSINTService.ipqualityscore_check(request.input_data, 'email')
+                elif 'ip' in request.command_name.lower():
+                    api_result = await OSINTService.ipqualityscore_check(request.input_data, 'ip')
+                else:
+                    api_result = await OSINTService.ipqualityscore_check(request.input_data, 'url')
             else:
-                # Generic mock for other providers
-                await asyncio.sleep(1)
-                api_result = {
-                    'success': True,
-                    'data': {
-                        'provider': request.provider,
-                        'command': request.command_name,
-                        'input': request.input_data,
-                        'status': 'Integration coming soon',
-                        'message': f'{request.provider} integration will be available soon with your API key'
-                    }
-                }
+                # No more mocks - return proper error
+                raise HTTPException(
+                    status_code=501,
+                    detail=f"Provider '{request.provider}' integration not implemented yet. Please add the API key and integration code."
+                )
             
             # Calculate execution time
             execution_time = (datetime.now() - start_time).total_seconds() * 1000
@@ -277,6 +404,8 @@ async def execute_command(request: CommandRequest, user=Depends(get_current_user
                 'execution_time_ms': int(execution_time)
             }
             
+        except HTTPException:
+            raise
         except Exception as api_error:
             logger.error(f"API execution error: {api_error}")
             
@@ -291,6 +420,8 @@ async def execute_command(request: CommandRequest, user=Depends(get_current_user
             
             raise HTTPException(status_code=400, detail=str(api_error))
             
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Command execution error: {e}")
         raise HTTPException(status_code=500, detail=f"Command execution failed: {str(e)}")
@@ -300,8 +431,10 @@ async def verify_captcha(request: CaptchaVerifyRequest):
     """Verify Cloudflare Turnstile captcha"""
     try:
         if not TURNSTILE_SECRET_KEY:
-            # For development, always return success
-            return {'success': True, 'message': 'Captcha verified (development mode)'}
+            raise HTTPException(
+                status_code=503,
+                detail="Turnstile secret key not configured. Please add TURNSTILE_SECRET_KEY to environment variables."
+            )
         
         async with httpx.AsyncClient() as client:
             response = await client.post(
@@ -320,7 +453,7 @@ async def verify_captcha(request: CaptchaVerifyRequest):
                 
     except Exception as e:
         logger.error(f"Captcha verification error: {e}")
-        return {'success': False, 'message': 'Captcha verification error'}
+        raise HTTPException(status_code=500, detail="Captcha verification error")
 
 @api_router.get("/commands/recent")
 async def get_recent_commands(user=Depends(get_current_user)):
