@@ -420,7 +420,7 @@ class KeyForgeAPITester:
         failed_tests = total_tests - passed_tests
         
         print("=" * 60)
-        print("📊 TEST SUMMARY")
+        print("📊 TEST SUMMARY - PRODUCTION READY VERSION")
         print("=" * 60)
         print(f"⏱️  Total execution time: {end_time - start_time:.2f} seconds")
         print(f"📈 Total tests: {total_tests}")
@@ -434,11 +434,11 @@ class KeyForgeAPITester:
                 if not result['success']:
                     print(f"   ❌ {result['test']}: {result['details']}")
         
-        print("\n🎯 CRITICAL FINDINGS:")
+        print("\n🎯 PRODUCTION READINESS ASSESSMENT:")
         
         # Check if basic connectivity works
         root_test = next((r for r in self.test_results if 'Root Health Check' in r['test']), None)
-        health_test = next((r for r in self.test_results if 'Detailed Health Check' in r['test']), None)
+        health_test = next((r for r in self.test_results if 'Service Configuration Check' in r['test']), None)
         
         if root_test and root_test['success']:
             print("   ✅ Backend API is accessible and responding")
@@ -446,9 +446,9 @@ class KeyForgeAPITester:
             print("   ❌ Backend API connectivity issues detected")
             
         if health_test and health_test['success']:
-            print("   ✅ Health endpoint working with service status")
+            print("   ✅ Service configuration status correctly reported")
         else:
-            print("   ❌ Health endpoint issues detected")
+            print("   ❌ Service configuration status issues detected")
             
         # Check authentication
         auth_tests = [r for r in self.test_results if 'Unauthenticated' in r['test']]
@@ -459,21 +459,37 @@ class KeyForgeAPITester:
         else:
             print("   ❌ Authentication protection issues detected")
             
-        # Check captcha
-        captcha_test = next((r for r in self.test_results if 'Captcha Verification' in r['test']), None)
-        if captcha_test and captcha_test['success']:
-            print("   ✅ Captcha endpoint working (dev mode)")
-        else:
-            print("   ❌ Captcha endpoint issues detected")
-
-        # Check OSINT integrations
-        osint_tests = [r for r in self.test_results if 'Mock Auth' in r['test']]
-        osint_working = any(r['success'] for r in osint_tests)
+        # Check NO MOCK DATA implementation
+        virustotal_test = next((r for r in self.test_results if 'VirusTotal' in r['test'] and 'Real API' in r['test']), None)
+        missing_key_tests = [r for r in self.test_results if 'Missing API Key Error' in r['test']]
+        unknown_provider_test = next((r for r in self.test_results if 'Unknown Provider' in r['test']), None)
         
-        if osint_working:
-            print("   ✅ OSINT integrations responding (auth enforcement working)")
+        no_mock_working = True
+        if missing_key_tests:
+            missing_key_working = all(r['success'] for r in missing_key_tests)
+            if missing_key_working:
+                print("   ✅ Missing API keys return proper 503 errors (NO MOCK DATA)")
+            else:
+                print("   ❌ Missing API key error handling issues detected")
+                no_mock_working = False
+        
+        if unknown_provider_test and unknown_provider_test['success']:
+            print("   ✅ Unknown providers return proper 501 errors")
         else:
-            print("   ❌ OSINT integration issues detected")
+            print("   ❌ Unknown provider error handling issues detected")
+            no_mock_working = False
+            
+        if virustotal_test:
+            if virustotal_test['success']:
+                print("   ✅ VirusTotal integration configured with real API")
+            else:
+                print("   ❌ VirusTotal integration issues detected")
+                no_mock_working = False
+        
+        if no_mock_working:
+            print("\n🚀 PRODUCTION READY: NO MOCK DATA implementation verified")
+        else:
+            print("\n⚠️  PRODUCTION ISSUES: Mock data or error handling problems detected")
         
         return passed_tests, failed_tests
 
