@@ -71,26 +71,49 @@ class KeyForgeAPITester:
         except Exception as e:
             self.log_test("GET /api/ - Root Health Check", False, f"Connection error: {str(e)}")
 
-        # Test detailed health endpoint
+        # Test detailed health endpoint - CRITICAL: Check service configuration status
         try:
             response = self.session.get(f"{self.base_url}/health", timeout=10)
             if response.status_code == 200:
                 data = response.json()
                 services = data.get('services', {})
+                
+                # Verify expected service statuses
+                expected_configured = ['supabase', 'virustotal']  # These should be configured
+                expected_not_configured = ['hunter_io', 'shodan', 'criminal_ip', 'ipqualityscore']  # These should NOT be configured
+                
+                config_correct = True
+                config_details = []
+                
+                for service in expected_configured:
+                    if services.get(service) != 'configured':
+                        config_correct = False
+                        config_details.append(f"{service}: expected 'configured', got '{services.get(service)}'")
+                
+                for service in expected_not_configured:
+                    if services.get(service) != 'not_configured':
+                        config_correct = False
+                        config_details.append(f"{service}: expected 'not_configured', got '{services.get(service)}'")
+                
                 self.log_test(
-                    "GET /api/health - Detailed Health Check", 
-                    True, 
-                    f"Status: {data.get('status')}, Supabase: {services.get('supabase')}, VirusTotal: {services.get('virustotal')}"
+                    "GET /api/health - Service Configuration Check", 
+                    config_correct, 
+                    f"VirusTotal: {services.get('virustotal')}, Hunter.io: {services.get('hunter_io')}, Shodan: {services.get('shodan')}, Criminal IP: {services.get('criminal_ip')}"
                 )
+                
+                if not config_correct:
+                    for detail in config_details:
+                        print(f"   ⚠️  {detail}")
+                        
             else:
                 self.log_test(
-                    "GET /api/health - Detailed Health Check", 
+                    "GET /api/health - Service Configuration Check", 
                     False, 
                     f"Status: {response.status_code}",
                     response.json() if response.content else None
                 )
         except Exception as e:
-            self.log_test("GET /api/health - Detailed Health Check", False, f"Connection error: {str(e)}")
+            self.log_test("GET /api/health - Service Configuration Check", False, f"Connection error: {str(e)}")
 
     def test_captcha_endpoint(self):
         """Test captcha verification endpoint"""
