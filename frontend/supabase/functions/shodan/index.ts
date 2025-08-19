@@ -12,11 +12,11 @@ serve(async (req) => {
   }
 
   try {
-    const { email, executionId, command } = await req.json()
+    const { ip, executionId, command } = await req.json()
     
-    const HUNTER_API_KEY = Deno.env.get('HUNTER_API_KEY')
+    const SHODAN_API_KEY = Deno.env.get('SHODAN_API_KEY')
     
-    if (!HUNTER_API_KEY) {
+    if (!SHODAN_API_KEY) {
       // Update execution record with error
       const supabaseClient = createClient(
         Deno.env.get('SUPABASE_URL') ?? '',
@@ -27,7 +27,7 @@ serve(async (req) => {
         .from('command_executions')
         .update({
           status: 'error',
-          error_message: 'Hunter.io API key not configured. Please add your Hunter.io API key to use email verification services.',
+          error_message: 'Shodan API key not configured. Please add your Shodan API key to use IP intelligence services.',
           execution_time_ms: 0
         })
         .eq('id', executionId)
@@ -35,7 +35,7 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ 
           success: false, 
-          error: 'Hunter.io API key not configured. Please add your Hunter.io API key to use email verification services.'
+          error: 'Shodan API key not configured. Please add your Shodan API key to use IP intelligence services.'
         }),
         {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -52,36 +52,44 @@ serve(async (req) => {
 
     const startTime = Date.now()
     
-    // Real Hunter.io API call
-    const apiUrl = 'https://api.hunter.io/v2/email-verifier'
+    // Real Shodan API call
+    const apiUrl = `https://api.shodan.io/shodan/host/${ip}`
     const url = new URL(apiUrl)
-    url.searchParams.append('email', email)
-    url.searchParams.append('api_key', HUNTER_API_KEY)
+    url.searchParams.append('key', SHODAN_API_KEY)
 
     const response = await fetch(url.toString())
     const executionTime = Date.now() - startTime
     
-    if (!response.ok) {
-      throw new Error(`Hunter.io API error: ${response.status} ${response.statusText}`)
-    }
+    let processedData: any
 
-    const data = await response.json()
-    const emailData = data.data || {}
-
-    const processedData = {
-      email: email,
-      result: emailData.result || 'unknown',
-      score: emailData.score || 0,
-      regexp: emailData.regexp || false,
-      gibberish: emailData.gibberish || true,
-      disposable: emailData.disposable || true,
-      webmail: emailData.webmail || false,
-      mx_records: emailData.mx_records || false,
-      smtp_server: emailData.smtp_server || false,
-      smtp_check: emailData.smtp_check || false,
-      accept_all: emailData.accept_all || false,
-      block: emailData.block || true,
-      sources: emailData.sources || []
+    if (response.status === 200) {
+      const data = await response.json()
+      processedData = {
+        ip: ip,
+        city: data.city || 'Unknown',
+        country_name: data.country_name || 'Unknown',
+        country_code: data.country_code || 'XX',
+        latitude: data.latitude,
+        longitude: data.longitude,
+        org: data.org || 'Unknown',
+        isp: data.isp || 'Unknown',
+        ports: data.ports || [],
+        hostnames: data.hostnames || [],
+        domains: data.domains || [],
+        tags: data.tags || [],
+        vulns: Object.keys(data.vulns || {}),
+        last_update: data.last_update,
+        os: data.os,
+        asn: data.asn
+      }
+    } else if (response.status === 404) {
+      processedData = {
+        ip: ip,
+        status: 'No data available for this IP',
+        message: 'IP not found in Shodan database'
+      }
+    } else {
+      throw new Error(`Shodan API error: ${response.status} ${response.statusText}`)
     }
 
     // Update execution record in database
@@ -91,7 +99,7 @@ serve(async (req) => {
         status: 'success',
         output_data: processedData,
         execution_time_ms: executionTime,
-        api_cost: 0.10 // Hunter.io typical cost
+        api_cost: 0.02 // Shodan typical cost
       })
       .eq('id', executionId)
 
@@ -112,7 +120,7 @@ serve(async (req) => {
     )
 
   } catch (error) {
-    console.error('Hunter.io function error:', error)
+    console.error('Shodan function error:', error)
     
     // Update execution record with error
     const body = await req.clone().json().catch(() => ({}))

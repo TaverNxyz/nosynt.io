@@ -12,11 +12,11 @@ serve(async (req) => {
   }
 
   try {
-    const { email, executionId, command } = await req.json()
+    const { target, executionId, command, checkType = 'ip' } = await req.json()
     
-    const HUNTER_API_KEY = Deno.env.get('HUNTER_API_KEY')
+    const IPQUALITYSCORE_API_KEY = Deno.env.get('IPQUALITYSCORE_API_KEY')
     
-    if (!HUNTER_API_KEY) {
+    if (!IPQUALITYSCORE_API_KEY) {
       // Update execution record with error
       const supabaseClient = createClient(
         Deno.env.get('SUPABASE_URL') ?? '',
@@ -27,7 +27,7 @@ serve(async (req) => {
         .from('command_executions')
         .update({
           status: 'error',
-          error_message: 'Hunter.io API key not configured. Please add your Hunter.io API key to use email verification services.',
+          error_message: 'IPQualityScore API key not configured. Please add your IPQualityScore API key to use reputation services.',
           execution_time_ms: 0
         })
         .eq('id', executionId)
@@ -35,7 +35,7 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ 
           success: false, 
-          error: 'Hunter.io API key not configured. Please add your Hunter.io API key to use email verification services.'
+          error: 'IPQualityScore API key not configured. Please add your IPQualityScore API key to use reputation services.'
         }),
         {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -52,46 +52,33 @@ serve(async (req) => {
 
     const startTime = Date.now()
     
-    // Real Hunter.io API call
-    const apiUrl = 'https://api.hunter.io/v2/email-verifier'
-    const url = new URL(apiUrl)
-    url.searchParams.append('email', email)
-    url.searchParams.append('api_key', HUNTER_API_KEY)
+    // Real IPQualityScore API call
+    let apiUrl: string
+    if (checkType === 'ip') {
+      apiUrl = `https://ipqualityscore.com/api/json/ip/${IPQUALITYSCORE_API_KEY}/${target}`
+    } else if (checkType === 'email') {
+      apiUrl = `https://ipqualityscore.com/api/json/email/${IPQUALITYSCORE_API_KEY}/${target}`
+    } else {
+      apiUrl = `https://ipqualityscore.com/api/json/url/${IPQUALITYSCORE_API_KEY}/${encodeURIComponent(target)}`
+    }
 
-    const response = await fetch(url.toString())
+    const response = await fetch(apiUrl)
     const executionTime = Date.now() - startTime
     
     if (!response.ok) {
-      throw new Error(`Hunter.io API error: ${response.status} ${response.statusText}`)
+      throw new Error(`IPQualityScore API error: ${response.status} ${response.statusText}`)
     }
 
     const data = await response.json()
-    const emailData = data.data || {}
-
-    const processedData = {
-      email: email,
-      result: emailData.result || 'unknown',
-      score: emailData.score || 0,
-      regexp: emailData.regexp || false,
-      gibberish: emailData.gibberish || true,
-      disposable: emailData.disposable || true,
-      webmail: emailData.webmail || false,
-      mx_records: emailData.mx_records || false,
-      smtp_server: emailData.smtp_server || false,
-      smtp_check: emailData.smtp_check || false,
-      accept_all: emailData.accept_all || false,
-      block: emailData.block || true,
-      sources: emailData.sources || []
-    }
 
     // Update execution record in database
     const { error: updateError } = await supabaseClient
       .from('command_executions')
       .update({
         status: 'success',
-        output_data: processedData,
+        output_data: data,
         execution_time_ms: executionTime,
-        api_cost: 0.10 // Hunter.io typical cost
+        api_cost: 0.004 // IPQualityScore typical cost
       })
       .eq('id', executionId)
 
@@ -102,7 +89,7 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         success: true, 
-        data: processedData,
+        data: data,
         execution_time: executionTime
       }),
       {
@@ -112,7 +99,7 @@ serve(async (req) => {
     )
 
   } catch (error) {
-    console.error('Hunter.io function error:', error)
+    console.error('IPQualityScore function error:', error)
     
     // Update execution record with error
     const body = await req.clone().json().catch(() => ({}))
