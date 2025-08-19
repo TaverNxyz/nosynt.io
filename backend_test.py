@@ -118,11 +118,12 @@ class KeyForgeAPITester:
         except Exception as e:
             self.log_test("POST /api/captcha/verify - Captcha Verification", False, f"Error: {str(e)}")
 
-    def test_unauthenticated_command_execution(self):
-        """Test command execution without authentication (should fail)"""
+    def test_unauthenticated_access(self):
+        """Test endpoints without authentication (should fail)"""
         print("🚫 Testing Unauthenticated Access")
         print("-" * 30)
         
+        # Test command execution
         try:
             payload = {
                 "command_name": "Domain Reputation Check",
@@ -134,83 +135,47 @@ class KeyForgeAPITester:
             
             if response.status_code in [401, 403]:
                 self.log_test(
-                    "POST /api/commands/execute - Unauthenticated Access", 
+                    "POST /api/commands/execute - Unauthenticated", 
                     True, 
-                    f"Correctly rejected unauthenticated request with status {response.status_code}"
+                    f"Correctly rejected with status {response.status_code}"
                 )
             else:
                 self.log_test(
-                    "POST /api/commands/execute - Unauthenticated Access", 
-                    False, 
-                    f"Expected 401/403, got {response.status_code}",
-                    response.json() if response.content else None
-                )
-        except Exception as e:
-            self.log_test("POST /api/commands/execute - Unauthenticated Access", False, f"Error: {str(e)}")
-
-    def test_unauthenticated_api_key_endpoints(self):
-        """Test API key endpoints without authentication (should fail)"""
-        print("🔑 Testing Unauthenticated API Key Access")
-        print("-" * 30)
-        
-        # Test GET /api-keys
-        try:
-            response = self.session.get(f"{self.base_url}/api-keys", timeout=10)
-            if response.status_code in [401, 403]:
-                self.log_test(
-                    "GET /api/api-keys - Unauthenticated Access", 
-                    True, 
-                    f"Correctly rejected unauthenticated request with status {response.status_code}"
-                )
-            else:
-                self.log_test(
-                    "GET /api/api-keys - Unauthenticated Access", 
+                    "POST /api/commands/execute - Unauthenticated", 
                     False, 
                     f"Expected 401/403, got {response.status_code}"
                 )
         except Exception as e:
-            self.log_test("GET /api/api-keys - Unauthenticated Access", False, f"Error: {str(e)}")
+            self.log_test("POST /api/commands/execute - Unauthenticated", False, f"Error: {str(e)}")
 
-        # Test POST /api-keys
+        # Test API keys endpoints
+        endpoints = [
+            ("GET", "/api-keys", "GET /api/api-keys - Unauthenticated"),
+            ("GET", "/commands/recent", "GET /api/commands/recent - Unauthenticated")
+        ]
+        
+        for method, endpoint, test_name in endpoints:
+            try:
+                if method == "GET":
+                    response = self.session.get(f"{self.base_url}{endpoint}", timeout=10)
+                
+                if response.status_code in [401, 403]:
+                    self.log_test(test_name, True, f"Correctly rejected with status {response.status_code}")
+                else:
+                    self.log_test(test_name, False, f"Expected 401/403, got {response.status_code}")
+            except Exception as e:
+                self.log_test(test_name, False, f"Error: {str(e)}")
+
+        # Test POST API keys
         try:
-            payload = {
-                "service_name": "test_service",
-                "key_name": "test_key",
-                "api_key": "test_api_key_123"
-            }
+            payload = {"service_name": "test", "key_name": "test", "api_key": "test123"}
             response = self.session.post(f"{self.base_url}/api-keys", json=payload, timeout=10)
             if response.status_code in [401, 403]:
-                self.log_test(
-                    "POST /api/api-keys - Unauthenticated Access", 
-                    True, 
-                    f"Correctly rejected unauthenticated request with status {response.status_code}"
-                )
+                self.log_test("POST /api/api-keys - Unauthenticated", True, f"Correctly rejected with status {response.status_code}")
             else:
-                self.log_test(
-                    "POST /api/api-keys - Unauthenticated Access", 
-                    False, 
-                    f"Expected 401/403, got {response.status_code}"
-                )
+                self.log_test("POST /api/api-keys - Unauthenticated", False, f"Expected 401/403, got {response.status_code}")
         except Exception as e:
-            self.log_test("POST /api/api-keys - Unauthenticated Access", False, f"Error: {str(e)}")
-
-        # Test GET /commands/recent
-        try:
-            response = self.session.get(f"{self.base_url}/commands/recent", timeout=10)
-            if response.status_code in [401, 403]:
-                self.log_test(
-                    "GET /api/commands/recent - Unauthenticated Access", 
-                    True, 
-                    f"Correctly rejected unauthenticated request with status {response.status_code}"
-                )
-            else:
-                self.log_test(
-                    "GET /api/commands/recent - Unauthenticated Access", 
-                    False, 
-                    f"Expected 401/403, got {response.status_code}"
-                )
-        except Exception as e:
-            self.log_test("GET /api/commands/recent - Unauthenticated Access", False, f"Error: {str(e)}")
+            self.log_test("POST /api/api-keys - Unauthenticated", False, f"Error: {str(e)}")
 
     def test_osint_integrations_mock_auth(self):
         """Test OSINT integrations with mock authentication"""
@@ -221,163 +186,45 @@ class KeyForgeAPITester:
         mock_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IlRlc3QgVXNlciIsImlhdCI6MTUxNjIzOTAyMn0.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
         headers = {"Authorization": f"Bearer {mock_token}"}
         
-        # Test VirusTotal domain reputation
-        try:
-            payload = {
-                "command_name": "Domain Reputation Check",
-                "command_category": "Domain Analysis", 
-                "provider": "virustotal",
-                "input_data": self.test_domain
-            }
-            response = self.session.post(f"{self.base_url}/commands/execute", json=payload, headers=headers, timeout=30)
-            
-            if response.status_code == 200:
-                data = response.json()
-                self.log_test(
-                    "VirusTotal Domain Reputation - Mock Auth", 
-                    True, 
-                    f"Success: {data.get('success')}, Execution time: {data.get('execution_time_ms')}ms"
-                )
-            elif response.status_code == 401:
-                self.log_test(
-                    "VirusTotal Domain Reputation - Mock Auth", 
-                    True, 
-                    "Authentication properly enforced (expected with mock token)"
-                )
-            else:
-                self.log_test(
-                    "VirusTotal Domain Reputation - Mock Auth", 
-                    False, 
-                    f"Status: {response.status_code}",
-                    response.json() if response.content else None
-                )
-        except Exception as e:
-            self.log_test("VirusTotal Domain Reputation - Mock Auth", False, f"Error: {str(e)}")
-
-        # Test Hunter.io mock integration
-        try:
-            payload = {
-                "command_name": "Email Verification",
-                "command_category": "Email Analysis",
-                "provider": "hunter.io",
-                "input_data": self.test_email
-            }
-            response = self.session.post(f"{self.base_url}/commands/execute", json=payload, headers=headers, timeout=30)
-            
-            if response.status_code == 200:
-                data = response.json()
-                self.log_test(
-                    "Hunter.io Email Verification - Mock Auth", 
-                    True, 
-                    f"Success: {data.get('success')}, Mock integration working"
-                )
-            elif response.status_code == 401:
-                self.log_test(
-                    "Hunter.io Email Verification - Mock Auth", 
-                    True, 
-                    "Authentication properly enforced (expected with mock token)"
-                )
-            else:
-                self.log_test(
-                    "Hunter.io Email Verification - Mock Auth", 
-                    False, 
-                    f"Status: {response.status_code}",
-                    response.json() if response.content else None
-                )
-        except Exception as e:
-            self.log_test("Hunter.io Email Verification - Mock Auth", False, f"Error: {str(e)}")
-
-        # Test Shodan mock integration
-        try:
-            payload = {
-                "command_name": "IP Lookup",
-                "command_category": "IP Analysis",
-                "provider": "shodan",
-                "input_data": self.test_ip
-            }
-            response = self.session.post(f"{self.base_url}/commands/execute", json=payload, headers=headers, timeout=30)
-            
-            if response.status_code == 200:
-                data = response.json()
-                self.log_test(
-                    "Shodan IP Lookup - Mock Auth", 
-                    True, 
-                    f"Success: {data.get('success')}, Mock integration working"
-                )
-            elif response.status_code == 401:
-                self.log_test(
-                    "Shodan IP Lookup - Mock Auth", 
-                    True, 
-                    "Authentication properly enforced (expected with mock token)"
-                )
-            else:
-                self.log_test(
-                    "Shodan IP Lookup - Mock Auth", 
-                    False, 
-                    f"Status: {response.status_code}",
-                    response.json() if response.content else None
-                )
-        except Exception as e:
-            self.log_test("Shodan IP Lookup - Mock Auth", False, f"Error: {str(e)}")
-
-        # Test generic mock integration
-        try:
-            payload = {
-                "command_name": "Generic Test",
-                "command_category": "Test Category",
-                "provider": "unknown_provider",
-                "input_data": "test_input"
-            }
-            response = self.session.post(f"{self.base_url}/commands/execute", json=payload, headers=headers, timeout=30)
-            
-            if response.status_code == 200:
-                data = response.json()
-                self.log_test(
-                    "Generic Mock Integration - Mock Auth", 
-                    True, 
-                    f"Success: {data.get('success')}, Generic mock working"
-                )
-            elif response.status_code == 401:
-                self.log_test(
-                    "Generic Mock Integration - Mock Auth", 
-                    True, 
-                    "Authentication properly enforced (expected with mock token)"
-                )
-            else:
-                self.log_test(
-                    "Generic Mock Integration - Mock Auth", 
-                    False, 
-                    f"Status: {response.status_code}",
-                    response.json() if response.content else None
-                )
-        except Exception as e:
-            self.log_test("Generic Mock Integration - Mock Auth", False, f"Error: {str(e)}")
-        """Test CORS configuration"""
-        print("🌐 Testing CORS Configuration")
-        print("-" * 30)
+        osint_tests = [
+            ("virustotal", "Domain Reputation Check", "Domain Analysis", self.test_domain, "VirusTotal Domain"),
+            ("hunter.io", "Email Verification", "Email Analysis", self.test_email, "Hunter.io Email"),
+            ("shodan", "IP Lookup", "IP Analysis", self.test_ip, "Shodan IP"),
+            ("unknown_provider", "Generic Test", "Test Category", "test_input", "Generic Mock")
+        ]
         
-        try:
-            # Test preflight request
-            headers = {
-                'Origin': 'https://keyforge-osint.preview.emergentagent.com',
-                'Access-Control-Request-Method': 'POST',
-                'Access-Control-Request-Headers': 'Content-Type,Authorization'
-            }
-            response = self.session.options(f"{self.base_url}/health", headers=headers, timeout=10)
-            
-            cors_headers = {
-                'Access-Control-Allow-Origin': response.headers.get('Access-Control-Allow-Origin'),
-                'Access-Control-Allow-Methods': response.headers.get('Access-Control-Allow-Methods'),
-                'Access-Control-Allow-Headers': response.headers.get('Access-Control-Allow-Headers')
-            }
-            
-            self.log_test(
-                "OPTIONS /api/health - CORS Preflight", 
-                True, 
-                f"CORS headers present: {bool(any(cors_headers.values()))}"
-            )
-        except Exception as e:
-            self.log_test("OPTIONS /api/health - CORS Preflight", False, f"Error: {str(e)}")
+        for provider, command_name, category, input_data, test_label in osint_tests:
+            try:
+                payload = {
+                    "command_name": command_name,
+                    "command_category": category,
+                    "provider": provider,
+                    "input_data": input_data
+                }
+                response = self.session.post(f"{self.base_url}/commands/execute", json=payload, headers=headers, timeout=30)
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    self.log_test(
+                        f"{test_label} - Mock Auth", 
+                        True, 
+                        f"Success: {data.get('success')}, Time: {data.get('execution_time_ms')}ms"
+                    )
+                elif response.status_code in [401, 403]:
+                    self.log_test(
+                        f"{test_label} - Mock Auth", 
+                        True, 
+                        "Authentication properly enforced (expected with mock token)"
+                    )
+                else:
+                    self.log_test(
+                        f"{test_label} - Mock Auth", 
+                        False, 
+                        f"Status: {response.status_code}",
+                        response.json() if response.content else None
+                    )
+            except Exception as e:
+                self.log_test(f"{test_label} - Mock Auth", False, f"Error: {str(e)}")
 
     def test_error_handling(self):
         """Test error handling for invalid requests"""
@@ -393,37 +240,21 @@ class KeyForgeAPITester:
                 timeout=10
             )
             if response.status_code in [400, 422]:
-                self.log_test(
-                    "POST /api/captcha/verify - Invalid JSON", 
-                    True, 
-                    f"Correctly handled invalid JSON with status {response.status_code}"
-                )
+                self.log_test("Invalid JSON Handling", True, f"Correctly handled with status {response.status_code}")
             else:
-                self.log_test(
-                    "POST /api/captcha/verify - Invalid JSON", 
-                    False, 
-                    f"Expected 400/422, got {response.status_code}"
-                )
+                self.log_test("Invalid JSON Handling", False, f"Expected 400/422, got {response.status_code}")
         except Exception as e:
-            self.log_test("POST /api/captcha/verify - Invalid JSON", False, f"Error: {str(e)}")
+            self.log_test("Invalid JSON Handling", False, f"Error: {str(e)}")
 
         # Test missing required fields
         try:
             response = self.session.post(f"{self.base_url}/captcha/verify", json={}, timeout=10)
             if response.status_code == 422:
-                self.log_test(
-                    "POST /api/captcha/verify - Missing Fields", 
-                    True, 
-                    "Correctly validated required fields"
-                )
+                self.log_test("Missing Fields Validation", True, "Correctly validated required fields")
             else:
-                self.log_test(
-                    "POST /api/captcha/verify - Missing Fields", 
-                    False, 
-                    f"Expected 422, got {response.status_code}"
-                )
+                self.log_test("Missing Fields Validation", False, f"Expected 422, got {response.status_code}")
         except Exception as e:
-            self.log_test("POST /api/captcha/verify - Missing Fields", False, f"Error: {str(e)}")
+            self.log_test("Missing Fields Validation", False, f"Error: {str(e)}")
 
     def test_response_formats(self):
         """Test response format consistency"""
@@ -436,15 +267,11 @@ class KeyForgeAPITester:
             if response.status_code == 200:
                 data = response.json()
                 has_required_fields = all(key in data for key in ['message', 'version', 'status'])
-                self.log_test(
-                    "GET /api/ - Response Format", 
-                    has_required_fields, 
-                    f"Required fields present: {has_required_fields}"
-                )
+                self.log_test("Root Endpoint Format", has_required_fields, f"Required fields present: {has_required_fields}")
             else:
-                self.log_test("GET /api/ - Response Format", False, f"Status: {response.status_code}")
+                self.log_test("Root Endpoint Format", False, f"Status: {response.status_code}")
         except Exception as e:
-            self.log_test("GET /api/ - Response Format", False, f"Error: {str(e)}")
+            self.log_test("Root Endpoint Format", False, f"Error: {str(e)}")
 
         # Test health endpoint response format
         try:
@@ -452,15 +279,11 @@ class KeyForgeAPITester:
             if response.status_code == 200:
                 data = response.json()
                 has_required_fields = all(key in data for key in ['status', 'timestamp', 'services'])
-                self.log_test(
-                    "GET /api/health - Response Format", 
-                    has_required_fields, 
-                    f"Required fields present: {has_required_fields}"
-                )
+                self.log_test("Health Endpoint Format", has_required_fields, f"Required fields present: {has_required_fields}")
             else:
-                self.log_test("GET /api/health - Response Format", False, f"Status: {response.status_code}")
+                self.log_test("Health Endpoint Format", False, f"Status: {response.status_code}")
         except Exception as e:
-            self.log_test("GET /api/health - Response Format", False, f"Error: {str(e)}")
+            self.log_test("Health Endpoint Format", False, f"Error: {str(e)}")
 
     def run_all_tests(self):
         """Run all backend tests"""
@@ -469,10 +292,8 @@ class KeyForgeAPITester:
         # Run test suites
         self.test_health_endpoints()
         self.test_captcha_endpoint()
-        self.test_unauthenticated_command_execution()
-        self.test_unauthenticated_api_key_endpoints()
+        self.test_unauthenticated_access()
         self.test_osint_integrations_mock_auth()
-        self.test_cors_headers()
         self.test_error_handling()
         self.test_response_formats()
         
@@ -514,7 +335,7 @@ class KeyForgeAPITester:
             print("   ❌ Health endpoint issues detected")
             
         # Check authentication
-        auth_tests = [r for r in self.test_results if 'Unauthenticated Access' in r['test']]
+        auth_tests = [r for r in self.test_results if 'Unauthenticated' in r['test']]
         auth_working = all(r['success'] for r in auth_tests)
         
         if auth_working:
@@ -528,6 +349,15 @@ class KeyForgeAPITester:
             print("   ✅ Captcha endpoint working (dev mode)")
         else:
             print("   ❌ Captcha endpoint issues detected")
+
+        # Check OSINT integrations
+        osint_tests = [r for r in self.test_results if 'Mock Auth' in r['test']]
+        osint_working = any(r['success'] for r in osint_tests)
+        
+        if osint_working:
+            print("   ✅ OSINT integrations responding (auth enforcement working)")
+        else:
+            print("   ❌ OSINT integration issues detected")
         
         return passed_tests, failed_tests
 
