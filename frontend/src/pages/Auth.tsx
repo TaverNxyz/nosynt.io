@@ -216,15 +216,26 @@ export default function Auth() {
 
               <TabsContent value="signin">
                 <div className="space-y-4">
-                  <Button
-                    onClick={handleGitHubSignIn}
-                    variant="outline"
-                    className="w-full"
-                    disabled={isLoading}
-                  >
-                    <Github className="h-4 w-4 mr-2" />
-                    Continue with GitHub
-                  </Button>
+                  <div className="grid grid-cols-2 gap-3">
+                    <Button
+                      onClick={handleGitHubSignIn}
+                      variant="outline"
+                      className="w-full"
+                      disabled={isLoading}
+                    >
+                      <Github className="h-4 w-4 mr-2" />
+                      GitHub
+                    </Button>
+                    <Button
+                      onClick={handleDiscordSignIn}
+                      variant="outline"
+                      className="w-full"
+                      disabled={isLoading}
+                    >
+                      <MessageSquare className="h-4 w-4 mr-2" />
+                      Discord
+                    </Button>
+                  </div>
                   
                   <div className="relative">
                     <div className="absolute inset-0 flex items-center">
