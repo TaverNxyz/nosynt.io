@@ -11,6 +11,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
 import { AlertCircle, CheckCircle, Clock, Search, Zap, Globe, Shield, Database, Mail, Phone, User } from "lucide-react";
+import { TurnstileCaptcha } from "@/components/TurnstileCaptcha";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const commandCategories = [
   {
@@ -61,6 +64,8 @@ export default function Commands() {
   const [selectedCategory, setSelectedCategory] = useState("email");
   const [selectedCommand, setSelectedCommand] = useState("");
   const [inputData, setInputData] = useState("");
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [showCaptcha, setShowCaptcha] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -72,6 +77,30 @@ export default function Commands() {
 
   const handleExecuteCommand = async () => {
     if (!selectedCommand || !inputData.trim()) {
+      return;
+    }
+
+    // Show captcha if not verified yet
+    if (!captchaToken) {
+      setShowCaptcha(true);
+      toast.error("Please complete the captcha verification");
+      return;
+    }
+
+    // Verify captcha with backend
+    try {
+      const { data: captchaResult } = await supabase.functions.invoke('verify-captcha', {
+        body: { token: captchaToken }
+      });
+
+      if (!captchaResult?.success) {
+        toast.error("Captcha verification failed");
+        setCaptchaToken(null);
+        setShowCaptcha(true);
+        return;
+      }
+    } catch (error) {
+      toast.error("Failed to verify captcha");
       return;
     }
 
@@ -89,7 +118,20 @@ export default function Commands() {
     if (result) {
       setInputData("");
       setSelectedCommand("");
+      setCaptchaToken(null);
+      setShowCaptcha(false);
     }
+  };
+
+  const handleCaptchaVerify = (token: string) => {
+    setCaptchaToken(token);
+    setShowCaptcha(false);
+    toast.success("Captcha verified successfully");
+  };
+
+  const handleCaptchaError = (error: string) => {
+    toast.error(`Captcha error: ${error}`);
+    setCaptchaToken(null);
   };
 
   const getStatusIcon = (status: string) => {
@@ -202,6 +244,16 @@ export default function Commands() {
                   </div>
                 )}
                 
+                {showCaptcha && (
+                  <div className="p-4 border rounded-lg bg-muted/50">
+                    <Label className="text-sm font-medium mb-2 block">Security Verification</Label>
+                    <TurnstileCaptcha 
+                      onVerify={handleCaptchaVerify}
+                      onError={handleCaptchaError}
+                    />
+                  </div>
+                )}
+
                 <Button 
                   onClick={handleExecuteCommand}
                   disabled={!selectedCommand || !inputData.trim() || executing}
@@ -216,7 +268,7 @@ export default function Commands() {
                   ) : (
                     <>
                       <Zap className="mr-2 h-4 w-4" />
-                      Execute Command
+                      {captchaToken ? 'Execute Command' : 'Verify & Execute'}
                     </>
                   )}
                 </Button>

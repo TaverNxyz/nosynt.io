@@ -71,36 +71,101 @@ export function useCommandExecution() {
         throw new Error("Failed to create execution record");
       }
 
-      // Simulate command execution (replace with actual API calls)
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Execute real API calls based on provider and command
+      let apiResult;
+      let updatedExecution;
 
-      const executionTime = Date.now() - startTime;
-      const mockResult = {
-        success: true,
-        data: {
-          command: request.command_name,
-          input: request.input_data,
-          results: `Mock results for ${request.command_name}`,
-          timestamp: new Date().toISOString(),
-          provider: request.provider
-        }
-      };
+      switch (request.provider.toLowerCase()) {
+        case 'hunter.io':
+          apiResult = await supabase.functions.invoke('hunter-io', {
+            body: {
+              email: request.input_data,
+              executionId: execution.id,
+              command: request.command_category === 'Email Intelligence' ? 'email_verify' : 'domain_search'
+            }
+          });
 
-      // Update execution with results
-      const { data: updatedExecution, error: updateError } = await supabase
-        .from('command_executions')
-        .update({
-          status: 'success',
-          output_data: mockResult,
-          execution_time_ms: executionTime,
-          api_cost: 0.50
-        })
-        .eq('id', execution.id)
-        .select()
-        .single();
+          if (apiResult?.error) {
+            throw new Error(apiResult.error.message || 'Hunter.io API call failed');
+          }
 
-      if (updateError) {
-        throw new Error("Failed to update execution record");
+          // Fetch updated execution record
+          const { data: hunterExecution, error: hunterFetchError } = await supabase
+            .from('command_executions')
+            .select()
+            .eq('id', execution.id)
+            .single();
+
+          if (hunterFetchError || !hunterExecution) {
+            throw new Error("Failed to fetch updated execution record");
+          }
+
+          updatedExecution = hunterExecution;
+          break;
+
+        case 'virustotal':
+          let vtCommand = 'domain_reputation';
+          if (request.command_name.includes('IP')) vtCommand = 'ip_reputation';
+          if (request.command_name.includes('URL')) vtCommand = 'url_scan';
+          
+          apiResult = await supabase.functions.invoke('virustotal', {
+            body: {
+              target: request.input_data,
+              executionId: execution.id,
+              command: vtCommand
+            }
+          });
+
+          if (apiResult?.error) {
+            throw new Error(apiResult.error.message || 'VirusTotal API call failed');
+          }
+
+          // Fetch updated execution record
+          const { data: vtExecution, error: vtFetchError } = await supabase
+            .from('command_executions')
+            .select()
+            .eq('id', execution.id)
+            .single();
+
+          if (vtFetchError || !vtExecution) {
+            throw new Error("Failed to fetch updated execution record");
+          }
+
+          updatedExecution = vtExecution;
+          break;
+
+        default:
+          // Fallback for other providers not yet implemented
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          const mockResult = {
+            success: true,
+            data: {
+              command: request.command_name,
+              input: request.input_data,
+              results: `${request.provider} integration coming soon`,
+              timestamp: new Date().toISOString(),
+              provider: request.provider
+            }
+          };
+
+          const { data: mockExecution, error: updateError } = await supabase
+            .from('command_executions')
+            .update({
+              status: 'success',
+              output_data: mockResult,
+              execution_time_ms: Date.now() - startTime,
+              api_cost: 0.10
+            })
+            .eq('id', execution.id)
+            .select()
+            .single();
+
+          if (updateError || !mockExecution) {
+            throw new Error("Failed to update execution record");
+          }
+
+          updatedExecution = mockExecution;
+          break;
       }
 
       const result: CommandResult = {

@@ -9,7 +9,7 @@ const corsHeaders = {
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-const hunterApiKey = Deno.env.get('HUNTER_IO_API_KEY')!;
+const virusTotalApiKey = Deno.env.get('VIRUSTOTAL_API_KEY')!;
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -18,39 +18,50 @@ serve(async (req) => {
 
   try {
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
-    const { email, executionId, command } = await req.json();
+    const { target, executionId, command } = await req.json();
     
-    console.log('Hunter.io request:', { email, executionId, command });
+    console.log('VirusTotal request:', { target, executionId, command });
 
     let apiUrl = '';
-    let requestData: any = {};
+    let requestMethod = 'GET';
+    let requestBody = null;
 
     switch (command) {
-      case 'email_verify':
-        apiUrl = `https://api.hunter.io/v2/email-verifier?email=${encodeURIComponent(email)}&api_key=${hunterApiKey}`;
+      case 'domain_reputation':
+        apiUrl = `https://www.virustotal.com/vtapi/v2/domain/report?apikey=${virusTotalApiKey}&domain=${encodeURIComponent(target)}`;
         break;
-      case 'domain_search':
-        const domain = email.split('@')[1] || email;
-        apiUrl = `https://api.hunter.io/v2/domain-search?domain=${encodeURIComponent(domain)}&api_key=${hunterApiKey}`;
+      case 'ip_reputation':
+        apiUrl = `https://www.virustotal.com/vtapi/v2/ip-address/report?apikey=${virusTotalApiKey}&ip=${encodeURIComponent(target)}`;
+        break;
+      case 'url_scan':
+        // First submit URL for scanning
+        apiUrl = `https://www.virustotal.com/vtapi/v2/url/scan`;
+        requestMethod = 'POST';
+        requestBody = new URLSearchParams({
+          apikey: virusTotalApiKey,
+          url: target
+        });
         break;
       default:
         throw new Error(`Unknown command: ${command}`);
     }
 
-    console.log('Making request to Hunter.io:', apiUrl);
+    console.log('Making request to VirusTotal:', apiUrl);
 
     const response = await fetch(apiUrl, {
-      method: 'GET',
+      method: requestMethod,
       headers: {
         'Accept': 'application/json',
+        ...(requestMethod === 'POST' ? { 'Content-Type': 'application/x-www-form-urlencoded' } : {})
       },
+      ...(requestBody ? { body: requestBody } : {})
     });
 
     const responseData = await response.json();
-    console.log('Hunter.io response:', responseData);
+    console.log('VirusTotal response:', responseData);
 
     if (!response.ok) {
-      throw new Error(`Hunter.io API error: ${responseData.errors?.[0]?.details || 'Unknown error'}`);
+      throw new Error(`VirusTotal API error: ${responseData.error || 'Unknown error'}`);
     }
 
     // Update execution record with success
@@ -59,7 +70,7 @@ serve(async (req) => {
       .update({
         status: 'success',
         output_data: responseData,
-        api_cost: 0.01 // Hunter.io cost per request
+        api_cost: 0.05 // VirusTotal cost per request
       })
       .eq('id', executionId);
 
@@ -76,7 +87,7 @@ serve(async (req) => {
     });
 
   } catch (error) {
-    console.error('Hunter.io function error:', error);
+    console.error('VirusTotal function error:', error);
 
     // Update execution record with error
     if (req.json) {

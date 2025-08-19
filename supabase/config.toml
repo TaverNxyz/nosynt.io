@@ -10,3 +10,12 @@ verify_jwt = false
 
 [functions.telegram-integration]
 verify_jwt = false
+
+[functions.hunter-io]
+verify_jwt = true
+
+[functions.virustotal]
+verify_jwt = true
+
+[functions.verify-captcha]
+verify_jwt = false
