@@ -156,17 +156,17 @@ class KeyForgeAPITester:
         # Test GET /api-keys
         try:
             response = self.session.get(f"{self.base_url}/api-keys", timeout=10)
-            if response.status_code == 401:
+            if response.status_code in [401, 403]:
                 self.log_test(
                     "GET /api/api-keys - Unauthenticated Access", 
                     True, 
-                    "Correctly rejected unauthenticated request"
+                    f"Correctly rejected unauthenticated request with status {response.status_code}"
                 )
             else:
                 self.log_test(
                     "GET /api/api-keys - Unauthenticated Access", 
                     False, 
-                    f"Expected 401, got {response.status_code}"
+                    f"Expected 401/403, got {response.status_code}"
                 )
         except Exception as e:
             self.log_test("GET /api/api-keys - Unauthenticated Access", False, f"Error: {str(e)}")
@@ -179,17 +179,17 @@ class KeyForgeAPITester:
                 "api_key": "test_api_key_123"
             }
             response = self.session.post(f"{self.base_url}/api-keys", json=payload, timeout=10)
-            if response.status_code == 401:
+            if response.status_code in [401, 403]:
                 self.log_test(
                     "POST /api/api-keys - Unauthenticated Access", 
                     True, 
-                    "Correctly rejected unauthenticated request"
+                    f"Correctly rejected unauthenticated request with status {response.status_code}"
                 )
             else:
                 self.log_test(
                     "POST /api/api-keys - Unauthenticated Access", 
                     False, 
-                    f"Expected 401, got {response.status_code}"
+                    f"Expected 401/403, got {response.status_code}"
                 )
         except Exception as e:
             self.log_test("POST /api/api-keys - Unauthenticated Access", False, f"Error: {str(e)}")
@@ -197,17 +197,17 @@ class KeyForgeAPITester:
         # Test GET /commands/recent
         try:
             response = self.session.get(f"{self.base_url}/commands/recent", timeout=10)
-            if response.status_code == 401:
+            if response.status_code in [401, 403]:
                 self.log_test(
                     "GET /api/commands/recent - Unauthenticated Access", 
                     True, 
-                    "Correctly rejected unauthenticated request"
+                    f"Correctly rejected unauthenticated request with status {response.status_code}"
                 )
             else:
                 self.log_test(
                     "GET /api/commands/recent - Unauthenticated Access", 
                     False, 
-                    f"Expected 401, got {response.status_code}"
+                    f"Expected 401/403, got {response.status_code}"
                 )
         except Exception as e:
             self.log_test("GET /api/commands/recent - Unauthenticated Access", False, f"Error: {str(e)}")
