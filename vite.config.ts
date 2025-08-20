@@ -9,20 +9,24 @@ export default defineConfig(({ mode }) => ({
     outDir: 'build'
   },
   
-  // Server configuration
   server: {
     port: 8080,
-    host: '0.0.0.0', // Explicitly bind to all interfaces
+    host: '0.0.0.0',
     allowedHosts: true
   },
+  
   plugins: [
     react(),
-    mode === 'development' &&
-    componentTagger(),
+    mode === 'development' && componentTagger(),
   ].filter(Boolean),
+  
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
+  },
+  
+  optimizeDeps: {
+    exclude: ['lucide-react'],
   },
 }));
