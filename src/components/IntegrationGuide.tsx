@@ -26,7 +26,7 @@ export const IntegrationGuide = ({ integration, onClose }: IntegrationGuideProps
       <Card className="w-full max-w-4xl mx-auto">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold">
+            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white font-bold">
               D
             </div>
             Discord Bot Setup Guide
@@ -102,15 +102,15 @@ export const IntegrationGuide = ({ integration, onClose }: IntegrationGuideProps
                 </p>
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-green-500" />
+                    <CheckCircle className="w-4 h-4 text-terminal-green" />
                     <span className="text-sm">Send Messages</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-green-500" />
+                    <CheckCircle className="w-4 h-4 text-terminal-green" />
                     <span className="text-sm">Embed Links</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-green-500" />
+                    <CheckCircle className="w-4 h-4 text-terminal-green" />
                     <span className="text-sm">Read Message History</span>
                   </div>
                 </div>
@@ -207,7 +207,7 @@ export const IntegrationGuide = ({ integration, onClose }: IntegrationGuideProps
       <Card className="w-full max-w-4xl mx-auto">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center text-white font-bold">
+            <div className="w-8 h-8 bg-terminal-blue rounded-lg flex items-center justify-center text-white font-bold">
               T
             </div>
             Telegram Bot Setup Guide

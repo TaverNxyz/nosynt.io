@@ -279,7 +279,7 @@ export default function Premium() {
                   </div>
                   <div className="w-full bg-muted rounded-full h-2">
                     <div 
-                      className="bg-cyber-blue h-2 rounded-full transition-all duration-300" 
+                      className="bg-terminal-blue h-2 rounded-full transition-all duration-300" 
                       style={{ width: `${getUsagePercentage(usageMetrics.storageUsed, usageMetrics.storageLimit)}%` }}
                     />
                   </div>
@@ -298,7 +298,7 @@ export default function Premium() {
                   </div>
                   <div className="w-full bg-muted rounded-full h-2">
                     <div 
-                      className="bg-security-green h-2 rounded-full transition-all duration-300" 
+                      className="bg-terminal-green h-2 rounded-full transition-all duration-300" 
                       style={{ width: `${getUsagePercentage(usageMetrics.providersActive, usageMetrics.providersLimit)}%` }}
                     />
                   </div>
@@ -338,7 +338,7 @@ export default function Premium() {
                     </p>
                     <p className="text-xs text-muted-foreground">query success rate</p>
                   </div>
-                  <Zap className="h-8 w-8 text-cyber-blue" />
+                  <Zap className="h-8 w-8 text-terminal-blue" />
                 </div>
               </CardContent>
             </Card>
@@ -351,7 +351,7 @@ export default function Premium() {
                     <p className="text-2xl font-bold text-foreground">${monthlyUsage.total_api_cost.toFixed(2)}</p>
                     <p className="text-xs text-muted-foreground">this month</p>
                   </div>
-                  <Database className="h-8 w-8 text-security-green" />
+                  <Database className="h-8 w-8 text-terminal-green" />
                 </div>
               </CardContent>
             </Card>
@@ -364,7 +364,7 @@ export default function Premium() {
                     <p className="text-2xl font-bold text-foreground">{monthlyUsage.providers_used?.length || 0}</p>
                     <p className="text-xs text-muted-foreground">unique providers</p>
                   </div>
-                  <Shield className="h-8 w-8 text-security-green" />
+                  <Shield className="h-8 w-8 text-terminal-green" />
                 </div>
               </CardContent>
             </Card>
@@ -384,7 +384,7 @@ export default function Premium() {
             <span className={`text-sm ${isYearly ? 'font-semibold' : 'text-muted-foreground'}`}>
               Yearly
             </span>
-            <Badge variant="outline" className="bg-security-green/10 text-security-green border-security-green/20">
+            <Badge variant="outline" className="bg-terminal-green/10 text-terminal-green border-terminal-green/20">
               Save 17%
             </Badge>
           </div>
@@ -428,7 +428,7 @@ export default function Premium() {
                     {tier.features.map((feature, index) => (
                       <div key={index} className="flex items-start space-x-2">
                         {feature.included ? (
-                          <Check className="h-4 w-4 text-security-green mt-0.5 flex-shrink-0" />
+                          <Check className="h-4 w-4 text-terminal-green mt-0.5 flex-shrink-0" />
                         ) : (
                           <X className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
                         )}

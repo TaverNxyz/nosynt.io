@@ -377,10 +377,10 @@ export default function SystemSettings() {
 
   const getNotificationTypeColor = (type: string) => {
     switch (type) {
-      case 'success': return 'text-green-500 bg-green-500/10 border-green-500/20';
-      case 'warning': return 'text-yellow-500 bg-yellow-500/10 border-yellow-500/20';
-      case 'error': return 'text-red-500 bg-red-500/10 border-red-500/20';
-      default: return 'text-blue-500 bg-blue-500/10 border-blue-500/20';
+      case 'success': return 'text-terminal-green bg-terminal-green/10 border-terminal-green/20';
+      case 'warning': return 'text-terminal-amber bg-terminal-amber/10 border-terminal-amber/20';
+      case 'error': return 'text-terminal-red bg-terminal-red/10 border-terminal-red/20';
+      default: return 'text-terminal-blue bg-terminal-blue/10 border-terminal-blue/20';
     }
   };
 

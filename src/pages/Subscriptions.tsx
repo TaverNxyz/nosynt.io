@@ -116,9 +116,9 @@ export default function Subscriptions() {
 
   const getPlanColor = (planName: string) => {
     switch (planName.toLowerCase()) {
-      case 'free': return 'text-blue-500';
-      case 'pro': return 'text-purple-500';
-      case 'enterprise': return 'text-amber-500';
+      case 'free': return 'text-terminal-blue';
+      case 'pro': return 'text-terminal-magenta';
+      case 'enterprise': return 'text-terminal-amber';
       default: return 'text-primary';
     }
   };
@@ -126,7 +126,7 @@ export default function Subscriptions() {
   const formatFeatures = (features: string[]) => {
     return features.map((feature, index) => (
       <div key={index} className="flex items-center space-x-2">
-        <Check className="h-4 w-4 text-green-500" />
+        <Check className="h-4 w-4 text-terminal-green" />
         <span className="text-sm">{feature}</span>
       </div>
     ));
@@ -262,7 +262,7 @@ export default function Subscriptions() {
               
               <CardContent className="space-y-4">
                 <div className="space-y-2 text-center">
-                  <div className="p-3 bg-gradient-metallic rounded-lg">
+                  <div className="p-3 bg-gradient-card rounded-lg">
                     <p className="text-lg font-semibold">
                       {plan.max_commands_per_month === 999999 ? (
                         <span className="flex items-center justify-center">
@@ -275,7 +275,7 @@ export default function Subscriptions() {
                     </p>
                     <p className="text-sm text-muted-foreground">per month</p>
                   </div>
-                  <div className="p-3 bg-gradient-metallic rounded-lg">
+                  <div className="p-3 bg-gradient-card rounded-lg">
                     <p className="text-lg font-semibold">
                       ${plan.max_api_cost_per_month.toFixed(0)} API budget
                     </p>
