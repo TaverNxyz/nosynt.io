@@ -186,21 +186,21 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-hero p-4">
+    <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
-            <div className="p-4 rounded-full bg-gradient-primary shadow-glow">
-              <Shield className="h-8 w-8 text-primary-foreground" />
+            <div className="p-4 rounded-full bg-primary/10 border border-primary/30">
+              <Shield className="h-8 w-8 text-primary" />
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-foreground">nosynt.io</h1>
+          <h1 className="text-3xl font-bold text-foreground">deaddrop.io</h1>
           <p className="text-muted-foreground mt-2">
             Secure OSINT Intelligence Platform
           </p>
         </div>
 
-        <Card className="bg-gradient-card shadow-cosmic">
+        <Card className="bg-card/80 backdrop-blur-sm border border-border/50">
           <CardHeader className="text-center">
             <CardTitle className="text-foreground">Authentication</CardTitle>
             <CardDescription>
@@ -279,7 +279,7 @@ export default function Auth() {
                     </div>
                     <Button 
                       type="submit" 
-                      className="w-full bg-gradient-primary shadow-primary" 
+                      className="w-full bg-primary text-primary-foreground hover:bg-primary/90" 
                       disabled={isLoading}
                     >
                       {isLoading ? "Signing In..." : "Sign In"}
@@ -381,7 +381,7 @@ export default function Auth() {
                   </div>
                   <Button 
                     type="submit" 
-                    className="w-full bg-gradient-primary shadow-primary" 
+                    className="w-full bg-primary text-primary-foreground hover:bg-primary/90" 
                     disabled={isLoading}
                   >
                     {isLoading ? "Creating Account..." : "Create Account"}
