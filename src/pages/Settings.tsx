@@ -401,7 +401,7 @@ export default function SystemSettings() {
     <div className="space-y-6">
       {/* Header */}
       <div className="text-center space-y-4">
-        <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
           System Settings
         </h1>
         <p className="text-muted-foreground max-w-2xl mx-auto">
@@ -419,7 +419,7 @@ export default function SystemSettings() {
 
         <TabsContent value="notifications" className="space-y-6">
           {/* Notification Settings */}
-          <Card className="bg-gradient-card shadow-card">
+           <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Bell className="h-5 w-5" />
@@ -448,7 +448,7 @@ export default function SystemSettings() {
           </Card>
 
           {/* Recent Notifications */}
-          <Card className="bg-gradient-card shadow-card">
+           <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
             <CardHeader>
               <CardTitle>Recent Notifications</CardTitle>
               <CardDescription>Your latest system notifications and alerts</CardDescription>
@@ -512,7 +512,7 @@ export default function SystemSettings() {
 
         <TabsContent value="integrations" className="space-y-6">
           {/* Discord Integration */}
-          <Card className="bg-gradient-card shadow-card">
+           <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <div className="h-6 w-6 bg-[#5865F2] rounded-full flex items-center justify-center text-white text-xs font-bold">
@@ -634,7 +634,7 @@ export default function SystemSettings() {
           </Card>
 
           {/* Telegram Integration */}
-          <Card className="bg-gradient-card shadow-card">
+           <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <div className="h-6 w-6 bg-[#229ED9] rounded-full flex items-center justify-center text-white text-xs font-bold">
@@ -755,7 +755,7 @@ export default function SystemSettings() {
         </TabsContent>
 
         <TabsContent value="data" className="space-y-6">
-          <Card className="bg-gradient-card shadow-card">
+           <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Database className="h-5 w-5" />
@@ -792,7 +792,7 @@ export default function SystemSettings() {
         </TabsContent>
 
         <TabsContent value="security" className="space-y-6">
-          <Card className="bg-gradient-card shadow-card">
+          <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Shield className="h-5 w-5" />

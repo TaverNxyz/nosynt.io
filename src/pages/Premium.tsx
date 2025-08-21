@@ -226,7 +226,7 @@ export default function Premium() {
 
         <TabsContent value="usage" className="space-y-6">
           {/* Current Plan Overview */}
-          <Card className="bg-gradient-card shadow-card">
+          <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
@@ -312,7 +312,7 @@ export default function Premium() {
 
           {/* Usage Statistics */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Card className="bg-gradient-card shadow-card">
+            <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -325,7 +325,7 @@ export default function Premium() {
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-card shadow-card">
+            <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -343,7 +343,7 @@ export default function Premium() {
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-card shadow-card">
+            <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -356,7 +356,7 @@ export default function Premium() {
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-card shadow-card">
+            <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -400,7 +400,7 @@ export default function Premium() {
               >
                 {tier.popular && (
                   <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                    <Badge className="bg-gradient-primary text-primary-foreground">
+                    <Badge className="bg-primary text-primary-foreground">
                       Most Popular
                     </Badge>
                   </div>
@@ -450,8 +450,8 @@ export default function Premium() {
                     <Button 
                       className={`w-full ${
                         tier.popular 
-                          ? 'bg-gradient-primary shadow-primary' 
-                          : 'bg-gradient-security'
+                          ? 'bg-primary text-primary-foreground hover:bg-primary/90' 
+                          : 'bg-secondary text-secondary-foreground hover:bg-secondary/90'
                       }`}
                       variant={selectedTier === tier.id ? "default" : "outline"}
                       onClick={() => setSelectedTier(tier.id)}
@@ -467,7 +467,7 @@ export default function Premium() {
         </TabsContent>
 
         <TabsContent value="billing" className="space-y-6">
-          <Card className="bg-gradient-card shadow-card">
+          <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Calculator className="h-5 w-5" />

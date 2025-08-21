@@ -230,7 +230,7 @@ export default function Implementation() {
 
       {/* Overview Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="bg-gradient-card shadow-card">
+        <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -244,7 +244,7 @@ export default function Implementation() {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-card shadow-card">
+        <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -258,7 +258,7 @@ export default function Implementation() {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-card shadow-card">
+        <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -275,7 +275,7 @@ export default function Implementation() {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-card shadow-card">
+        <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -292,7 +292,7 @@ export default function Implementation() {
       {/* Phase Cards */}
       <div className="space-y-6">
         {implementationPhases.map((phase, index) => (
-          <Card key={phase.id} className="bg-gradient-card shadow-card">
+          <Card key={phase.id} className="bg-card/50 backdrop-blur-sm border border-border/50">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">

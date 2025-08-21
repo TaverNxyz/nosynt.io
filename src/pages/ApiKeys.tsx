@@ -372,7 +372,7 @@ export default function ApiKeys() {
 
         <TabsContent value="keys" className="space-y-6">
           {/* Add New Key */}
-          <Card className="bg-gradient-card shadow-card">
+          <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Plus className="h-5 w-5" />
@@ -455,7 +455,7 @@ export default function ApiKeys() {
               </div>
             ) : (
               apiKeys.map((key) => (
-                <Card key={key.id} className="bg-gradient-card shadow-card">
+                <Card key={key.id} className="bg-card/50 backdrop-blur-sm border border-border/50">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-4">
@@ -517,7 +517,7 @@ export default function ApiKeys() {
         <TabsContent value="services" className="space-y-6">
           <div className="grid gap-4">
             {supportedServices.map((service) => (
-              <Card key={service.name} className="bg-gradient-card shadow-card">
+              <Card key={service.name} className="bg-card/50 backdrop-blur-sm border border-border/50">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div className="flex-1">

@@ -169,7 +169,7 @@ export default function Subscriptions() {
     <div className="space-y-6">
       {/* Header */}
       <div className="text-center space-y-4">
-        <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
           Subscription Plans
         </h1>
         <p className="text-muted-foreground max-w-2xl mx-auto">
@@ -179,7 +179,7 @@ export default function Subscriptions() {
 
       {/* Current Usage Overview */}
       {limits && (
-        <Card className="bg-gradient-card shadow-card">
+        <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <AlertCircle className="h-5 w-5" />
@@ -230,7 +230,7 @@ export default function Subscriptions() {
           return (
             <Card 
               key={plan.id} 
-              className={`relative ${isCurrent ? 'ring-2 ring-primary' : ''} bg-gradient-card shadow-card`}
+              className={`relative ${isCurrent ? 'ring-2 ring-primary' : ''} bg-card/50 backdrop-blur-sm border border-border/50`}
             >
               {isCurrent && (
                 <Badge className="absolute -top-2 left-1/2 transform -translate-x-1/2 bg-primary">
@@ -240,7 +240,7 @@ export default function Subscriptions() {
               
               <CardHeader className="text-center">
                 <div className={`flex justify-center mb-4`}>
-                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-primary shadow-glow">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
                     <PlanIcon className={`h-6 w-6 text-primary-foreground`} />
                   </div>
                 </div>
@@ -306,7 +306,7 @@ export default function Subscriptions() {
 
       {/* Current Subscription Details */}
       {currentSubscription && (
-        <Card className="bg-gradient-card shadow-card">
+        <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
           <CardHeader>
             <CardTitle>Subscription Details</CardTitle>
             <CardDescription>Manage your current subscription</CardDescription>

@@ -161,7 +161,55 @@ export default function Analytics() {
           </CardContent>
         </Card>
 
-        <Card className="bg-card/50 backdrop-blur-sm border-border/50">
+          <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Commands This Month</p>
+                <p className="text-2xl font-bold text-foreground">{monthlyUsage.total_commands.toLocaleString()}</p>
+              </div>
+              <Database className="h-8 w-8 text-primary" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">API Cost</p>
+                <p className="text-2xl font-bold text-foreground">${monthlyUsage.total_api_cost.toFixed(2)}</p>
+              </div>
+              <Users className="h-8 w-8 text-blue-500" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Success Rate</p>
+                <p className="text-2xl font-bold text-green-500">{successRate}%</p>
+              </div>
+              <CheckCircle className="h-8 w-8 text-green-500" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Avg Response</p>
+                <p className="text-2xl font-bold text-foreground">{avgResponseTime}s</p>
+              </div>
+              <Zap className="h-8 w-8 text-yellow-500" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>

@@ -142,7 +142,7 @@ export function BootScreen({ onBootComplete }: BootScreenProps) {
               <div className="flex space-x-3">
                 <Button 
                   onClick={onBootComplete}
-                  className="bg-terminal-green text-background hover:bg-terminal-amber font-mono text-xs"
+                  className="bg-terminal-green text-background hover:bg-terminal-amber font-mono text-xs shadow-glow"
                 >
                   <Zap className="h-3 w-3 mr-1" />
                   ENTER SYSTEM

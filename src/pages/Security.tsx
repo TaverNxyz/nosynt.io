@@ -234,7 +234,7 @@ export default function Security() {
 
       {/* Security Overview */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="bg-gradient-card shadow-card">
+        <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -248,7 +248,7 @@ export default function Security() {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-card shadow-card">
+        <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -260,7 +260,7 @@ export default function Security() {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-card shadow-card">
+        <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -274,7 +274,7 @@ export default function Security() {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-card shadow-card">
+        <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -297,7 +297,7 @@ export default function Security() {
         <TabsContent value="compliance" className="space-y-6">
           <div className="grid gap-4">
             {complianceFrameworks.map((framework) => (
-              <Card key={framework.id} className="bg-gradient-card shadow-card">
+              <Card key={framework.id} className="bg-card/50 backdrop-blur-sm border border-border/50">
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
@@ -356,7 +356,7 @@ export default function Security() {
         <TabsContent value="controls" className="space-y-6">
           <div className="grid gap-4">
             {securityControls.map((control) => (
-              <Card key={control.id} className="bg-gradient-card shadow-card">
+              <Card key={control.id} className="bg-card/50 backdrop-blur-sm border border-border/50">
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
@@ -423,7 +423,7 @@ export default function Security() {
 
         <TabsContent value="risk" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card className="bg-gradient-card shadow-card">
+            <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
               <CardHeader>
                 <CardTitle>Risk Assessment Matrix</CardTitle>
                 <CardDescription>Current security risks by severity and likelihood</CardDescription>
@@ -460,7 +460,7 @@ export default function Security() {
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-card shadow-card">
+            <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
               <CardHeader>
                 <CardTitle>Threat Intelligence</CardTitle>
                 <CardDescription>Latest security threats and recommendations</CardDescription>
