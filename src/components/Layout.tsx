@@ -44,10 +44,17 @@ export default function Layout({ children }: LayoutProps) {
   const navigate = useNavigate();
   const { user, loading, signOut } = useAuth();
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
+  const [redirecting, setRedirecting] = useState(false);
 
   // Redirect to auth if not authenticated (except for auth page)
-  if (!loading && !user && location.pathname !== "/auth") {
-    navigate("/auth", { replace: true });
+  useEffect(() => {
+    if (!loading && !user && location.pathname !== "/auth") {
+      setRedirecting(true);
+      navigate("/auth", { replace: true });
+    }
+  }, [user, loading, location.pathname, navigate]);
+
+  if (redirecting || (!loading && !user && location.pathname !== "/auth")) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center font-mono">
         <div className="text-center">
