@@ -66,13 +66,13 @@ export function BootScreen({ onBootComplete }: BootScreenProps) {
   const getLineIcon = (type: string) => {
     switch (type) {
       case 'success':
-        return <CheckCircle className="h-3 w-3 text-green-400 inline mr-2" />;
+        return <CheckCircle className="h-3 w-3 text-terminal-green inline mr-2" />;
       case 'warning':
-        return <AlertTriangle className="h-3 w-3 text-yellow-400 inline mr-2" />;
+        return <AlertTriangle className="h-3 w-3 text-terminal-amber inline mr-2" />;
       case 'error':
-        return <AlertTriangle className="h-3 w-3 text-red-400 inline mr-2" />;
+        return <AlertTriangle className="h-3 w-3 text-terminal-red inline mr-2" />;
       case 'system':
-        return <Terminal className="h-3 w-3 text-green-400 inline mr-2" />;
+        return <Terminal className="h-3 w-3 text-terminal-green inline mr-2" />;
       default:
         return null;
     }
@@ -81,20 +81,20 @@ export function BootScreen({ onBootComplete }: BootScreenProps) {
   const getLineColor = (type: string) => {
     switch (type) {
       case 'success':
-        return 'text-green-400';
+        return 'text-terminal-green';
       case 'warning':
-        return 'text-yellow-400';
+        return 'text-terminal-amber';
       case 'error':
-        return 'text-red-400';
+        return 'text-terminal-red';
       case 'system':
-        return 'text-green-400';
+        return 'text-terminal-green';
       default:
-        return 'text-green-300';
+        return 'text-terminal-cyan';
     }
   };
 
   return (
-    <div className="min-h-screen bg-black text-green-400 font-mono text-sm relative overflow-hidden">
+    <div className="min-h-screen bg-background text-terminal-green font-mono text-sm relative overflow-hidden">
       {/* Imgur Background Image */}
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0 animate-[glitch_0.3s_ease-in-out_5s_infinite]"
@@ -121,8 +121,8 @@ export function BootScreen({ onBootComplete }: BootScreenProps) {
           
           {/* Terminal Cursor */}
           <div className="flex items-center">
-            <span className="text-green-400">root@deaddrop:~# </span>
-            <span className={`ml-1 ${showCursor ? 'opacity-100' : 'opacity-0'} transition-opacity text-green-400`}>
+            <span className="text-terminal-green">root@deaddrop:~# </span>
+            <span className={`ml-1 ${showCursor ? 'opacity-100' : 'opacity-0'} transition-opacity text-terminal-green`}>
               █
             </span>
           </div>
@@ -131,18 +131,18 @@ export function BootScreen({ onBootComplete }: BootScreenProps) {
         {/* Boot Complete Actions */}
         {isComplete && (
           <div className="mt-8 space-y-4 animate-fade-in">
-            <div className="border border-green-400/30 bg-black/80 p-4 rounded backdrop-blur-sm">
+            <div className="border border-terminal-green/30 bg-card/80 p-4 rounded backdrop-blur-sm">
               <div className="flex items-center space-x-3 mb-3">
-                <Terminal className="h-5 w-5 text-green-400" />
-                <span className="text-green-400 font-bold">SYSTEM READY</span>
+                <Terminal className="h-5 w-5 text-terminal-green" />
+                <span className="text-terminal-green font-bold">SYSTEM READY</span>
               </div>
-              <p className="text-green-300/70 text-xs mb-4">
+              <p className="text-terminal-cyan/70 text-xs mb-4">
                 All deaddrop.io modules loaded successfully. Ready to execute intelligence gathering operations.
               </p>
               <div className="flex space-x-3">
                 <Button 
                   onClick={onBootComplete}
-                  className="bg-green-400 text-black hover:bg-green-300 font-mono text-xs"
+                  className="bg-terminal-green text-background hover:bg-terminal-amber font-mono text-xs"
                 >
                   <Zap className="h-3 w-3 mr-1" />
                   ENTER SYSTEM
@@ -150,7 +150,7 @@ export function BootScreen({ onBootComplete }: BootScreenProps) {
                 <Button 
                   variant="outline" 
                   size="sm"
-                  className="border-green-400/30 text-green-400 hover:bg-green-400/10 font-mono text-xs bg-transparent"
+                  className="border-terminal-green/30 text-terminal-green hover:bg-terminal-green/10 font-mono text-xs bg-transparent"
                   onClick={() => window.location.reload()}
                 >
                   <Loader2 className="h-3 w-3 mr-1" />
@@ -167,7 +167,7 @@ export function BootScreen({ onBootComplete }: BootScreenProps) {
         {[...Array(30)].map((_, i) => (
           <div
             key={i}
-            className="absolute text-green-400 text-xs font-mono animate-pulse"
+            className="absolute text-terminal-green text-xs font-mono animate-pulse"
             style={{
               left: `${(i * 3.33) % 100}%`,
               top: `${Math.random() * 100}%`,
