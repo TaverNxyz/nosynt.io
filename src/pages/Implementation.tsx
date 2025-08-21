@@ -172,13 +172,13 @@ const implementationPhases: ImplementationPhase[] = [
 const getStatusColor = (status: string) => {
   switch (status) {
     case 'completed':
-      return 'text-security-green bg-security-green/10 border-security-green/20';
+      return 'text-terminal-green bg-terminal-green/10 border-terminal-green/20';
     case 'in-progress':
-      return 'text-cyber-blue bg-cyber-blue/10 border-cyber-blue/20';
+      return 'text-terminal-blue bg-terminal-blue/10 border-terminal-blue/20';
     case 'planned':
       return 'text-muted-foreground bg-muted/10 border-muted/20';
     case 'on-hold':
-      return 'text-security-amber bg-security-amber/10 border-security-amber/20';
+      return 'text-terminal-amber bg-terminal-amber/10 border-terminal-amber/20';
     default:
       return 'text-muted-foreground bg-muted/10 border-muted/20';
   }
@@ -202,11 +202,11 @@ const getStatusIcon = (status: string) => {
 const getRiskColor = (severity: string) => {
   switch (severity) {
     case 'high':
-      return 'text-security-red bg-security-red/10 border-security-red/20';
+      return 'text-terminal-red bg-terminal-red/10 border-terminal-red/20';
     case 'medium':
-      return 'text-security-amber bg-security-amber/10 border-security-amber/20';
+      return 'text-terminal-amber bg-terminal-amber/10 border-terminal-amber/20';
     case 'low':
-      return 'text-security-green bg-security-green/10 border-security-green/20';
+      return 'text-terminal-green bg-terminal-green/10 border-terminal-green/20';
     default:
       return 'text-muted-foreground bg-muted/10 border-muted/20';
   }
@@ -249,11 +249,11 @@ export default function Implementation() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Phases Complete</p>
-                <p className="text-2xl font-bold text-security-green">
+                <p className="text-2xl font-bold text-terminal-green">
                   {completedPhases}/{totalPhases}
                 </p>
               </div>
-              <CheckCircle className="h-8 w-8 text-security-green" />
+              <CheckCircle className="h-8 w-8 text-terminal-green" />
             </div>
           </CardContent>
         </Card>
@@ -270,7 +270,7 @@ export default function Implementation() {
                   of ${totalBudget.toLocaleString()}
                 </p>
               </div>
-              <DollarSign className="h-8 w-8 text-security-amber" />
+              <DollarSign className="h-8 w-8 text-terminal-amber" />
             </div>
           </CardContent>
         </Card>
@@ -283,7 +283,7 @@ export default function Implementation() {
                 <p className="text-2xl font-bold text-foreground">11</p>
                 <p className="text-xs text-muted-foreground">months total</p>
               </div>
-              <Calendar className="h-8 w-8 text-cyber-blue" />
+              <Calendar className="h-8 w-8 text-terminal-blue" />
             </div>
           </CardContent>
         </Card>
@@ -359,7 +359,7 @@ export default function Implementation() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                   {phase.deliverables.map((deliverable, index) => (
                     <div key={index} className="flex items-center space-x-2">
-                      <CheckCircle className="h-4 w-4 text-security-green flex-shrink-0" />
+                      <CheckCircle className="h-4 w-4 text-terminal-green flex-shrink-0" />
                       <span className="text-sm">{deliverable}</span>
                     </div>
                   ))}

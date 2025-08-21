@@ -318,10 +318,10 @@ export default function ApiKeys() {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'active':
-        return <CheckCircle className="h-4 w-4 text-security-green" />;
+        return <CheckCircle className="h-4 w-4 text-terminal-green" />;
       case 'expired':
       case 'invalid':
-        return <AlertCircle className="h-4 w-4 text-security-red" />;
+        return <AlertCircle className="h-4 w-4 text-terminal-red" />;
       default:
         return null;
     }
@@ -329,9 +329,9 @@ export default function ApiKeys() {
 
   const getStatusBadge = (status: string) => {
     const variants: Record<string, string> = {
-      active: "bg-security-green/10 text-security-green border-security-green/20",
-      expired: "bg-security-red/10 text-security-red border-security-red/20",
-      invalid: "bg-security-red/10 text-security-red border-security-red/20"
+      active: "bg-terminal-green/10 text-terminal-green border-terminal-green/20",
+      expired: "bg-terminal-red/10 text-terminal-red border-terminal-red/20",
+      invalid: "bg-terminal-red/10 text-terminal-red border-terminal-red/20"
     };
 
     return (

@@ -112,13 +112,13 @@ const mockProviders: Provider[] = [
 const getStatusColor = (status: string) => {
   switch (status) {
     case 'operational':
-      return 'text-security-green bg-security-green/10 border-security-green/20';
+      return 'text-terminal-green bg-terminal-green/10 border-terminal-green/20';
     case 'degraded':
-      return 'text-security-amber bg-security-amber/10 border-security-amber/20';
+      return 'text-terminal-amber bg-terminal-amber/10 border-terminal-amber/20';
     case 'outage':
-      return 'text-security-red bg-security-red/10 border-security-red/20';
+      return 'text-terminal-red bg-terminal-red/10 border-terminal-red/20';
     case 'maintenance':
-      return 'text-cyber-blue bg-cyber-blue/10 border-cyber-blue/20';
+      return 'text-terminal-blue bg-terminal-blue/10 border-terminal-blue/20';
     default:
       return 'text-muted-foreground bg-muted/10 border-muted/20';
   }
@@ -170,11 +170,11 @@ export default function Providers() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Operational</p>
-                <p className="text-2xl font-bold text-security-green">
+                <p className="text-2xl font-bold text-terminal-green">
                   {operationalCount}/{totalProviders}
                 </p>
               </div>
-              <CheckCircle className="h-8 w-8 text-security-green" />
+              <CheckCircle className="h-8 w-8 text-terminal-green" />
             </div>
           </CardContent>
         </Card>
@@ -188,7 +188,7 @@ export default function Providers() {
                   {Math.round(avgResponseTime)}ms
                 </p>
               </div>
-              <Zap className="h-8 w-8 text-cyber-blue" />
+              <Zap className="h-8 w-8 text-terminal-blue" />
             </div>
           </CardContent>
         </Card>
@@ -202,7 +202,7 @@ export default function Providers() {
                   {avgUptime.toFixed(1)}%
                 </p>
               </div>
-              <TrendingUp className="h-8 w-8 text-security-green" />
+              <TrendingUp className="h-8 w-8 text-terminal-green" />
             </div>
           </CardContent>
         </Card>

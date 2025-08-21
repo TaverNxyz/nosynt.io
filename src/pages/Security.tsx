@@ -163,11 +163,11 @@ const securityControls: SecurityControl[] = [
 const getComplianceStatusColor = (status: string) => {
   switch (status) {
     case 'compliant':
-      return 'text-security-green bg-security-green/10 border-security-green/20';
+      return 'text-terminal-green bg-terminal-green/10 border-terminal-green/20';
     case 'in-progress':
-      return 'text-cyber-blue bg-cyber-blue/10 border-cyber-blue/20';
+      return 'text-terminal-blue bg-terminal-blue/10 border-terminal-blue/20';
     case 'non-compliant':
-      return 'text-security-red bg-security-red/10 border-security-red/20';
+      return 'text-terminal-red bg-terminal-red/10 border-terminal-red/20';
     default:
       return 'text-muted-foreground bg-muted/10 border-muted/20';
   }
@@ -176,11 +176,11 @@ const getComplianceStatusColor = (status: string) => {
 const getControlStatusColor = (status: string) => {
   switch (status) {
     case 'implemented':
-      return 'text-security-green bg-security-green/10 border-security-green/20';
+      return 'text-terminal-green bg-terminal-green/10 border-terminal-green/20';
     case 'partial':
-      return 'text-security-amber bg-security-amber/10 border-security-amber/20';
+      return 'text-terminal-amber bg-terminal-amber/10 border-terminal-amber/20';
     case 'missing':
-      return 'text-security-red bg-security-red/10 border-security-red/20';
+      return 'text-terminal-red bg-terminal-red/10 border-terminal-red/20';
     default:
       return 'text-muted-foreground bg-muted/10 border-muted/20';
   }
@@ -189,13 +189,13 @@ const getControlStatusColor = (status: string) => {
 const getPriorityColor = (priority: string) => {
   switch (priority) {
     case 'critical':
-      return 'text-security-red bg-security-red/10 border-security-red/20';
+      return 'text-terminal-red bg-terminal-red/10 border-terminal-red/20';
     case 'high':
-      return 'text-security-amber bg-security-amber/10 border-security-amber/20';
+      return 'text-terminal-amber bg-terminal-amber/10 border-terminal-amber/20';
     case 'medium':
-      return 'text-cyber-blue bg-cyber-blue/10 border-cyber-blue/20';
+      return 'text-terminal-blue bg-terminal-blue/10 border-terminal-blue/20';
     case 'low':
-      return 'text-security-green bg-security-green/10 border-security-green/20';
+      return 'text-terminal-green bg-terminal-green/10 border-terminal-green/20';
     default:
       return 'text-muted-foreground bg-muted/10 border-muted/20';
   }
@@ -243,7 +243,7 @@ export default function Security() {
                   {implementedControls}/{totalControls}
                 </p>
               </div>
-              <Shield className="h-8 w-8 text-security-green" />
+              <Shield className="h-8 w-8 text-terminal-green" />
             </div>
           </CardContent>
         </Card>
@@ -253,9 +253,9 @@ export default function Security() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Critical Issues</p>
-                <p className="text-2xl font-bold text-security-red">{criticalIssues}</p>
+                <p className="text-2xl font-bold text-terminal-red">{criticalIssues}</p>
               </div>
-              <AlertTriangle className="h-8 w-8 text-security-red" />
+              <AlertTriangle className="h-8 w-8 text-terminal-red" />
             </div>
           </CardContent>
         </Card>
@@ -269,7 +269,7 @@ export default function Security() {
                   {Math.round(avgCompliance)}%
                 </p>
               </div>
-              <FileText className="h-8 w-8 text-cyber-blue" />
+              <FileText className="h-8 w-8 text-terminal-blue" />
             </div>
           </CardContent>
         </Card>
@@ -467,9 +467,9 @@ export default function Security() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  <div className="p-3 bg-security-red/10 border border-security-red/20 rounded-lg">
+                  <div className="p-3 bg-terminal-red/10 border border-terminal-red/20 rounded-lg">
                     <div className="flex items-center space-x-2 mb-2">
-                      <AlertTriangle className="h-4 w-4 text-security-red" />
+                      <AlertTriangle className="h-4 w-4 text-terminal-red" />
                       <span className="font-medium text-sm">Critical Alert</span>
                     </div>
                     <p className="text-sm text-muted-foreground">
@@ -478,9 +478,9 @@ export default function Security() {
                     </p>
                   </div>
                   
-                  <div className="p-3 bg-security-amber/10 border border-security-amber/20 rounded-lg">
+                  <div className="p-3 bg-terminal-amber/10 border border-terminal-amber/20 rounded-lg">
                     <div className="flex items-center space-x-2 mb-2">
-                      <Clock className="h-4 w-4 text-security-amber" />
+                      <Clock className="h-4 w-4 text-terminal-amber" />
                       <span className="font-medium text-sm">Advisory</span>
                     </div>
                     <p className="text-sm text-muted-foreground">
@@ -489,9 +489,9 @@ export default function Security() {
                     </p>
                   </div>
                   
-                  <div className="p-3 bg-security-green/10 border border-security-green/20 rounded-lg">
+                  <div className="p-3 bg-terminal-green/10 border border-terminal-green/20 rounded-lg">
                     <div className="flex items-center space-x-2 mb-2">
-                      <CheckCircle className="h-4 w-4 text-security-green" />
+                      <CheckCircle className="h-4 w-4 text-terminal-green" />
                       <span className="font-medium text-sm">All Clear</span>
                     </div>
                     <p className="text-sm text-muted-foreground">
