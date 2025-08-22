@@ -43,37 +43,32 @@ const App = () => {
   return (
     <ThemeProvider attribute="class" defaultTheme="dark">
       <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter
-            future={{
-              v7_startTransition: true,
-              v7_relativeSplatPath: true,
-            }}
-          >
-            <Layout>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/commands" element={<Commands />} />
-                <Route path="/analytics" element={<Analytics />} />
-                <Route path="/api-keys" element={<ApiKeys />} />
-                <Route path="/providers" element={<Providers />} />
-                <Route path="/implementation" element={<Implementation />} />
-                <Route path="/security" element={<Security />} />
-                <Route path="/subscriptions" element={<Subscriptions />} />
-                <Route path="/settings" element={<Settings />} />
-                <Route path="/premium" element={<Premium />} />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </Layout>
-          </BrowserRouter>
-        </TooltipProvider>
-      </AuthProvider>
-    </QueryClientProvider>
+        <AuthProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Layout>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/auth" element={<Auth />} />
+                  <Route path="/commands" element={<Commands />} />
+                  <Route path="/analytics" element={<Analytics />} />
+                  <Route path="/api-keys" element={<ApiKeys />} />
+                  <Route path="/providers" element={<Providers />} />
+                  <Route path="/implementation" element={<Implementation />} />
+                  <Route path="/security" element={<Security />} />
+                  <Route path="/subscriptions" element={<Subscriptions />} />
+                  <Route path="/settings" element={<Settings />} />
+                  <Route path="/premium" element={<Premium />} />
+                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Layout>
+            </BrowserRouter>
+          </TooltipProvider>
+        </AuthProvider>
+      </QueryClientProvider>
     </ThemeProvider>
   );
 };
