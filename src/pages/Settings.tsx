@@ -14,7 +14,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { IntegrationGuide } from "@/components/IntegrationGuide";
 import { toast } from "sonner";
 import { 
-  Settings, 
+  Settings as SettingsIcon,
   Bell, 
   Trash2, 
   Plus,
@@ -47,7 +47,7 @@ interface SystemNotification {
   action_url?: string;
 }
 
-export default function SystemSettings() {
+export default function Settings() {
   const { user } = useAuth();
   const [notifications, setNotifications] = useState<SystemNotification[]>([]);
   const [notificationSettings, setNotificationSettings] = useState<NotificationSetting[]>([
