@@ -146,39 +146,6 @@ export type Database = {
         }
         Relationships: []
       }
-      notifications: {
-        Row: {
-          config: Json
-          created_at: string
-          enabled: boolean
-          event_type: string
-          id: string
-          type: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          config?: Json
-          created_at?: string
-          enabled?: boolean
-          event_type: string
-          id?: string
-          type: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          config?: Json
-          created_at?: string
-          enabled?: boolean
-          event_type?: string
-          id?: string
-          type?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
       order_items: {
         Row: {
           created_at: string
@@ -247,59 +214,6 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
-      }
-      osint_reports: {
-        Row: {
-          created_at: string
-          execution_id: string
-          file_path: string | null
-          findings: Json
-          id: string
-          report_type: string
-          risk_score: number | null
-          summary: string | null
-          tags: string[] | null
-          target: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          execution_id: string
-          file_path?: string | null
-          findings?: Json
-          id?: string
-          report_type: string
-          risk_score?: number | null
-          summary?: string | null
-          tags?: string[] | null
-          target: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          execution_id?: string
-          file_path?: string | null
-          findings?: Json
-          id?: string
-          report_type?: string
-          risk_score?: number | null
-          summary?: string | null
-          tags?: string[] | null
-          target?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "osint_reports_execution_id_fkey"
-            columns: ["execution_id"]
-            isOneToOne: false
-            referencedRelation: "command_executions"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       payment_logs: {
         Row: {
@@ -678,45 +592,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      webhook_endpoints: {
-        Row: {
-          active: boolean
-          created_at: string
-          events: string[]
-          id: string
-          last_triggered_at: string | null
-          name: string
-          secret: string | null
-          updated_at: string
-          url: string
-          user_id: string
-        }
-        Insert: {
-          active?: boolean
-          created_at?: string
-          events?: string[]
-          id?: string
-          last_triggered_at?: string | null
-          name: string
-          secret?: string | null
-          updated_at?: string
-          url: string
-          user_id: string
-        }
-        Update: {
-          active?: boolean
-          created_at?: string
-          events?: string[]
-          id?: string
-          last_triggered_at?: string | null
-          name?: string
-          secret?: string | null
-          updated_at?: string
-          url?: string
-          user_id?: string
-        }
-        Relationships: []
       }
     }
     Views: {
