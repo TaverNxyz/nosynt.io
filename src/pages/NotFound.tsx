@@ -6,7 +6,7 @@ import { AlertTriangle, Home, Search, ArrowLeft } from "lucide-react";
 export default function NotFound() {
   return (
     <div className="min-h-[60vh] flex items-center justify-center p-4">
-      <Card className="max-w-md w-full bg-card/80 backdrop-blur-sm border border-border/50 text-center">
+      <Card className="max-w-md w-full bg-gradient-card shadow-card text-center">
         <CardHeader className="space-y-4">
           <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-destructive/10">
             <AlertTriangle className="h-10 w-10 text-destructive" />
@@ -24,7 +24,7 @@ export default function NotFound() {
         
         <CardContent className="space-y-4">
           <div className="flex flex-col sm:flex-row gap-3">
-            <Button asChild className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90">
+            <Button asChild className="flex-1 bg-gradient-primary">
               <Link to="/">
                 <Home className="mr-2 h-4 w-4" />
                 Go Home

@@ -112,13 +112,13 @@ const mockProviders: Provider[] = [
 const getStatusColor = (status: string) => {
   switch (status) {
     case 'operational':
-      return 'text-terminal-green bg-terminal-green/10 border-terminal-green/20';
+      return 'text-security-green bg-security-green/10 border-security-green/20';
     case 'degraded':
-      return 'text-terminal-amber bg-terminal-amber/10 border-terminal-amber/20';
+      return 'text-security-amber bg-security-amber/10 border-security-amber/20';
     case 'outage':
-      return 'text-terminal-red bg-terminal-red/10 border-terminal-red/20';
+      return 'text-security-red bg-security-red/10 border-security-red/20';
     case 'maintenance':
-      return 'text-terminal-blue bg-terminal-blue/10 border-terminal-blue/20';
+      return 'text-cyber-blue bg-cyber-blue/10 border-cyber-blue/20';
     default:
       return 'text-muted-foreground bg-muted/10 border-muted/20';
   }
@@ -165,21 +165,21 @@ export default function Providers() {
 
       {/* Status Overview */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
+        <Card className="bg-gradient-card shadow-card">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Operational</p>
-                <p className="text-2xl font-bold text-terminal-green">
+                <p className="text-2xl font-bold text-security-green">
                   {operationalCount}/{totalProviders}
                 </p>
               </div>
-              <CheckCircle className="h-8 w-8 text-terminal-green" />
+              <CheckCircle className="h-8 w-8 text-security-green" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
+        <Card className="bg-gradient-card shadow-card">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -188,12 +188,12 @@ export default function Providers() {
                   {Math.round(avgResponseTime)}ms
                 </p>
               </div>
-              <Zap className="h-8 w-8 text-terminal-blue" />
+              <Zap className="h-8 w-8 text-cyber-blue" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
+        <Card className="bg-gradient-card shadow-card">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -202,12 +202,12 @@ export default function Providers() {
                   {avgUptime.toFixed(1)}%
                 </p>
               </div>
-              <TrendingUp className="h-8 w-8 text-terminal-green" />
+              <TrendingUp className="h-8 w-8 text-security-green" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
+        <Card className="bg-gradient-card shadow-card">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -235,7 +235,7 @@ export default function Providers() {
                 variant={selectedCategory === category ? "default" : "outline"}
                 size="sm"
                 onClick={() => setSelectedCategory(category)}
-                className={selectedCategory === category ? "bg-primary text-primary-foreground" : ""}
+                className={selectedCategory === category ? "bg-gradient-primary" : ""}
               >
                 {category === "all" ? "All Services" : category}
               </Button>
@@ -245,7 +245,7 @@ export default function Providers() {
           {/* Provider Grid */}
           <div className="grid gap-4">
             {filteredProviders.map((provider) => (
-              <Card key={provider.id} className="bg-card/50 backdrop-blur-sm border border-border/50">
+              <Card key={provider.id} className="bg-gradient-card shadow-card">
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
@@ -301,7 +301,7 @@ export default function Providers() {
 
         <TabsContent value="analytics" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
+            <Card className="bg-gradient-card shadow-card">
               <CardHeader>
                 <CardTitle>Response Time Trends</CardTitle>
                 <CardDescription>Average response times over the last 24 hours</CardDescription>
@@ -316,7 +316,7 @@ export default function Providers() {
               </CardContent>
             </Card>
 
-            <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
+            <Card className="bg-gradient-card shadow-card">
               <CardHeader>
                 <CardTitle>Uptime History</CardTitle>
                 <CardDescription>Service availability over the last 30 days</CardDescription>

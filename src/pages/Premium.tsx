@@ -226,7 +226,7 @@ export default function Premium() {
 
         <TabsContent value="usage" className="space-y-6">
           {/* Current Plan Overview */}
-          <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
+          <Card className="bg-gradient-card shadow-card">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
@@ -279,7 +279,7 @@ export default function Premium() {
                   </div>
                   <div className="w-full bg-muted rounded-full h-2">
                     <div 
-                      className="bg-terminal-blue h-2 rounded-full transition-all duration-300" 
+                      className="bg-cyber-blue h-2 rounded-full transition-all duration-300" 
                       style={{ width: `${getUsagePercentage(usageMetrics.storageUsed, usageMetrics.storageLimit)}%` }}
                     />
                   </div>
@@ -298,7 +298,7 @@ export default function Premium() {
                   </div>
                   <div className="w-full bg-muted rounded-full h-2">
                     <div 
-                      className="bg-terminal-green h-2 rounded-full transition-all duration-300" 
+                      className="bg-security-green h-2 rounded-full transition-all duration-300" 
                       style={{ width: `${getUsagePercentage(usageMetrics.providersActive, usageMetrics.providersLimit)}%` }}
                     />
                   </div>
@@ -312,7 +312,7 @@ export default function Premium() {
 
           {/* Usage Statistics */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
+            <Card className="bg-gradient-card shadow-card">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -325,7 +325,7 @@ export default function Premium() {
               </CardContent>
             </Card>
 
-            <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
+            <Card className="bg-gradient-card shadow-card">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -338,12 +338,12 @@ export default function Premium() {
                     </p>
                     <p className="text-xs text-muted-foreground">query success rate</p>
                   </div>
-                  <Zap className="h-8 w-8 text-terminal-blue" />
+                  <Zap className="h-8 w-8 text-cyber-blue" />
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
+            <Card className="bg-gradient-card shadow-card">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -351,12 +351,12 @@ export default function Premium() {
                     <p className="text-2xl font-bold text-foreground">${monthlyUsage.total_api_cost.toFixed(2)}</p>
                     <p className="text-xs text-muted-foreground">this month</p>
                   </div>
-                  <Database className="h-8 w-8 text-terminal-green" />
+                  <Database className="h-8 w-8 text-security-green" />
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
+            <Card className="bg-gradient-card shadow-card">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -364,7 +364,7 @@ export default function Premium() {
                     <p className="text-2xl font-bold text-foreground">{monthlyUsage.providers_used?.length || 0}</p>
                     <p className="text-xs text-muted-foreground">unique providers</p>
                   </div>
-                  <Shield className="h-8 w-8 text-terminal-green" />
+                  <Shield className="h-8 w-8 text-security-green" />
                 </div>
               </CardContent>
             </Card>
@@ -384,7 +384,7 @@ export default function Premium() {
             <span className={`text-sm ${isYearly ? 'font-semibold' : 'text-muted-foreground'}`}>
               Yearly
             </span>
-            <Badge variant="outline" className="bg-terminal-green/10 text-terminal-green border-terminal-green/20">
+            <Badge variant="outline" className="bg-security-green/10 text-security-green border-security-green/20">
               Save 17%
             </Badge>
           </div>
@@ -394,13 +394,13 @@ export default function Premium() {
             {premiumTiers.map((tier) => (
               <Card 
                 key={tier.id}
-                className={`relative transition-all duration-300 ${
-                  tier.popular ? 'ring-2 ring-primary shadow-lg' : 'shadow-md'
+                className={`relative bg-gradient-card shadow-card transition-all duration-300 hover:shadow-primary ${
+                  tier.popular ? 'ring-2 ring-primary' : ''
                 } ${selectedTier === tier.id ? 'scale-105' : ''}`}
               >
                 {tier.popular && (
                   <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                    <Badge className="bg-primary text-primary-foreground">
+                    <Badge className="bg-gradient-primary text-primary-foreground">
                       Most Popular
                     </Badge>
                   </div>
@@ -428,7 +428,7 @@ export default function Premium() {
                     {tier.features.map((feature, index) => (
                       <div key={index} className="flex items-start space-x-2">
                         {feature.included ? (
-                          <Check className="h-4 w-4 text-terminal-green mt-0.5 flex-shrink-0" />
+                          <Check className="h-4 w-4 text-security-green mt-0.5 flex-shrink-0" />
                         ) : (
                           <X className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
                         )}
@@ -450,8 +450,8 @@ export default function Premium() {
                     <Button 
                       className={`w-full ${
                         tier.popular 
-                          ? 'bg-primary text-primary-foreground hover:bg-primary/90' 
-                          : 'bg-secondary text-secondary-foreground hover:bg-secondary/90'
+                          ? 'bg-gradient-primary shadow-primary' 
+                          : 'bg-gradient-security'
                       }`}
                       variant={selectedTier === tier.id ? "default" : "outline"}
                       onClick={() => setSelectedTier(tier.id)}
@@ -467,7 +467,7 @@ export default function Premium() {
         </TabsContent>
 
         <TabsContent value="billing" className="space-y-6">
-          <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
+          <Card className="bg-gradient-card shadow-card">
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Calculator className="h-5 w-5" />

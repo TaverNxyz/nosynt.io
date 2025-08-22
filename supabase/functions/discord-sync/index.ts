@@ -1,133 +1,126 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import "https://deno.land/x/xhr@0.1.0/mod.ts";
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+};
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { executionId, userId } = await req.json()
+    const { command, results, channelId, userId } = await req.json();
     
-    // Initialize Supabase client
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
-
-    // Get execution details
-    const { data: execution, error: execError } = await supabaseClient
-      .from('command_executions')
-      .select('*')
-      .eq('id', executionId)
-      .single()
-
-    if (execError || !execution) {
-      throw new Error('Execution not found')
+    console.log('Discord sync request:', { command: command?.name, channelId, userId });
+    
+    const discordToken = Deno.env.get('DISCORD_BOT_TOKEN');
+    if (!discordToken) {
+      console.error('Discord bot token not configured');
+      throw new Error('Discord bot token not configured');
     }
 
-    // Get user's Discord settings
-    const { data: discordSettings, error: settingsError } = await supabaseClient
-      .from('discord_settings')
-      .select('*')
-      .eq('user_id', userId)
-      .single()
-
-    if (settingsError || !discordSettings || !discordSettings.webhook_url) {
-      throw new Error('Discord webhook not configured')
+    if (!channelId || channelId.trim() === '') {
+      console.error('Channel ID is empty or missing');
+      throw new Error('Discord channel ID is required. Please configure it in Settings > Integrations.');
     }
 
-    // Check if auto-sync is enabled and if we should sync this execution
-    if (!discordSettings.auto_sync_enabled) {
-      return new Response(
-        JSON.stringify({ success: false, message: 'Auto-sync disabled' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
+    if (!command || !command.name) {
+      console.error('Command data is missing');
+      throw new Error('Command data is required');
     }
 
-    if (discordSettings.sync_successful_only && execution.status !== 'success') {
-      return new Response(
-        JSON.stringify({ success: false, message: 'Sync only successful executions' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
-    }
-
-    // Prepare Discord embed
-    const embed = {
-      title: `🔍 OSINT Command Executed`,
-      color: execution.status === 'success' ? 0x00ff00 : 0xff0000,
-      fields: [
-        { name: 'Command', value: execution.command_name, inline: true },
-        { name: 'Provider', value: execution.provider, inline: true },
-        { name: 'Status', value: execution.status.toUpperCase(), inline: true },
-        { name: 'Input', value: execution.input_data, inline: false },
-        { name: 'Execution Time', value: `${execution.execution_time_ms || 0}ms`, inline: true },
-        { name: 'Cost', value: `$${execution.api_cost || 0}`, inline: true }
-      ],
-      timestamp: execution.created_at,
-      footer: { text: 'KeyForge OSINT Hub' }
-    }
-
-    if (execution.status === 'success' && execution.output_data) {
-      const outputPreview = JSON.stringify(execution.output_data).substring(0, 500)
-      embed.fields.push({
-        name: 'Results Preview',
-        value: `\`\`\`json\n${outputPreview}${outputPreview.length >= 500 ? '...' : ''}\n\`\`\``,
-        inline: false
-      })
-    }
-
-    if (execution.status === 'error' && execution.error_message) {
-      embed.fields.push({
-        name: 'Error',
-        value: execution.error_message.substring(0, 500),
-        inline: false
-      })
-    }
-
-    // Send to Discord
-    const discordResponse = await fetch(discordSettings.webhook_url, {
+    // Format the command results for Discord
+    const formattedMessage = formatResultsForDiscord(command, results);
+    
+    console.log('Sending message to Discord channel:', channelId);
+    
+    // Send to Discord channel
+    const discordResponse = await fetch(`https://discord.com/api/v10/channels/${channelId}/messages`, {
       method: 'POST',
       headers: {
+        'Authorization': `Bot ${discordToken}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        embeds: [embed]
-      })
-    })
+        content: formattedMessage,
+        embeds: [{
+          title: `🔍 OSINT Command: ${command.name}`,
+          description: `Executed by <@${userId}>`,
+          color: 0x00ff00,
+          fields: [
+            {
+              name: "Command",
+              value: command.name,
+              inline: true
+            },
+            {
+              name: "Category", 
+              value: command.category,
+              inline: true
+            },
+            {
+              name: "Provider",
+              value: command.provider,
+              inline: true
+            },
+            {
+              name: "Results",
+              value: "```json\n" + JSON.stringify(results, null, 2).slice(0, 1000) + "```",
+              inline: false
+            }
+          ],
+          timestamp: new Date().toISOString(),
+          footer: {
+            text: "OSINT Intelligence Platform"
+          }
+        }]
+      }),
+    });
 
     if (!discordResponse.ok) {
-      throw new Error(`Discord webhook failed: ${discordResponse.status}`)
+      const error = await discordResponse.text();
+      console.error('Discord API Error:', error);
+      throw new Error(`Discord API error: ${discordResponse.status}`);
     }
 
-    return new Response(
-      JSON.stringify({ 
-        success: true, 
-        message: 'Successfully synced to Discord' 
-      }),
-      {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200,
-      },
-    )
+    const messageData = await discordResponse.json();
+    
+    console.log(`Successfully sent OSINT results to Discord channel ${channelId}`);
+    
+    return new Response(JSON.stringify({ 
+      success: true, 
+      messageId: messageData.id,
+      channelId: channelId
+    }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
 
   } catch (error) {
-    console.error('Discord sync error:', error)
-
-    return new Response(
-      JSON.stringify({ 
-        success: false, 
-        error: error.message 
-      }),
-      {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 400,
-      },
-    )
+    console.error('Error in discord-sync function:', error);
+    return new Response(JSON.stringify({ 
+      error: error.message,
+      success: false 
+    }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   }
-})
+});
+
+function formatResultsForDiscord(command: any, results: any): string {
+  const truncatedResults = JSON.stringify(results, null, 2);
+  
+  return `🔍 **OSINT Command Executed**
+**Command:** ${command.name}
+**Category:** ${command.category} 
+**Provider:** ${command.provider}
+
+**Results Summary:**
+\`\`\`json
+${truncatedResults.slice(0, 1500)}${truncatedResults.length > 1500 ? '\n... (truncated)' : ''}
+\`\`\``;
+}

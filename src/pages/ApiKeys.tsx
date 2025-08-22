@@ -318,10 +318,10 @@ export default function ApiKeys() {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'active':
-        return <CheckCircle className="h-4 w-4 text-terminal-green" />;
+        return <CheckCircle className="h-4 w-4 text-security-green" />;
       case 'expired':
       case 'invalid':
-        return <AlertCircle className="h-4 w-4 text-terminal-red" />;
+        return <AlertCircle className="h-4 w-4 text-security-red" />;
       default:
         return null;
     }
@@ -329,9 +329,9 @@ export default function ApiKeys() {
 
   const getStatusBadge = (status: string) => {
     const variants: Record<string, string> = {
-      active: "bg-terminal-green/10 text-terminal-green border-terminal-green/20",
-      expired: "bg-terminal-red/10 text-terminal-red border-terminal-red/20",
-      invalid: "bg-terminal-red/10 text-terminal-red border-terminal-red/20"
+      active: "bg-security-green/10 text-security-green border-security-green/20",
+      expired: "bg-security-red/10 text-security-red border-security-red/20",
+      invalid: "bg-security-red/10 text-security-red border-security-red/20"
     };
 
     return (
@@ -372,7 +372,7 @@ export default function ApiKeys() {
 
         <TabsContent value="keys" className="space-y-6">
           {/* Add New Key */}
-          <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
+          <Card className="bg-gradient-card shadow-card">
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Plus className="h-5 w-5" />
@@ -455,7 +455,7 @@ export default function ApiKeys() {
               </div>
             ) : (
               apiKeys.map((key) => (
-                <Card key={key.id} className="bg-card/50 backdrop-blur-sm border border-border/50">
+                <Card key={key.id} className="bg-gradient-card shadow-card">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-4">
@@ -517,7 +517,7 @@ export default function ApiKeys() {
         <TabsContent value="services" className="space-y-6">
           <div className="grid gap-4">
             {supportedServices.map((service) => (
-              <Card key={service.name} className="bg-card/50 backdrop-blur-sm border border-border/50">
+              <Card key={service.name} className="bg-gradient-card shadow-card">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div className="flex-1">

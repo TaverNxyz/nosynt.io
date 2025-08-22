@@ -44,17 +44,10 @@ export default function Layout({ children }: LayoutProps) {
   const navigate = useNavigate();
   const { user, loading, signOut } = useAuth();
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
-  const [redirecting, setRedirecting] = useState(false);
 
   // Redirect to auth if not authenticated (except for auth page)
-  useEffect(() => {
-    if (!loading && !user && location.pathname !== "/auth") {
-      setRedirecting(true);
-      navigate("/auth", { replace: true });
-    }
-  }, [user, loading, location.pathname, navigate]);
-
-  if (redirecting || (!loading && !user && location.pathname !== "/auth")) {
+  if (!loading && !user && location.pathname !== "/auth") {
+    navigate("/auth", { replace: true });
     return (
       <div className="min-h-screen bg-background flex items-center justify-center font-mono">
         <div className="text-center">
@@ -80,12 +73,12 @@ export default function Layout({ children }: LayoutProps) {
         <img 
           src="https://i.imgur.com/QNvtBwh.gif" 
           alt="Terminal Animation" 
-          className="w-20 h-20 rounded-full border border-terminal-green/30 shadow-glow"
+          className="w-20 h-20 rounded-full border border-terminal-green/30 shadow-terminal"
         />
       </div>
       
       {/* Terminal Header */}
-      <header className="border-b border-border bg-card/80 backdrop-blur-sm relative z-50 shadow-glow">
+      <header className="border-b border-border bg-card/80 backdrop-blur-sm relative z-50 shadow-terminal">
         <div className="flex h-12 items-center px-4 text-sm">
           <div className="flex items-center space-x-2 group">
             <div className="flex h-6 w-6 items-center justify-center rounded bg-terminal-green text-black">
@@ -109,7 +102,7 @@ export default function Layout({ children }: LayoutProps) {
                   className={cn(
                     "flex items-center space-x-2 px-3 py-1 text-xs font-mono transition-all duration-200",
                     isActive
-                      ? "text-terminal-green shadow-glow bg-terminal-green/10 border border-terminal-green/30"
+                      ? "text-terminal-green shadow-terminal bg-terminal-green/10 border border-terminal-green/30"
                       : "text-muted-foreground hover:text-terminal-green hover:bg-terminal-green/5"
                   )}
                 >

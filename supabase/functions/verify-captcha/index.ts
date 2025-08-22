@@ -1,85 +1,50 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import "https://deno.land/x/xhr@0.1.0/mod.ts";
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+};
+
+const turnstileSecretKey = Deno.env.get('CLOUDFLARE_TURNSTILE_SECRET_KEY')!;
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { token } = await req.json()
+    const { token } = await req.json();
     
-    const TURNSTILE_SECRET_KEY = Deno.env.get('TURNSTILE_SECRET_KEY')
-    
-    if (!TURNSTILE_SECRET_KEY) {
-      // For development/testing, always return success
-      return new Response(
-        JSON.stringify({ 
-          success: true, 
-          message: 'Captcha verified (development mode)',
-          'error-codes': []
-        }),
-        {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 200,
-        },
-      )
-    }
+    console.log('Verifying Cloudflare Turnstile token');
 
-    // Verify with Cloudflare Turnstile
-    const formData = new FormData()
-    formData.append('secret', TURNSTILE_SECRET_KEY)
-    formData.append('response', token)
+    const formData = new FormData();
+    formData.append('secret', turnstileSecretKey);
+    formData.append('response', token);
 
     const response = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
       method: 'POST',
-      body: formData,
-    })
+      body: formData
+    });
 
-    const result = await response.json()
+    const result = await response.json();
+    console.log('Turnstile verification result:', result);
 
-    if (result.success) {
-      return new Response(
-        JSON.stringify({ 
-          success: true, 
-          message: 'Captcha verified successfully',
-          'error-codes': []
-        }),
-        {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 200,
-        },
-      )
-    } else {
-      return new Response(
-        JSON.stringify({ 
-          success: false, 
-          message: 'Captcha verification failed',
-          'error-codes': result['error-codes'] || []
-        }),
-        {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 400,
-        },
-      )
-    }
+    return new Response(JSON.stringify({
+      success: result.success,
+      error: result['error-codes']?.[0] || null
+    }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
 
   } catch (error) {
-    console.error('Captcha verification error:', error)
-
-    return new Response(
-      JSON.stringify({ 
-        success: false, 
-        error: error.message 
-      }),
-      {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 500,
-      },
-    )
+    console.error('Captcha verification error:', error);
+    return new Response(JSON.stringify({ 
+      success: false, 
+      error: error.message 
+    }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   }
-})
+});

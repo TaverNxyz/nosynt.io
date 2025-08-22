@@ -164,7 +164,7 @@ export default function Commands() {
     <div className="space-y-6">
       {/* Header */}
       <div className="text-center space-y-4">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+        <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
           OSINT Command Center
         </h1>
         <p className="text-muted-foreground max-w-2xl mx-auto">
@@ -192,7 +192,7 @@ export default function Commands() {
         {commandCategories.map((category) => (
           <TabsContent key={category.id} value={category.id} className="space-y-6">
             {/* Command Selection */}
-            <Card className="bg-card/50 backdrop-blur-sm border-border/50">
+            <Card className="bg-gradient-card shadow-card">
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   {category.icon}
@@ -278,7 +278,7 @@ export default function Commands() {
         ))}
 
         {/* Execution Results - Outside tabs to show on all tabs */}
-        <Card className="bg-card/50 backdrop-blur-sm border-border/50">
+        <Card className="bg-gradient-card shadow-card">
           <CardHeader>
             <CardTitle>Recent Executions</CardTitle>
             <CardDescription>Your command execution history and results</CardDescription>

@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Shield, Mail, Lock, User, Github, MessageSquare } from "lucide-react";
+import { Shield, Mail, Lock, User, Github } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 
@@ -157,50 +157,22 @@ export default function Auth() {
     }
   };
 
-  const handleDiscordSignIn = async () => {
-    setIsLoading(true);
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'discord',
-        options: {
-          redirectTo: `${window.location.origin}/`
-        }
-      });
-
-      if (error) {
-        toast({
-          title: "Discord Sign In Failed",
-          description: error.message,
-          variant: "destructive"
-        });
-      }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "An unexpected error occurred",
-        variant: "destructive"
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-hero p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
-            <div className="p-4 rounded-full bg-primary/10 border border-primary/30">
-              <Shield className="h-8 w-8 text-primary" />
+            <div className="p-4 rounded-full bg-gradient-primary shadow-glow">
+              <Shield className="h-8 w-8 text-primary-foreground" />
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-foreground">deaddrop.io</h1>
+          <h1 className="text-3xl font-bold text-foreground">nosynt.io</h1>
           <p className="text-muted-foreground mt-2">
             Secure OSINT Intelligence Platform
           </p>
         </div>
 
-        <Card className="bg-card/80 backdrop-blur-sm border border-border/50">
+        <Card className="bg-gradient-card shadow-cosmic">
           <CardHeader className="text-center">
             <CardTitle className="text-foreground">Authentication</CardTitle>
             <CardDescription>
@@ -216,26 +188,15 @@ export default function Auth() {
 
               <TabsContent value="signin">
                 <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-3">
-                    <Button
-                      onClick={handleGitHubSignIn}
-                      variant="outline"
-                      className="w-full"
-                      disabled={isLoading}
-                    >
-                      <Github className="h-4 w-4 mr-2" />
-                      GitHub
-                    </Button>
-                    <Button
-                      onClick={handleDiscordSignIn}
-                      variant="outline"
-                      className="w-full"
-                      disabled={isLoading}
-                    >
-                      <MessageSquare className="h-4 w-4 mr-2" />
-                      Discord
-                    </Button>
-                  </div>
+                  <Button
+                    onClick={handleGitHubSignIn}
+                    variant="outline"
+                    className="w-full"
+                    disabled={isLoading}
+                  >
+                    <Github className="h-4 w-4 mr-2" />
+                    Continue with GitHub
+                  </Button>
                   
                   <div className="relative">
                     <div className="absolute inset-0 flex items-center">
@@ -279,7 +240,7 @@ export default function Auth() {
                     </div>
                     <Button 
                       type="submit" 
-                      className="w-full bg-primary text-primary-foreground hover:bg-primary/90" 
+                      className="w-full bg-gradient-primary shadow-primary" 
                       disabled={isLoading}
                     >
                       {isLoading ? "Signing In..." : "Sign In"}
@@ -290,26 +251,15 @@ export default function Auth() {
 
               <TabsContent value="signup">
                 <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-3">
-                    <Button
-                      onClick={handleGitHubSignIn}
-                      variant="outline"
-                      className="w-full"
-                      disabled={isLoading}
-                    >
-                      <Github className="h-4 w-4 mr-2" />
-                      GitHub
-                    </Button>
-                    <Button
-                      onClick={handleDiscordSignIn}
-                      variant="outline"
-                      className="w-full"
-                      disabled={isLoading}
-                    >
-                      <MessageSquare className="h-4 w-4 mr-2" />
-                      Discord
-                    </Button>
-                  </div>
+                  <Button
+                    onClick={handleGitHubSignIn}
+                    variant="outline"
+                    className="w-full"
+                    disabled={isLoading}
+                  >
+                    <Github className="h-4 w-4 mr-2" />
+                    Continue with GitHub
+                  </Button>
                   
                   <div className="relative">
                     <div className="absolute inset-0 flex items-center">
@@ -381,7 +331,7 @@ export default function Auth() {
                   </div>
                   <Button 
                     type="submit" 
-                    className="w-full bg-primary text-primary-foreground hover:bg-primary/90" 
+                    className="w-full bg-gradient-primary shadow-primary" 
                     disabled={isLoading}
                   >
                     {isLoading ? "Creating Account..." : "Create Account"}

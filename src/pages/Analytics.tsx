@@ -103,7 +103,7 @@ export default function Analytics() {
     <div className="space-y-6">
       {/* Header */}
       <div className="text-center space-y-4">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+        <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
           Analytics & Monitoring
         </h1>
         <p className="text-muted-foreground max-w-2xl mx-auto">
@@ -113,7 +113,7 @@ export default function Analytics() {
 
       {/* Overview Stats */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-        <Card className="bg-card/50 backdrop-blur-sm border-border/50">
+        <Card className="bg-gradient-metallic border-border/50">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -125,7 +125,7 @@ export default function Analytics() {
           </CardContent>
         </Card>
 
-        <Card className="bg-card/50 backdrop-blur-sm border-border/50">
+        <Card className="bg-gradient-metallic border-border/50">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -137,7 +137,7 @@ export default function Analytics() {
           </CardContent>
         </Card>
 
-        <Card className="bg-card/50 backdrop-blur-sm border-border/50">
+        <Card className="bg-gradient-metallic border-border/50">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -149,7 +149,7 @@ export default function Analytics() {
           </CardContent>
         </Card>
 
-        <Card className="bg-card/50 backdrop-blur-sm border-border/50">
+        <Card className="bg-gradient-metallic border-border/50">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -161,55 +161,7 @@ export default function Analytics() {
           </CardContent>
         </Card>
 
-          <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Commands This Month</p>
-                <p className="text-2xl font-bold text-foreground">{monthlyUsage.total_commands.toLocaleString()}</p>
-              </div>
-              <Database className="h-8 w-8 text-primary" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">API Cost</p>
-                <p className="text-2xl font-bold text-foreground">${monthlyUsage.total_api_cost.toFixed(2)}</p>
-              </div>
-              <Users className="h-8 w-8 text-blue-500" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Success Rate</p>
-                <p className="text-2xl font-bold text-green-500">{successRate}%</p>
-              </div>
-              <CheckCircle className="h-8 w-8 text-green-500" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Avg Response</p>
-                <p className="text-2xl font-bold text-foreground">{avgResponseTime}s</p>
-              </div>
-              <Zap className="h-8 w-8 text-yellow-500" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
+        <Card className="bg-gradient-metallic border-border/50">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -292,7 +244,7 @@ export default function Analytics() {
 
           {/* Platform Details */}
           {selectedPlatform && (
-            <Card className="bg-card/50 backdrop-blur-sm border-primary/20">
+            <Card className="bg-gradient-metallic border-primary/20">
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <selectedPlatform.icon className="h-6 w-6 text-primary" />
@@ -373,7 +325,7 @@ export default function Analytics() {
 
         <TabsContent value="usage" className="space-y-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card className="bg-card/50 backdrop-blur-sm border-border/50">
+            <Card className="bg-gradient-card shadow-card">
               <CardHeader>
                 <CardTitle>Query Volume Trends</CardTitle>
                 <CardDescription>OSINT query patterns over the last 30 days</CardDescription>
@@ -386,22 +338,22 @@ export default function Analytics() {
                       <p className="text-xs text-muted-foreground">Total Queries</p>
                     </div>
                     <div>
-                      <p className="text-2xl font-bold text-terminal-green">98.7%</p>
+                      <p className="text-2xl font-bold text-security-green">98.7%</p>
                       <p className="text-xs text-muted-foreground">Success Rate</p>
                     </div>
                     <div>
-                      <p className="text-2xl font-bold text-terminal-blue">1.1s</p>
+                      <p className="text-2xl font-bold text-cyber-blue">1.1s</p>
                       <p className="text-xs text-muted-foreground">Avg Response</p>
                     </div>
                   </div>
-                  <div className="h-32 bg-card/50 border border-border/50 rounded-lg flex items-center justify-center">
+                  <div className="h-32 bg-gradient-metallic rounded-lg flex items-center justify-center">
                     <p className="text-sm text-muted-foreground">Query trends visualization</p>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="bg-card/50 backdrop-blur-sm border-border/50">
+            <Card className="bg-gradient-card shadow-card">
               <CardHeader>
                 <CardTitle>Provider Performance</CardTitle>
                 <CardDescription>Performance metrics across all OSINT providers</CardDescription>
@@ -421,8 +373,8 @@ export default function Analytics() {
                           <div className="w-20 h-2 bg-muted rounded-full">
                             <div 
                               className={`h-2 rounded-full ${
-                                provider.status === 'optimal' ? 'bg-terminal-green' :
-                                provider.status === 'good' ? 'bg-terminal-blue' : 'bg-terminal-amber'
+                                provider.status === 'optimal' ? 'bg-security-green' :
+                                provider.status === 'good' ? 'bg-cyber-blue' : 'bg-security-amber'
                               }`}
                               style={{ width: `${provider.usage}%` }}
                             />
@@ -440,7 +392,7 @@ export default function Analytics() {
 
         <TabsContent value="monitoring" className="space-y-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card className="bg-card/50 backdrop-blur-sm border-border/50">
+            <Card className="bg-gradient-card shadow-card">
               <CardHeader>
                 <CardTitle>System Health</CardTitle>
                 <CardDescription>Real-time infrastructure monitoring</CardDescription>
@@ -448,12 +400,12 @@ export default function Analytics() {
               <CardContent>
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center p-3 bg-card/50 border border-border/50 rounded-lg">
-                      <p className="text-lg font-bold text-terminal-green">99.8%</p>
+                    <div className="text-center p-3 bg-gradient-metallic rounded-lg">
+                      <p className="text-lg font-bold text-security-green">99.8%</p>
                       <p className="text-xs text-muted-foreground">Uptime</p>
                     </div>
-                    <div className="text-center p-3 bg-card/50 border border-border/50 rounded-lg">
-                      <p className="text-lg font-bold text-terminal-blue">2.1ms</p>
+                    <div className="text-center p-3 bg-gradient-metallic rounded-lg">
+                      <p className="text-lg font-bold text-cyber-blue">2.1ms</p>
                       <p className="text-xs text-muted-foreground">Latency</p>
                     </div>
                   </div>
@@ -478,7 +430,7 @@ export default function Analytics() {
               </CardContent>
             </Card>
 
-            <Card className="bg-card/50 backdrop-blur-sm border-border/50">
+            <Card className="bg-gradient-card shadow-card">
               <CardHeader>
                 <CardTitle>Alert Status</CardTitle>
                 <CardDescription>System alerts and notifications</CardDescription>
@@ -490,10 +442,10 @@ export default function Analytics() {
                     { type: "warning", message: "High memory usage detected", time: "15 min ago" },
                     { type: "success", message: "All services operational", time: "1 hour ago" }
                   ].map((alert, index) => (
-                    <div key={index} className="flex items-start space-x-3 p-2 rounded-lg bg-card/50 border border-border/50">
+                    <div key={index} className="flex items-start space-x-3 p-2 rounded-lg bg-gradient-metallic">
                       <div className={`w-2 h-2 rounded-full mt-2 ${
-                        alert.type === 'success' ? 'bg-terminal-green' :
-                        alert.type === 'warning' ? 'bg-terminal-amber' : 'bg-terminal-blue'
+                        alert.type === 'success' ? 'bg-security-green' :
+                        alert.type === 'warning' ? 'bg-security-amber' : 'bg-cyber-blue'
                       }`} />
                       <div className="flex-1">
                         <p className="text-sm">{alert.message}</p>

@@ -14,7 +14,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { IntegrationGuide } from "@/components/IntegrationGuide";
 import { toast } from "sonner";
 import { 
-  Settings as SettingsIcon,
+  Settings, 
   Bell, 
   Trash2, 
   Plus,
@@ -47,7 +47,7 @@ interface SystemNotification {
   action_url?: string;
 }
 
-export default function Settings() {
+export default function SystemSettings() {
   const { user } = useAuth();
   const [notifications, setNotifications] = useState<SystemNotification[]>([]);
   const [notificationSettings, setNotificationSettings] = useState<NotificationSetting[]>([
@@ -377,10 +377,10 @@ export default function Settings() {
 
   const getNotificationTypeColor = (type: string) => {
     switch (type) {
-      case 'success': return 'text-terminal-green bg-terminal-green/10 border-terminal-green/20';
-      case 'warning': return 'text-terminal-amber bg-terminal-amber/10 border-terminal-amber/20';
-      case 'error': return 'text-terminal-red bg-terminal-red/10 border-terminal-red/20';
-      default: return 'text-terminal-blue bg-terminal-blue/10 border-terminal-blue/20';
+      case 'success': return 'text-green-500 bg-green-500/10 border-green-500/20';
+      case 'warning': return 'text-yellow-500 bg-yellow-500/10 border-yellow-500/20';
+      case 'error': return 'text-red-500 bg-red-500/10 border-red-500/20';
+      default: return 'text-blue-500 bg-blue-500/10 border-blue-500/20';
     }
   };
 
@@ -401,7 +401,7 @@ export default function Settings() {
     <div className="space-y-6">
       {/* Header */}
       <div className="text-center space-y-4">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+        <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
           System Settings
         </h1>
         <p className="text-muted-foreground max-w-2xl mx-auto">
@@ -419,7 +419,7 @@ export default function Settings() {
 
         <TabsContent value="notifications" className="space-y-6">
           {/* Notification Settings */}
-           <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
+          <Card className="bg-gradient-card shadow-card">
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Bell className="h-5 w-5" />
@@ -448,7 +448,7 @@ export default function Settings() {
           </Card>
 
           {/* Recent Notifications */}
-           <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
+          <Card className="bg-gradient-card shadow-card">
             <CardHeader>
               <CardTitle>Recent Notifications</CardTitle>
               <CardDescription>Your latest system notifications and alerts</CardDescription>
@@ -512,7 +512,7 @@ export default function Settings() {
 
         <TabsContent value="integrations" className="space-y-6">
           {/* Discord Integration */}
-           <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
+          <Card className="bg-gradient-card shadow-card">
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <div className="h-6 w-6 bg-[#5865F2] rounded-full flex items-center justify-center text-white text-xs font-bold">
@@ -634,7 +634,7 @@ export default function Settings() {
           </Card>
 
           {/* Telegram Integration */}
-           <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
+          <Card className="bg-gradient-card shadow-card">
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <div className="h-6 w-6 bg-[#229ED9] rounded-full flex items-center justify-center text-white text-xs font-bold">
@@ -755,7 +755,7 @@ export default function Settings() {
         </TabsContent>
 
         <TabsContent value="data" className="space-y-6">
-           <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
+          <Card className="bg-gradient-card shadow-card">
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Database className="h-5 w-5" />
@@ -792,7 +792,7 @@ export default function Settings() {
         </TabsContent>
 
         <TabsContent value="security" className="space-y-6">
-          <Card className="bg-card/50 backdrop-blur-sm border border-border/50">
+          <Card className="bg-gradient-card shadow-card">
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Shield className="h-5 w-5" />

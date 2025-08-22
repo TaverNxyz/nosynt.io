@@ -73,22 +73,16 @@ export default {
 				'terminal-cyan': 'hsl(var(--terminal-cyan))',
 				'terminal-magenta': 'hsl(var(--terminal-magenta))'
 			},
-      backgroundImage: {
-        'gradient-terminal': 'var(--gradient-terminal)',
-        'gradient-boot': 'var(--gradient-boot)',
-        'gradient-matrix': 'var(--gradient-matrix)',
-        'gradient-hero': 'var(--gradient-hero)',
-        'gradient-primary': 'var(--gradient-primary)',
-        'gradient-card': 'var(--gradient-card)'
-      },
-      boxShadow: {
-        'terminal': 'var(--shadow-terminal)',
-        'scan': 'var(--shadow-scan)',
-        'error': 'var(--shadow-error)',
-        'glow': 'var(--shadow-glow)',
-        'cosmic': 'var(--shadow-cosmic)',
-        'primary': 'var(--shadow-primary)'
-      },
+			backgroundImage: {
+				'gradient-terminal': 'var(--gradient-terminal)',
+				'gradient-boot': 'var(--gradient-boot)',
+				'gradient-matrix': 'var(--gradient-matrix)'
+			},
+			boxShadow: {
+				'terminal': 'var(--shadow-terminal)',
+				'scan': 'var(--shadow-scan)',
+				'error': 'var(--shadow-error)'
+			},
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',

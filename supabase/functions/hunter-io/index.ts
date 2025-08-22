@@ -1,146 +1,107 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import "https://deno.land/x/xhr@0.1.0/mod.ts";
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.55.0';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+};
+
+const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+const hunterApiKey = Deno.env.get('HUNTER_IO_API_KEY')!;
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { email, executionId, command } = await req.json()
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    const { email, executionId, command } = await req.json();
     
-    const HUNTER_API_KEY = Deno.env.get('HUNTER_API_KEY')
-    
-    if (!HUNTER_API_KEY) {
-      // Update execution record with error
-      const supabaseClient = createClient(
-        Deno.env.get('SUPABASE_URL') ?? '',
-        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-      )
-      
-      await supabaseClient
-        .from('command_executions')
-        .update({
-          status: 'error',
-          error_message: 'Hunter.io API key not configured. Please add your Hunter.io API key to use email verification services.',
-          execution_time_ms: 0
-        })
-        .eq('id', executionId)
+    console.log('Hunter.io request:', { email, executionId, command });
 
-      return new Response(
-        JSON.stringify({ 
-          success: false, 
-          error: 'Hunter.io API key not configured. Please add your Hunter.io API key to use email verification services.'
-        }),
-        {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 503,
-        },
-      )
+    let apiUrl = '';
+    let requestData: any = {};
+
+    switch (command) {
+      case 'email_verify':
+        apiUrl = `https://api.hunter.io/v2/email-verifier?email=${encodeURIComponent(email)}&api_key=${hunterApiKey}`;
+        break;
+      case 'domain_search':
+        const domain = email.split('@')[1] || email;
+        apiUrl = `https://api.hunter.io/v2/domain-search?domain=${encodeURIComponent(domain)}&api_key=${hunterApiKey}`;
+        break;
+      default:
+        throw new Error(`Unknown command: ${command}`);
     }
 
-    // Initialize Supabase client
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
+    console.log('Making request to Hunter.io:', apiUrl);
 
-    const startTime = Date.now()
-    
-    // Real Hunter.io API call
-    const apiUrl = 'https://api.hunter.io/v2/email-verifier'
-    const url = new URL(apiUrl)
-    url.searchParams.append('email', email)
-    url.searchParams.append('api_key', HUNTER_API_KEY)
+    const response = await fetch(apiUrl, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+      },
+    });
 
-    const response = await fetch(url.toString())
-    const executionTime = Date.now() - startTime
-    
+    const responseData = await response.json();
+    console.log('Hunter.io response:', responseData);
+
     if (!response.ok) {
-      throw new Error(`Hunter.io API error: ${response.status} ${response.statusText}`)
+      throw new Error(`Hunter.io API error: ${responseData.errors?.[0]?.details || 'Unknown error'}`);
     }
 
-    const data = await response.json()
-    const emailData = data.data || {}
-
-    const processedData = {
-      email: email,
-      result: emailData.result || 'unknown',
-      score: emailData.score || 0,
-      regexp: emailData.regexp || false,
-      gibberish: emailData.gibberish || true,
-      disposable: emailData.disposable || true,
-      webmail: emailData.webmail || false,
-      mx_records: emailData.mx_records || false,
-      smtp_server: emailData.smtp_server || false,
-      smtp_check: emailData.smtp_check || false,
-      accept_all: emailData.accept_all || false,
-      block: emailData.block || true,
-      sources: emailData.sources || []
-    }
-
-    // Update execution record in database
-    const { error: updateError } = await supabaseClient
+    // Update execution record with success
+    const { error: updateError } = await supabase
       .from('command_executions')
       .update({
         status: 'success',
-        output_data: processedData,
-        execution_time_ms: executionTime,
-        api_cost: 0.10 // Hunter.io typical cost
+        output_data: responseData,
+        api_cost: 0.01 // Hunter.io cost per request
       })
-      .eq('id', executionId)
+      .eq('id', executionId);
 
     if (updateError) {
-      console.error('Database update error:', updateError)
+      console.error('Failed to update execution:', updateError);
     }
 
-    return new Response(
-      JSON.stringify({ 
-        success: true, 
-        data: processedData,
-        execution_time: executionTime
-      }),
-      {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200,
-      },
-    )
+    return new Response(JSON.stringify({
+      success: true,
+      data: responseData,
+      executionId
+    }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
 
   } catch (error) {
-    console.error('Hunter.io function error:', error)
-    
+    console.error('Hunter.io function error:', error);
+
     // Update execution record with error
-    const body = await req.clone().json().catch(() => ({}))
-    if (body.executionId) {
-      const supabaseClient = createClient(
-        Deno.env.get('SUPABASE_URL') ?? '',
-        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-      )
-      
-      await supabaseClient
-        .from('command_executions')
-        .update({
-          status: 'error',
-          error_message: error.message,
-          execution_time_ms: 0
-        })
-        .eq('id', body.executionId)
+    if (req.json) {
+      try {
+        const { executionId } = await req.json();
+        const supabase = createClient(supabaseUrl, supabaseServiceKey);
+        
+        await supabase
+          .from('command_executions')
+          .update({
+            status: 'error',
+            error_message: error.message
+          })
+          .eq('id', executionId);
+      } catch (updateError) {
+        console.error('Failed to update execution with error:', updateError);
+      }
     }
 
-    return new Response(
-      JSON.stringify({ 
-        success: false, 
-        error: error.message 
-      }),
-      {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 400,
-      },
-    )
+    return new Response(JSON.stringify({ 
+      success: false, 
+      error: error.message 
+    }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   }
-})
+});
