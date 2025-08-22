@@ -19,3 +19,12 @@ verify_jwt = true
 
 [functions.verify-captcha]
 verify_jwt = false
+
+[functions.advanced-osint]
+verify_jwt = true
+
+[functions.notification-handler]
+verify_jwt = false
+
+[functions.realtime-updates]
+verify_jwt = false
