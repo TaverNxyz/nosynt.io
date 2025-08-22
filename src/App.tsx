@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "./hooks/useAuth";
 import { BootScreen } from "./components/BootScreen";
 import Layout from "./components/Layout";
@@ -31,14 +32,17 @@ const App = () => {
 
   if (showBootScreen) {
     return (
-      <TooltipProvider>
-        <BootScreen onBootComplete={handleBootComplete} />
-      </TooltipProvider>
+      <ThemeProvider attribute="class" defaultTheme="dark">
+        <TooltipProvider>
+          <BootScreen onBootComplete={handleBootComplete} />
+        </TooltipProvider>
+      </ThemeProvider>
     );
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <ThemeProvider attribute="class" defaultTheme="dark">
+      <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <TooltipProvider>
           <Toaster />
@@ -65,6 +69,7 @@ const App = () => {
         </TooltipProvider>
       </AuthProvider>
     </QueryClientProvider>
+    </ThemeProvider>
   );
 };
 
