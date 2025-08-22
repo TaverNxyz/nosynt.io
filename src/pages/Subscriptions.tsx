@@ -262,7 +262,7 @@ export default function Subscriptions() {
               
               <CardContent className="space-y-4">
                 <div className="space-y-2 text-center">
-                  <div className="p-3 bg-gradient-card rounded-lg">
+                  <div className="p-3 bg-card/50 rounded-lg border">
                     <p className="text-lg font-semibold">
                       {plan.max_commands_per_month === 999999 ? (
                         <span className="flex items-center justify-center">
@@ -275,7 +275,7 @@ export default function Subscriptions() {
                     </p>
                     <p className="text-sm text-muted-foreground">per month</p>
                   </div>
-                  <div className="p-3 bg-gradient-card rounded-lg">
+                  <div className="p-3 bg-card/50 rounded-lg border">
                     <p className="text-lg font-semibold">
                       ${plan.max_api_cost_per_month.toFixed(0)} API budget
                     </p>

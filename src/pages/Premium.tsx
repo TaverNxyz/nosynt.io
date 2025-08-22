@@ -394,8 +394,8 @@ export default function Premium() {
             {premiumTiers.map((tier) => (
               <Card 
                 key={tier.id}
-                className={`relative bg-gradient-card shadow-card transition-all duration-300 hover:shadow-primary ${
-                  tier.popular ? 'ring-2 ring-primary' : ''
+                className={`relative transition-all duration-300 ${
+                  tier.popular ? 'ring-2 ring-primary shadow-lg' : 'shadow-md'
                 } ${selectedTier === tier.id ? 'scale-105' : ''}`}
               >
                 {tier.popular && (
