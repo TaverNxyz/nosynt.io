@@ -64,6 +64,57 @@ export type Database = {
         }
         Relationships: []
       }
+      command_executions: {
+        Row: {
+          api_cost: number | null
+          command_category: string
+          command_id: string
+          command_name: string
+          created_at: string | null
+          error_message: string | null
+          execution_time_ms: number | null
+          id: string
+          input_data: string
+          output_data: Json | null
+          provider: string
+          status: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          api_cost?: number | null
+          command_category: string
+          command_id: string
+          command_name: string
+          created_at?: string | null
+          error_message?: string | null
+          execution_time_ms?: number | null
+          id?: string
+          input_data: string
+          output_data?: Json | null
+          provider: string
+          status?: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          api_cost?: number | null
+          command_category?: string
+          command_id?: string
+          command_name?: string
+          created_at?: string | null
+          error_message?: string | null
+          execution_time_ms?: number | null
+          id?: string
+          input_data?: string
+          output_data?: Json | null
+          provider?: string
+          status?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       email_intelligence: {
         Row: {
           breach_data: string | null
@@ -275,7 +326,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      check_user_limits: {
+        Args: { api_cost_to_add?: number; user_uuid: string }
+        Returns: {
+          commands_used: number
+          total_cost_used: number
+          within_command_limit: boolean
+          within_cost_limit: boolean
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never

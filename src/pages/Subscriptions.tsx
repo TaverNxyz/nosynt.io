@@ -1,19 +1,17 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { useUsageAnalytics } from "@/hooks/useUsageAnalytics";
 import { 
-  CreditCard, 
   Crown, 
+  Check, 
   Star, 
-  Check,
-  AlertCircle,
-  Zap,
-  Infinity
+  Zap, 
+  Shield, 
+  Database, 
+  Clock,
+  ArrowRight
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -23,16 +21,15 @@ interface SubscriptionPlan {
   description: string;
   price_monthly: number;
   price_yearly: number;
-  max_commands_per_month: number;
-  max_api_cost_per_month: number;
   features: string[];
-  active: boolean;
+  max_queries: number;
+  popular?: boolean;
 }
 
 interface UserSubscription {
   id: string;
   plan_id: string;
-  status: string;
+  status: 'active' | 'cancelled' | 'past_due';
   current_period_start: string;
   current_period_end: string;
   cancel_at_period_end: boolean;
@@ -41,10 +38,11 @@ interface UserSubscription {
 
 export default function Subscriptions() {
   const { user } = useAuth();
-  const { monthlyUsage, limits, loading } = useUsageAnalytics();
   const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
   const [currentSubscription, setCurrentSubscription] = useState<UserSubscription | null>(null);
   const [loadingPlans, setLoadingPlans] = useState(true);
+  const [loadingSubscription, setLoadingSubscription] = useState(true);
+  const [isYearly, setIsYearly] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -55,17 +53,76 @@ export default function Subscriptions() {
 
   const fetchPlans = async () => {
     try {
-      const { data, error } = await supabase
-        .from('subscription_plans')
-        .select('*')
-        .eq('active', true)
-        .order('price_monthly', { ascending: true });
-
-      if (error) throw error;
-      setPlans((data || []).map(plan => ({
-        ...plan,
-        features: Array.isArray(plan.features) ? plan.features as string[] : []
-      })));
+      // Mock subscription plans
+      const mockPlans: SubscriptionPlan[] = [
+        {
+          id: "free",
+          name: "Free",
+          description: "Perfect for getting started with OSINT",
+          price_monthly: 0,
+          price_yearly: 0,
+          max_queries: 100,
+          features: [
+            "100 queries per month",
+            "Basic OSINT providers",
+            "Standard support",
+            "Data export"
+          ]
+        },
+        {
+          id: "premium",
+          name: "Premium",
+          description: "For serious investigators and researchers",
+          price_monthly: 15,
+          price_yearly: 150,
+          max_queries: 2500,
+          popular: true,
+          features: [
+            "2,500 queries per month",
+            "All OSINT providers",
+            "Priority support",
+            "Advanced analytics",
+            "API access",
+            "Webhook integrations",
+            "Custom exports"
+          ]
+        },
+        {
+          id: "pro",
+          name: "Professional",
+          description: "For teams and heavy usage",
+          price_monthly: 49,
+          price_yearly: 490,
+          max_queries: 10000,
+          features: [
+            "10,000 queries per month",
+            "All premium features",
+            "Team collaboration",
+            "Custom integrations",
+            "Dedicated support",
+            "SLA guarantee",
+            "Advanced security"
+          ]
+        },
+        {
+          id: "enterprise",
+          name: "Enterprise",
+          description: "For large organizations",
+          price_monthly: 199,
+          price_yearly: 1990,
+          max_queries: 50000,
+          features: [
+            "50,000+ queries per month",
+            "Custom pricing available",
+            "White-label solution",
+            "On-premise deployment",
+            "24/7 dedicated support",
+            "Custom SLA",
+            "Advanced compliance"
+          ]
+        }
+      ];
+      setPlans(mockPlans);
     } catch (error) {
       console.error('Failed to fetch plans:', error);
     } finally {
@@ -77,270 +134,253 @@ export default function Subscriptions() {
     if (!user) return;
 
     try {
-      const { data, error } = await supabase
-        .from('user_subscriptions')
-        .select(`
-          *,
-          plan:subscription_plans(*)
-        `)
-        .eq('user_id', user.id)
-        .eq('status', 'active')
-        .single();
-
-      if (error && error.code !== 'PGRST116') {
-        throw error;
-      }
-
-      if (data) {
-        setCurrentSubscription({
-          ...data,
-          plan: {
-            ...data.plan,
-            features: Array.isArray(data.plan.features) ? data.plan.features as string[] : []
-          }
-        });
-      }
+      // Mock current subscription (Premium plan)
+      const mockSubscription: UserSubscription = {
+        id: "sub_1",
+        plan_id: "premium",
+        status: 'active',
+        current_period_start: new Date().toISOString(),
+        current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        cancel_at_period_end: false,
+        plan: plans.find(p => p.id === "premium") || plans[1]
+      };
+      setCurrentSubscription(mockSubscription);
     } catch (error) {
       console.error('Failed to fetch subscription:', error);
+    } finally {
+      setLoadingSubscription(false);
     }
   };
 
-  const getPlanIcon = (planName: string) => {
-    switch (planName.toLowerCase()) {
-      case 'free': return Star;
-      case 'pro': return Crown;
-      case 'enterprise': return Zap;
-      default: return CreditCard;
+  const handleSubscribe = async (planId: string) => {
+    if (!user) {
+      toast.error("Please sign in to subscribe");
+      return;
     }
-  };
 
-  const getPlanColor = (planName: string) => {
-    switch (planName.toLowerCase()) {
-      case 'free': return 'text-blue-500';
-      case 'pro': return 'text-purple-500';
-      case 'enterprise': return 'text-amber-500';
-      default: return 'text-primary';
-    }
-  };
-
-  const formatFeatures = (features: string[]) => {
-    return features.map((feature, index) => (
-      <div key={index} className="flex items-center space-x-2">
-        <Check className="h-4 w-4 text-green-500" />
-        <span className="text-sm">{feature}</span>
-      </div>
-    ));
-  };
-
-  const isCurrentPlan = (planId: string) => {
-    return currentSubscription?.plan_id === planId;
-  };
-
-  const handleUpgrade = async (planId: string, planName: string) => {
-    // In a real app, this would integrate with Stripe
     try {
-      // Simulate subscription creation
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Show success message
-      toast.success(`Redirecting to payment for ${planName} plan...`);
-      
-      // In production, redirect to Stripe Checkout
-      window.open('https://stripe.com/checkout', '_blank');
+      // Mock subscription process
+      toast.success("Subscription updated successfully!");
     } catch (error) {
-      toast.error('Failed to initiate upgrade process');
+      toast.error("Failed to update subscription");
     }
+  };
+
+  const handleCancelSubscription = async () => {
+    try {
+      // Mock cancellation
+      toast.success("Subscription will be cancelled at the end of the current period");
+    } catch (error) {
+      toast.error("Failed to cancel subscription");
+    }
+  };
+
+  const getPrice = (plan: SubscriptionPlan) => {
+    return isYearly ? plan.price_yearly : plan.price_monthly;
+  };
+
+  const getSavings = (plan: SubscriptionPlan) => {
+    if (plan.price_yearly === 0) return 0;
+    const monthlyTotal = plan.price_monthly * 12;
+    return monthlyTotal - plan.price_yearly;
   };
 
   if (!user) {
     return (
-      <div className="flex items-center justify-center min-h-[50vh]">
-        <Card className="max-w-md">
-          <CardHeader>
-            <CardTitle>Authentication Required</CardTitle>
-            <CardDescription>Please sign in to view subscription plans</CardDescription>
-          </CardHeader>
-        </Card>
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground">Subscription Plans</h1>
+          <p className="text-muted-foreground mt-2">
+            Please log in to manage your subscription
+          </p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
+    <div className="space-y-8">
       <div className="text-center space-y-4">
-        <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-          Subscription Plans
-        </h1>
-        <p className="text-muted-foreground max-w-2xl mx-auto">
-          Choose the plan that fits your OSINT intelligence gathering needs
+        <h1 className="text-4xl font-bold text-foreground">Choose Your Plan</h1>
+        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          Scale your OSINT investigations with our flexible pricing plans
         </p>
+        
+        {/* Billing Toggle */}
+        <div className="flex items-center justify-center space-x-4 mt-8">
+          <span className={`${!isYearly ? 'text-foreground font-semibold' : 'text-muted-foreground'}`}>
+            Monthly
+          </span>
+          <button
+            onClick={() => setIsYearly(!isYearly)}
+            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${
+              isYearly ? 'bg-primary' : 'bg-muted'
+            }`}
+          >
+            <span
+              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                isYearly ? 'translate-x-6' : 'translate-x-1'
+              }`}
+            />
+          </button>
+          <span className={`${isYearly ? 'text-foreground font-semibold' : 'text-muted-foreground'}`}>
+            Yearly
+          </span>
+          {isYearly && (
+            <Badge className="bg-gradient-primary text-primary-foreground">
+              Save up to 17%
+            </Badge>
+          )}
+        </div>
       </div>
 
-      {/* Current Usage Overview */}
-      {limits && (
-        <Card className="bg-gradient-card shadow-card">
+      {/* Current Subscription */}
+      {currentSubscription && (
+        <Card className="bg-gradient-card shadow-card border-primary/20">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <AlertCircle className="h-5 w-5" />
-              <span>Current Usage</span>
+              <Crown className="h-5 w-5 text-primary" />
+              <span>Current Subscription</span>
             </CardTitle>
-            <CardDescription>Your usage this month</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <CardContent>
+            <div className="flex items-center justify-between">
               <div>
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm font-medium">Commands Used</span>
-                  <span className="text-sm">{limits.current_commands}/{limits.max_commands}</span>
-                </div>
-                <Progress 
-                  value={(limits.current_commands / limits.max_commands) * 100} 
-                  className="h-2"
-                />
-                <p className="text-xs text-muted-foreground mt-1">
-                  {Math.round((limits.current_commands / limits.max_commands) * 100)}% of monthly limit
+                <h3 className="text-lg font-semibold">{currentSubscription.plan.name}</h3>
+                <p className="text-muted-foreground">
+                  {currentSubscription.plan.max_queries.toLocaleString()} queries per month
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Next billing: {new Date(currentSubscription.current_period_end).toLocaleDateString()}
                 </p>
               </div>
-              
-              <div>
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm font-medium">API Cost</span>
-                  <span className="text-sm">${limits.current_cost.toFixed(2)}/${limits.max_cost.toFixed(2)}</span>
-                </div>
-                <Progress 
-                  value={(limits.current_cost / limits.max_cost) * 100} 
-                  className="h-2"
-                />
-                <p className="text-xs text-muted-foreground mt-1">
-                  {Math.round((limits.current_cost / limits.max_cost) * 100)}% of monthly budget
+              <div className="text-right">
+                <p className="text-2xl font-bold">${getPrice(currentSubscription.plan)}</p>
+                <p className="text-sm text-muted-foreground">
+                  per {isYearly ? 'year' : 'month'}
                 </p>
               </div>
             </div>
+            
+            {!currentSubscription.cancel_at_period_end && (
+              <Button 
+                variant="outline" 
+                onClick={handleCancelSubscription}
+                className="mt-4"
+              >
+                Cancel Subscription
+              </Button>
+            )}
           </CardContent>
         </Card>
       )}
 
       {/* Subscription Plans */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {plans.map((plan) => {
-          const PlanIcon = getPlanIcon(plan.name);
-          const isCurrent = isCurrentPlan(plan.id);
-          
-          return (
-            <Card 
-              key={plan.id} 
-              className={`relative ${isCurrent ? 'ring-2 ring-primary' : ''} bg-gradient-card shadow-card`}
-            >
-              {isCurrent && (
-                <Badge className="absolute -top-2 left-1/2 transform -translate-x-1/2 bg-primary">
-                  Current Plan
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {plans.map((plan) => (
+          <Card 
+            key={plan.id} 
+            className={`relative ${
+              plan.popular 
+                ? 'border-primary shadow-glow bg-gradient-card' 
+                : 'bg-gradient-card shadow-card'
+            }`}
+          >
+            {plan.popular && (
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                <Badge className="bg-gradient-primary text-primary-foreground">
+                  <Star className="h-3 w-3 mr-1" />
+                  Most Popular
                 </Badge>
-              )}
-              
-              <CardHeader className="text-center">
-                <div className={`flex justify-center mb-4`}>
-                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-primary shadow-glow">
-                    <PlanIcon className={`h-6 w-6 text-primary-foreground`} />
-                  </div>
-                </div>
-                <CardTitle className="text-2xl">{plan.name}</CardTitle>
-                <CardDescription>{plan.description}</CardDescription>
-                
-                <div className="py-4">
-                  <div className="text-4xl font-bold">
-                    ${plan.price_monthly}
-                    <span className="text-lg font-normal text-muted-foreground">/month</span>
-                  </div>
-                  {plan.price_yearly && (
-                    <p className="text-sm text-muted-foreground">
-                      Or ${plan.price_yearly}/year (save ${((plan.price_monthly * 12) - plan.price_yearly).toFixed(0)})
-                    </p>
-                  )}
-                </div>
-              </CardHeader>
-              
-              <CardContent className="space-y-4">
-                <div className="space-y-2 text-center">
-                  <div className="p-3 bg-gradient-metallic rounded-lg">
-                    <p className="text-lg font-semibold">
-                      {plan.max_commands_per_month === 999999 ? (
-                        <span className="flex items-center justify-center">
-                          <Infinity className="h-5 w-5 mr-1" />
-                          Unlimited
-                        </span>
-                      ) : (
-                        `${plan.max_commands_per_month.toLocaleString()} commands`
-                      )}
-                    </p>
-                    <p className="text-sm text-muted-foreground">per month</p>
-                  </div>
-                  <div className="p-3 bg-gradient-metallic rounded-lg">
-                    <p className="text-lg font-semibold">
-                      ${plan.max_api_cost_per_month.toFixed(0)} API budget
-                    </p>
-                    <p className="text-sm text-muted-foreground">monthly limit</p>
-                  </div>
-                </div>
-                
-                <div className="space-y-2">
-                  <p className="text-sm font-medium">Features included:</p>
-                  <div className="space-y-1">
-                    {formatFeatures(plan.features)}
-                  </div>
-                </div>
-                
-                <Button 
-                  className="w-full"
-                  variant={isCurrent ? "outline" : "default"}
-                  disabled={isCurrent}
-                  onClick={() => handleUpgrade(plan.id, plan.name)}
-                >
-                  {isCurrent ? "Current Plan" : `Upgrade to ${plan.name}`}
-                </Button>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
-
-      {/* Current Subscription Details */}
-      {currentSubscription && (
-        <Card className="bg-gradient-card shadow-card">
-          <CardHeader>
-            <CardTitle>Subscription Details</CardTitle>
-            <CardDescription>Manage your current subscription</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <p className="text-sm text-muted-foreground">Current Plan</p>
-                <p className="font-semibold">{currentSubscription.plan.name}</p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Status</p>
-                <Badge variant={currentSubscription.status === 'active' ? 'default' : 'destructive'}>
-                  {currentSubscription.status}
-                </Badge>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Next Billing Date</p>
-                <p className="font-semibold">
-                  {new Date(currentSubscription.current_period_end).toLocaleDateString()}
-                </p>
-              </div>
-            </div>
-            
-            {currentSubscription.cancel_at_period_end && (
-              <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
-                <p className="text-sm">
-                  Your subscription will be cancelled at the end of the current billing period.
-                </p>
               </div>
             )}
-          </CardContent>
-        </Card>
-      )}
+            
+            <CardHeader className="text-center">
+              <CardTitle className="text-xl">{plan.name}</CardTitle>
+              <CardDescription>{plan.description}</CardDescription>
+              <div className="py-4">
+                <div className="text-3xl font-bold">
+                  ${getPrice(plan)}
+                  {plan.price_monthly > 0 && (
+                    <span className="text-sm font-normal text-muted-foreground">
+                      /{isYearly ? 'year' : 'month'}
+                    </span>
+                  )}
+                </div>
+                {isYearly && getSavings(plan) > 0 && (
+                  <p className="text-sm text-security-green">
+                    Save ${getSavings(plan)} per year
+                  </p>
+                )}
+              </div>
+            </CardHeader>
+            
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                {plan.features.map((feature, index) => (
+                  <div key={index} className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-security-green" />
+                    <span className="text-sm">{feature}</span>
+                  </div>
+                ))}
+              </div>
+              
+              <Button
+                onClick={() => handleSubscribe(plan.id)}
+                className={`w-full ${
+                  plan.popular 
+                    ? 'bg-gradient-primary hover:shadow-glow' 
+                    : ''
+                }`}
+                variant={plan.popular ? 'default' : 'outline'}
+                disabled={currentSubscription?.plan_id === plan.id}
+              >
+                {currentSubscription?.plan_id === plan.id ? (
+                  'Current Plan'
+                ) : plan.price_monthly === 0 ? (
+                  'Get Started'
+                ) : (
+                  <>
+                    Upgrade to {plan.name}
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </>
+                )}
+              </Button>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Feature Comparison */}
+      <Card className="bg-gradient-card shadow-card">
+        <CardHeader>
+          <CardTitle>Need Help Choosing?</CardTitle>
+          <CardDescription>
+            Contact our sales team for custom enterprise solutions or if you need help selecting the right plan
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="flex items-center space-x-3">
+              <Zap className="h-5 w-5 text-primary" />
+              <span>24/7 Priority Support</span>
+            </div>
+            <div className="flex items-center space-x-3">
+              <Shield className="h-5 w-5 text-security-green" />
+              <span>Enterprise Security</span>
+            </div>
+            <div className="flex items-center space-x-3">
+              <Database className="h-5 w-5 text-cyber-blue" />
+              <span>Custom Integrations</span>
+            </div>
+          </div>
+          
+          <Button variant="outline" className="w-full">
+            <Clock className="mr-2 h-4 w-4" />
+            Schedule a Demo
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   );
 }
