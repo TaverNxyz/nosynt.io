@@ -14,7 +14,262 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      api_keys: {
+        Row: {
+          api_key: string
+          created_at: string | null
+          id: number
+          usage_count: number | null
+          user_id: number | null
+        }
+        Insert: {
+          api_key: string
+          created_at?: string | null
+          id?: never
+          usage_count?: number | null
+          user_id?: number | null
+        }
+        Update: {
+          api_key?: string
+          created_at?: string | null
+          id?: never
+          usage_count?: number | null
+          user_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "api_keys_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      auth_providers: {
+        Row: {
+          created_at: string | null
+          id: number
+          name: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: never
+          name: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: never
+          name?: string
+        }
+        Relationships: []
+      }
+      email_intelligence: {
+        Row: {
+          breach_data: string | null
+          created_at: string | null
+          email: string
+          id: number
+          reputation: string | null
+        }
+        Insert: {
+          breach_data?: string | null
+          created_at?: string | null
+          email: string
+          id?: never
+          reputation?: string | null
+        }
+        Update: {
+          breach_data?: string | null
+          created_at?: string | null
+          email?: string
+          id?: never
+          reputation?: string | null
+        }
+        Relationships: []
+      }
+      github_intelligence: {
+        Row: {
+          created_at: string | null
+          email: string | null
+          id: number
+          repositories: string | null
+          username: string
+        }
+        Insert: {
+          created_at?: string | null
+          email?: string | null
+          id?: never
+          repositories?: string | null
+          username: string
+        }
+        Update: {
+          created_at?: string | null
+          email?: string | null
+          id?: never
+          repositories?: string | null
+          username?: string
+        }
+        Relationships: []
+      }
+      ip_intelligence: {
+        Row: {
+          created_at: string | null
+          id: number
+          ip_address: string
+          isp: string | null
+          location: string | null
+          threat_level: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: never
+          ip_address: string
+          isp?: string | null
+          location?: string | null
+          threat_level?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: never
+          ip_address?: string
+          isp?: string | null
+          location?: string | null
+          threat_level?: string | null
+        }
+        Relationships: []
+      }
+      phone_intelligence: {
+        Row: {
+          carrier: string | null
+          created_at: string | null
+          id: number
+          location: string | null
+          phone_number: string
+          validation_status: string | null
+        }
+        Insert: {
+          carrier?: string | null
+          created_at?: string | null
+          id?: never
+          location?: string | null
+          phone_number: string
+          validation_status?: string | null
+        }
+        Update: {
+          carrier?: string | null
+          created_at?: string | null
+          id?: never
+          location?: string | null
+          phone_number?: string
+          validation_status?: string | null
+        }
+        Relationships: []
+      }
+      premium_keys: {
+        Row: {
+          created_at: string | null
+          id: number
+          queries_remaining: number | null
+          tier: string
+          user_id: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: never
+          queries_remaining?: number | null
+          tier: string
+          user_id?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: never
+          queries_remaining?: number | null
+          tier?: string
+          user_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "premium_keys_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_authentications: {
+        Row: {
+          access_token: string | null
+          created_at: string | null
+          expires_at: string | null
+          id: number
+          provider_id: number | null
+          provider_user_id: string
+          refresh_token: string | null
+          user_id: number | null
+        }
+        Insert: {
+          access_token?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: never
+          provider_id?: number | null
+          provider_user_id: string
+          refresh_token?: string | null
+          user_id?: number | null
+        }
+        Update: {
+          access_token?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: never
+          provider_id?: number | null
+          provider_user_id?: string
+          refresh_token?: string | null
+          user_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_authentications_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "auth_providers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_authentications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      users: {
+        Row: {
+          created_at: string | null
+          email: string
+          id: number
+          phone: string | null
+          username: string
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          id?: never
+          phone?: string | null
+          username: string
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          id?: never
+          phone?: string | null
+          username?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
