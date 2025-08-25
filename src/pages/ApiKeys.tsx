@@ -240,10 +240,7 @@ export default function ApiKeys() {
   };
 
   const handleAddKey = async () => {
-    console.log("handleAddKey called", { newKey, selectedService, keyName, user });
-    
     if (!newKey || !selectedService || !keyName || !user) {
-      console.log("Missing information:", { newKey: !!newKey, selectedService: !!selectedService, keyName: !!keyName, user: !!user });
       toast({
         title: "Missing Information",
         description: "Please provide service, key name, and API key",
@@ -253,7 +250,6 @@ export default function ApiKeys() {
     }
 
     try {
-      console.log("Attempting to insert API key...");
       const { error } = await supabase
         .from('api_keys')
         .insert({
@@ -267,12 +263,8 @@ export default function ApiKeys() {
           usage_limit: 1000
         });
 
-      if (error) {
-        console.error("Supabase error:", error);
-        throw error;
-      }
+      if (error) throw error;
 
-      console.log("API key inserted successfully");
       await fetchApiKeys();
       setNewKey("");
       setSelectedService("");
@@ -283,7 +275,6 @@ export default function ApiKeys() {
         description: `Successfully added ${selectedService} API key`,
       });
     } catch (error) {
-      console.error("Error adding API key:", error);
       toast({
         title: "Error", 
         description: "Failed to add API key",
@@ -341,19 +332,6 @@ export default function ApiKeys() {
       </Badge>
     );
   };
-
-  if (!user) {
-    return (
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">API Key Management</h1>
-          <p className="text-muted-foreground mt-2">
-            Please log in to manage your API keys
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-6">
@@ -432,11 +410,7 @@ export default function ApiKeys() {
                   </div>
                 </div>
               </div>
-              <Button 
-                onClick={handleAddKey} 
-                className="w-full bg-primary text-primary-foreground hover:bg-primary/90 font-semibold py-2 px-4 rounded-md"
-                size="lg"
-              >
+              <Button onClick={handleAddKey} className="bg-gradient-primary shadow-primary">
                 <Key className="h-4 w-4 mr-2" />
                 Add API Key
               </Button>

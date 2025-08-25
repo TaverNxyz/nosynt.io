@@ -1,7 +1,5 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -23,36 +21,6 @@ import {
 
 export default function Index() {
   const { user } = useAuth();
-  const [apiKeyStats, setApiKeyStats] = useState({ active: 0, expired: 0 });
-
-  useEffect(() => {
-    if (user) {
-      fetchApiKeyStats();
-    }
-  }, [user]);
-
-  const fetchApiKeyStats = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('api_keys')
-        .select('status');
-
-      if (error) throw error;
-
-      const stats = (data || []).reduce(
-        (acc, key) => {
-          if (key.status === 'active') acc.active++;
-          else if (key.status === 'expired' || key.status === 'invalid') acc.expired++;
-          return acc;
-        },
-        { active: 0, expired: 0 }
-      );
-
-      setApiKeyStats(stats);
-    } catch (error) {
-      console.error('Error fetching API key stats:', error);
-    }
-  };
   
   if (!user) {
     return (
@@ -79,10 +47,10 @@ export default function Index() {
         <div className="space-y-4 animate-slide-in-bottom">
           <div className="relative inline-block">
             <h1 className="text-4xl md:text-6xl font-bold text-white relative z-10">
-              deaddrop.io
+              NoSynt.io
             </h1>
             <div className="absolute inset-0 bg-gradient-primary bg-clip-text text-transparent blur-sm opacity-50 animate-pulse-glow">
-              deaddrop.io
+              NoSynt.io
             </div>
           </div>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto animate-slide-in-bottom [animation-delay:200ms] animate-glitch hover:animate-none transition-all duration-300">
@@ -194,14 +162,14 @@ export default function Index() {
               <span className="text-sm">Active API Keys</span>
               <Badge variant="outline" className="bg-[hsl(var(--security-green))]/10 text-[hsl(var(--security-green))] border-[hsl(var(--security-green))]/20 hover:shadow-glow transition-all duration-300">
                 <CheckCircle className="h-3 w-3 mr-1" />
-                {apiKeyStats.active} Active
+                3 Active
               </Badge>
             </div>
             <div className="flex items-center justify-between relative z-10">
               <span className="text-sm">Expired Keys</span>
               <Badge variant="outline" className="bg-[hsl(var(--security-red))]/10 text-[hsl(var(--security-red))] border-[hsl(var(--security-red))]/20 hover:shadow-glow transition-all duration-300">
                 <AlertTriangle className="h-3 w-3 mr-1" />
-                {apiKeyStats.expired} Expired
+                1 Expired
               </Badge>
             </div>
             <Button asChild className="w-full mt-4 relative z-10 group/button" variant="outline">
