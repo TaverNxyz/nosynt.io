@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useUsageAnalytics } from "@/hooks/useUsageAnalytics";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -154,17 +155,31 @@ const premiumTiers: PremiumTier[] = [
   }
 ];
 
-const usageMetrics = {
-  currentTier: "premium",
-  queriesUsed: 1250,
-  queriesLimit: 5000,
-  storageUsed: 3.2,
-  storageLimit: 10,
-  providersActive: 12,
-  providersLimit: 15
-};
-
 export default function Premium() {
+  const { monthlyUsage, limits } = useUsageAnalytics();
+  const [usageMetrics, setUsageMetrics] = useState({
+    currentTier: "free",
+    queriesUsed: 0,
+    queriesLimit: 100,
+    storageUsed: 0,
+    storageLimit: 1,
+    providersActive: 0,
+    providersLimit: 5
+  });
+
+  useEffect(() => {
+    if (limits) {
+      setUsageMetrics({
+        currentTier: "free", // This should come from user's actual subscription
+        queriesUsed: limits.current_commands,
+        queriesLimit: limits.max_commands,
+        storageUsed: 0, // Calculate from actual usage
+        storageLimit: 1,
+        providersActive: monthlyUsage.providers_used?.length || 0,
+        providersLimit: limits.max_commands > 100 ? 15 : 5
+      });
+    }
+  }, [limits, monthlyUsage]);
   const [isYearly, setIsYearly] = useState(false);
   const [selectedTier, setSelectedTier] = useState(usageMetrics.currentTier);
 
@@ -302,7 +317,7 @@ export default function Premium() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-muted-foreground">This Month</p>
-                    <p className="text-2xl font-bold text-foreground">1,250</p>
+                    <p className="text-2xl font-bold text-foreground">{monthlyUsage.total_commands}</p>
                     <p className="text-xs text-muted-foreground">queries executed</p>
                   </div>
                   <TrendingUp className="h-8 w-8 text-primary" />
@@ -314,9 +329,14 @@ export default function Premium() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-muted-foreground">Avg Response</p>
-                    <p className="text-2xl font-bold text-foreground">1.2s</p>
-                    <p className="text-xs text-muted-foreground">query response time</p>
+                    <p className="text-sm text-muted-foreground">Success Rate</p>
+                    <p className="text-2xl font-bold text-foreground">
+                      {monthlyUsage.total_commands > 0 
+                        ? `${((monthlyUsage.successful_commands / monthlyUsage.total_commands) * 100).toFixed(1)}%`
+                        : 'N/A'
+                      }
+                    </p>
+                    <p className="text-xs text-muted-foreground">query success rate</p>
                   </div>
                   <Zap className="h-8 w-8 text-cyber-blue" />
                 </div>
@@ -327,9 +347,9 @@ export default function Premium() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-muted-foreground">Data Processed</p>
-                    <p className="text-2xl font-bold text-foreground">8.9</p>
-                    <p className="text-xs text-muted-foreground">GB this month</p>
+                    <p className="text-sm text-muted-foreground">API Cost</p>
+                    <p className="text-2xl font-bold text-foreground">${monthlyUsage.total_api_cost.toFixed(2)}</p>
+                    <p className="text-xs text-muted-foreground">this month</p>
                   </div>
                   <Database className="h-8 w-8 text-security-green" />
                 </div>
@@ -340,9 +360,9 @@ export default function Premium() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-muted-foreground">Success Rate</p>
-                    <p className="text-2xl font-bold text-foreground">99.2%</p>
-                    <p className="text-xs text-muted-foreground">query success rate</p>
+                    <p className="text-sm text-muted-foreground">Providers Used</p>
+                    <p className="text-2xl font-bold text-foreground">{monthlyUsage.providers_used?.length || 0}</p>
+                    <p className="text-xs text-muted-foreground">unique providers</p>
                   </div>
                   <Shield className="h-8 w-8 text-security-green" />
                 </div>

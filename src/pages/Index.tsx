@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -21,6 +23,36 @@ import {
 
 export default function Index() {
   const { user } = useAuth();
+  const [apiKeyStats, setApiKeyStats] = useState({ active: 0, expired: 0 });
+
+  useEffect(() => {
+    if (user) {
+      fetchApiKeyStats();
+    }
+  }, [user]);
+
+  const fetchApiKeyStats = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('api_keys')
+        .select('status');
+
+      if (error) throw error;
+
+      const stats = (data || []).reduce(
+        (acc, key) => {
+          if (key.status === 'active') acc.active++;
+          else if (key.status === 'expired' || key.status === 'invalid') acc.expired++;
+          return acc;
+        },
+        { active: 0, expired: 0 }
+      );
+
+      setApiKeyStats(stats);
+    } catch (error) {
+      console.error('Error fetching API key stats:', error);
+    }
+  };
   
   if (!user) {
     return (
@@ -162,14 +194,14 @@ export default function Index() {
               <span className="text-sm">Active API Keys</span>
               <Badge variant="outline" className="bg-[hsl(var(--security-green))]/10 text-[hsl(var(--security-green))] border-[hsl(var(--security-green))]/20 hover:shadow-glow transition-all duration-300">
                 <CheckCircle className="h-3 w-3 mr-1" />
-                3 Active
+                {apiKeyStats.active} Active
               </Badge>
             </div>
             <div className="flex items-center justify-between relative z-10">
               <span className="text-sm">Expired Keys</span>
               <Badge variant="outline" className="bg-[hsl(var(--security-red))]/10 text-[hsl(var(--security-red))] border-[hsl(var(--security-red))]/20 hover:shadow-glow transition-all duration-300">
                 <AlertTriangle className="h-3 w-3 mr-1" />
-                1 Expired
+                {apiKeyStats.expired} Expired
               </Badge>
             </div>
             <Button asChild className="w-full mt-4 relative z-10 group/button" variant="outline">
