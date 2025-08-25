@@ -16,51 +16,46 @@ export type Database = {
     Tables: {
       api_keys: {
         Row: {
-          api_key: string
-          created_at: string | null
-          id: number
+          created_at: string
+          encrypted_key: string
+          id: string
+          key_name: string
+          key_preview: string
+          last_used: string | null
+          service_name: string
+          status: string | null
+          updated_at: string
           usage_count: number | null
-          user_id: number | null
+          usage_limit: number | null
+          user_id: string
         }
         Insert: {
-          api_key: string
-          created_at?: string | null
-          id?: never
+          created_at?: string
+          encrypted_key: string
+          id?: string
+          key_name: string
+          key_preview: string
+          last_used?: string | null
+          service_name: string
+          status?: string | null
+          updated_at?: string
           usage_count?: number | null
-          user_id?: number | null
+          usage_limit?: number | null
+          user_id: string
         }
         Update: {
-          api_key?: string
-          created_at?: string | null
-          id?: never
+          created_at?: string
+          encrypted_key?: string
+          id?: string
+          key_name?: string
+          key_preview?: string
+          last_used?: string | null
+          service_name?: string
+          status?: string | null
+          updated_at?: string
           usage_count?: number | null
-          user_id?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "api_keys_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      auth_providers: {
-        Row: {
-          created_at: string | null
-          id: number
-          name: string
-        }
-        Insert: {
-          created_at?: string | null
-          id?: never
-          name: string
-        }
-        Update: {
-          created_at?: string | null
-          id?: never
-          name?: string
+          usage_limit?: number | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -70,7 +65,7 @@ export type Database = {
           command_category: string
           command_id: string
           command_name: string
-          created_at: string | null
+          created_at: string
           error_message: string | null
           execution_time_ms: number | null
           id: string
@@ -78,7 +73,7 @@ export type Database = {
           output_data: Json | null
           provider: string
           status: string
-          updated_at: string | null
+          updated_at: string
           user_id: string
         }
         Insert: {
@@ -86,7 +81,7 @@ export type Database = {
           command_category: string
           command_id: string
           command_name: string
-          created_at?: string | null
+          created_at?: string
           error_message?: string | null
           execution_time_ms?: number | null
           id?: string
@@ -94,7 +89,7 @@ export type Database = {
           output_data?: Json | null
           provider: string
           status?: string
-          updated_at?: string | null
+          updated_at?: string
           user_id: string
         }
         Update: {
@@ -102,7 +97,7 @@ export type Database = {
           command_category?: string
           command_id?: string
           command_name?: string
-          created_at?: string | null
+          created_at?: string
           error_message?: string | null
           execution_time_ms?: number | null
           id?: string
@@ -110,216 +105,282 @@ export type Database = {
           output_data?: Json | null
           provider?: string
           status?: string
-          updated_at?: string | null
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
       }
-      email_intelligence: {
+      discord_settings: {
         Row: {
-          breach_data: string | null
-          created_at: string | null
-          email: string
-          id: number
-          reputation: string | null
+          auto_sync_enabled: boolean | null
+          created_at: string
+          discord_channel_id: string | null
+          discord_user_id: string | null
+          id: string
+          sync_successful_only: boolean | null
+          updated_at: string
+          user_id: string
+          webhook_url: string | null
         }
         Insert: {
-          breach_data?: string | null
-          created_at?: string | null
-          email: string
-          id?: never
-          reputation?: string | null
+          auto_sync_enabled?: boolean | null
+          created_at?: string
+          discord_channel_id?: string | null
+          discord_user_id?: string | null
+          id?: string
+          sync_successful_only?: boolean | null
+          updated_at?: string
+          user_id: string
+          webhook_url?: string | null
         }
         Update: {
-          breach_data?: string | null
-          created_at?: string | null
-          email?: string
-          id?: never
-          reputation?: string | null
+          auto_sync_enabled?: boolean | null
+          created_at?: string
+          discord_channel_id?: string | null
+          discord_user_id?: string | null
+          id?: string
+          sync_successful_only?: boolean | null
+          updated_at?: string
+          user_id?: string
+          webhook_url?: string | null
         }
         Relationships: []
       }
-      github_intelligence: {
+      profiles: {
         Row: {
-          created_at: string | null
-          email: string | null
-          id: number
-          repositories: string | null
-          username: string
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          plan_type: string | null
+          updated_at: string
+          user_id: string
+          username: string | null
         }
         Insert: {
-          created_at?: string | null
-          email?: string | null
-          id?: never
-          repositories?: string | null
-          username: string
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          plan_type?: string | null
+          updated_at?: string
+          user_id: string
+          username?: string | null
         }
         Update: {
-          created_at?: string | null
-          email?: string | null
-          id?: never
-          repositories?: string | null
-          username?: string
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          plan_type?: string | null
+          updated_at?: string
+          user_id?: string
+          username?: string | null
         }
         Relationships: []
       }
-      ip_intelligence: {
+      subscription_plans: {
         Row: {
-          created_at: string | null
-          id: number
-          ip_address: string
-          isp: string | null
-          location: string | null
-          threat_level: string | null
+          active: boolean | null
+          created_at: string
+          description: string | null
+          features: Json | null
+          id: string
+          max_api_cost_per_month: number | null
+          max_commands_per_month: number | null
+          name: string
+          price_monthly: number
+          price_yearly: number | null
+          updated_at: string
         }
         Insert: {
-          created_at?: string | null
-          id?: never
-          ip_address: string
-          isp?: string | null
-          location?: string | null
-          threat_level?: string | null
+          active?: boolean | null
+          created_at?: string
+          description?: string | null
+          features?: Json | null
+          id?: string
+          max_api_cost_per_month?: number | null
+          max_commands_per_month?: number | null
+          name: string
+          price_monthly: number
+          price_yearly?: number | null
+          updated_at?: string
         }
         Update: {
-          created_at?: string | null
-          id?: never
-          ip_address?: string
-          isp?: string | null
-          location?: string | null
-          threat_level?: string | null
+          active?: boolean | null
+          created_at?: string
+          description?: string | null
+          features?: Json | null
+          id?: string
+          max_api_cost_per_month?: number | null
+          max_commands_per_month?: number | null
+          name?: string
+          price_monthly?: number
+          price_yearly?: number | null
+          updated_at?: string
         }
         Relationships: []
       }
-      phone_intelligence: {
+      system_notifications: {
         Row: {
-          carrier: string | null
-          created_at: string | null
-          id: number
-          location: string | null
-          phone_number: string
-          validation_status: string | null
+          action_url: string | null
+          created_at: string
+          id: string
+          message: string
+          read: boolean | null
+          title: string
+          type: string
+          user_id: string | null
         }
         Insert: {
-          carrier?: string | null
-          created_at?: string | null
-          id?: never
-          location?: string | null
-          phone_number: string
-          validation_status?: string | null
+          action_url?: string | null
+          created_at?: string
+          id?: string
+          message: string
+          read?: boolean | null
+          title: string
+          type?: string
+          user_id?: string | null
         }
         Update: {
-          carrier?: string | null
-          created_at?: string | null
-          id?: never
-          location?: string | null
-          phone_number?: string
-          validation_status?: string | null
+          action_url?: string | null
+          created_at?: string
+          id?: string
+          message?: string
+          read?: boolean | null
+          title?: string
+          type?: string
+          user_id?: string | null
         }
         Relationships: []
       }
-      premium_keys: {
+      telegram_settings: {
         Row: {
-          created_at: string | null
-          id: number
-          queries_remaining: number | null
-          tier: string
-          user_id: number | null
+          auto_sync_enabled: boolean | null
+          bot_token: string | null
+          created_at: string
+          id: string
+          sync_successful_only: boolean | null
+          telegram_chat_id: string | null
+          telegram_user_id: string | null
+          updated_at: string
+          user_id: string
         }
         Insert: {
-          created_at?: string | null
-          id?: never
-          queries_remaining?: number | null
-          tier: string
-          user_id?: number | null
+          auto_sync_enabled?: boolean | null
+          bot_token?: string | null
+          created_at?: string
+          id?: string
+          sync_successful_only?: boolean | null
+          telegram_chat_id?: string | null
+          telegram_user_id?: string | null
+          updated_at?: string
+          user_id: string
         }
         Update: {
-          created_at?: string | null
-          id?: never
-          queries_remaining?: number | null
-          tier?: string
-          user_id?: number | null
+          auto_sync_enabled?: boolean | null
+          bot_token?: string | null
+          created_at?: string
+          id?: string
+          sync_successful_only?: boolean | null
+          telegram_chat_id?: string | null
+          telegram_user_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      usage_analytics: {
+        Row: {
+          categories_used: Json | null
+          created_at: string
+          date: string
+          failed_commands: number | null
+          id: string
+          providers_used: Json | null
+          successful_commands: number | null
+          total_api_cost: number | null
+          total_commands: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          categories_used?: Json | null
+          created_at?: string
+          date?: string
+          failed_commands?: number | null
+          id?: string
+          providers_used?: Json | null
+          successful_commands?: number | null
+          total_api_cost?: number | null
+          total_commands?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          categories_used?: Json | null
+          created_at?: string
+          date?: string
+          failed_commands?: number | null
+          id?: string
+          providers_used?: Json | null
+          successful_commands?: number | null
+          total_api_cost?: number | null
+          total_commands?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_subscriptions: {
+        Row: {
+          cancel_at_period_end: boolean | null
+          created_at: string
+          current_period_end: string
+          current_period_start: string
+          id: string
+          plan_id: string
+          status: string
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cancel_at_period_end?: boolean | null
+          created_at?: string
+          current_period_end: string
+          current_period_start?: string
+          id?: string
+          plan_id: string
+          status?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cancel_at_period_end?: boolean | null
+          created_at?: string
+          current_period_end?: string
+          current_period_start?: string
+          id?: string
+          plan_id?: string
+          status?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
+          user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "premium_keys_user_id_fkey"
-            columns: ["user_id"]
+            foreignKeyName: "user_subscriptions_plan_id_fkey"
+            columns: ["plan_id"]
             isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "subscription_plans"
             referencedColumns: ["id"]
           },
         ]
-      }
-      user_authentications: {
-        Row: {
-          access_token: string | null
-          created_at: string | null
-          expires_at: string | null
-          id: number
-          provider_id: number | null
-          provider_user_id: string
-          refresh_token: string | null
-          user_id: number | null
-        }
-        Insert: {
-          access_token?: string | null
-          created_at?: string | null
-          expires_at?: string | null
-          id?: never
-          provider_id?: number | null
-          provider_user_id: string
-          refresh_token?: string | null
-          user_id?: number | null
-        }
-        Update: {
-          access_token?: string | null
-          created_at?: string | null
-          expires_at?: string | null
-          id?: never
-          provider_id?: number | null
-          provider_user_id?: string
-          refresh_token?: string | null
-          user_id?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_authentications_provider_id_fkey"
-            columns: ["provider_id"]
-            isOneToOne: false
-            referencedRelation: "auth_providers"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "user_authentications_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      users: {
-        Row: {
-          created_at: string | null
-          email: string
-          id: number
-          phone: string | null
-          username: string
-        }
-        Insert: {
-          created_at?: string | null
-          email: string
-          id?: never
-          phone?: string | null
-          username: string
-        }
-        Update: {
-          created_at?: string | null
-          email?: string
-          id?: never
-          phone?: string | null
-          username?: string
-        }
-        Relationships: []
       }
     }
     Views: {
@@ -329,8 +390,10 @@ export type Database = {
       check_user_limits: {
         Args: { api_cost_to_add?: number; user_uuid: string }
         Returns: {
-          commands_used: number
-          total_cost_used: number
+          current_commands: number
+          current_cost: number
+          max_commands: number
+          max_cost: number
           within_command_limit: boolean
           within_cost_limit: boolean
         }[]

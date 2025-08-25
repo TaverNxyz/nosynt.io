@@ -33,30 +33,100 @@ interface AnalyticsPlatform {
   integration: 'connected' | 'available' | 'enterprise';
 }
 
+const analyticsPlatforms: AnalyticsPlatform[] = [
+  {
+    id: "posthog",
+    name: "PostHog",
+    description: "Product analytics, feature flags, and session recordings",
+    status: 'active',
+    usage: 85,
+    icon: BarChart3,
+    features: ["Event Tracking", "User Funnels", "Feature Flags", "Session Replay"],
+    integration: 'connected'
+  },
+  {
+    id: "matomo",
+    name: "Matomo",
+    description: "Privacy-focused web analytics platform",
+    status: 'active',
+    usage: 72,
+    icon: Globe,
+    features: ["Privacy Compliance", "Real-time Analytics", "Goal Tracking"],
+    integration: 'connected'
+  },
+  {
+    id: "metabase",
+    name: "Metabase",
+    description: "Business intelligence and data visualization",
+    status: 'active',
+    usage: 60,
+    icon: Database,
+    features: ["SQL Queries", "Dashboards", "Data Visualization", "Alerts"],
+    integration: 'connected'
+  },
+  {
+    id: "plausible",
+    name: "Plausible Analytics",
+    description: "Simple, privacy-friendly web analytics",
+    status: 'active',
+    usage: 45,
+    icon: TrendingUp,
+    features: ["Lightweight", "GDPR Compliant", "No Cookies", "Open Source"],
+    integration: 'available'
+  },
+  {
+    id: "superset",
+    name: "Apache Superset",
+    description: "Modern data exploration and visualization platform",
+    status: 'maintenance',
+    usage: 30,
+    icon: BarChart3,
+    features: ["Rich Visualizations", "SQL Lab", "Security", "Scalability"],
+    integration: 'available'
+  },
+  {
+    id: "grafana",
+    name: "Grafana",
+    description: "Observability and monitoring platform",
+    status: 'active',
+    usage: 90,
+    icon: Activity,
+    features: ["Monitoring", "Alerting", "Visualization", "Observability"],
+    integration: 'connected'
+  },
+  {
+    id: "datadog",
+    name: "Datadog",
+    description: "Cloud monitoring and security platform",
+    status: 'active',
+    usage: 95,
+    icon: Eye,
+    features: ["APM", "Infrastructure Monitoring", "Log Management", "Security"],
+    integration: 'enterprise'
+  },
+  {
+    id: "prometheus",
+    name: "Prometheus",
+    description: "Systems monitoring and alerting toolkit",
+    status: 'active',
+    usage: 78,
+    icon: Clock,
+    features: ["Time Series DB", "Alerting", "Service Discovery", "Exporters"],
+    integration: 'connected'
+  }
+];
+
 export default function Analytics() {
   const { user } = useAuth();
   const { monthlyUsage, limits, loading } = useUsageAnalytics();
   const [selectedPlatform, setSelectedPlatform] = useState<AnalyticsPlatform | null>(null);
   const [recentExecutions, setRecentExecutions] = useState<any[]>([]);
-  const [analyticsPlatforms, setAnalyticsPlatforms] = useState<AnalyticsPlatform[]>([]);
 
   useEffect(() => {
     if (user) {
       fetchRecentExecutions();
-      fetchAnalyticsIntegrations();
     }
   }, [user]);
-
-  const fetchAnalyticsIntegrations = async () => {
-    try {
-      // This would fetch real analytics integrations from your database
-      // For now, show empty state since no real integrations exist
-      setAnalyticsPlatforms([]);
-    } catch (error) {
-      console.error('Failed to fetch analytics integrations:', error);
-    }
-  };
-
 
   const fetchRecentExecutions = async () => {
     if (!user) return;
