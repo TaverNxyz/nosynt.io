@@ -68,15 +68,6 @@ export default function Layout({ children }: LayoutProps) {
       {/* Scanlines Effect */}
       <div className="scanlines absolute inset-0 z-0 pointer-events-none" />
       
-      {/* Animated Gif in Top Right */}
-      <div className="fixed top-4 right-4 z-40 opacity-80 hover:opacity-100 transition-opacity duration-300">
-        <img 
-          src="https://i.imgur.com/QNvtBwh.gif" 
-          alt="Terminal Animation" 
-          className="w-20 h-20 rounded-full border border-terminal-green/30 shadow-terminal"
-        />
-      </div>
-      
       {/* Terminal Header */}
       <header className="border-b border-border bg-card/80 backdrop-blur-sm relative z-50 shadow-terminal">
         <div className="flex h-12 items-center px-4 text-sm">
