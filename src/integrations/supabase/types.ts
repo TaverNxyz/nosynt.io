@@ -14,13 +14,160 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      api_keys: {
+        Row: {
+          created_at: string
+          encrypted_key: string
+          id: string
+          key_name: string
+          key_preview: string
+          last_used_at: string | null
+          service_name: string
+          status: string
+          updated_at: string
+          usage_count: number
+          usage_limit: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          encrypted_key: string
+          id?: string
+          key_name: string
+          key_preview: string
+          last_used_at?: string | null
+          service_name: string
+          status?: string
+          updated_at?: string
+          usage_count?: number
+          usage_limit?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          encrypted_key?: string
+          id?: string
+          key_name?: string
+          key_preview?: string
+          last_used_at?: string | null
+          service_name?: string
+          status?: string
+          updated_at?: string
+          usage_count?: number
+          usage_limit?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      command_executions: {
+        Row: {
+          api_cost: number | null
+          command_category: string
+          command_id: string
+          command_name: string
+          created_at: string
+          error_message: string | null
+          execution_time_ms: number | null
+          id: string
+          input_data: string
+          output_data: Json | null
+          provider: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          api_cost?: number | null
+          command_category: string
+          command_id: string
+          command_name: string
+          created_at?: string
+          error_message?: string | null
+          execution_time_ms?: number | null
+          id?: string
+          input_data: string
+          output_data?: Json | null
+          provider: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          api_cost?: number | null
+          command_category?: string
+          command_id?: string
+          command_name?: string
+          created_at?: string
+          error_message?: string | null
+          execution_time_ms?: number | null
+          id?: string
+          input_data?: string
+          output_data?: Json | null
+          provider?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      usage_analytics: {
+        Row: {
+          categories_used: Json
+          created_at: string
+          failed_commands: number
+          id: string
+          month: number
+          providers_used: Json
+          successful_commands: number
+          total_api_cost: number
+          total_commands: number
+          updated_at: string
+          user_id: string
+          year: number
+        }
+        Insert: {
+          categories_used?: Json
+          created_at?: string
+          failed_commands?: number
+          id?: string
+          month: number
+          providers_used?: Json
+          successful_commands?: number
+          total_api_cost?: number
+          total_commands?: number
+          updated_at?: string
+          user_id: string
+          year: number
+        }
+        Update: {
+          categories_used?: Json
+          created_at?: string
+          failed_commands?: number
+          id?: string
+          month?: number
+          providers_used?: Json
+          successful_commands?: number
+          total_api_cost?: number
+          total_commands?: number
+          updated_at?: string
+          user_id?: string
+          year?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      check_user_limits: {
+        Args: { user_uuid: string }
+        Returns: {
+          current_commands: number
+          current_cost: number
+          max_commands: number
+          max_cost: number
+          within_command_limit: boolean
+          within_cost_limit: boolean
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
