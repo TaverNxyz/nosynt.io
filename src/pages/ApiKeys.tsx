@@ -462,7 +462,7 @@ export default function ApiKeys() {
                       </div>
                       <div>
                         <p className="text-muted-foreground">Last Used</p>
-                        <p>{key.last_used ? new Date(key.last_used).toLocaleDateString() : "Never"}</p>
+                        <p>{key.last_used_at ? new Date(key.last_used_at).toLocaleDateString() : "Never"}</p>
                       </div>
                       <div>
                         <p className="text-muted-foreground">Usage</p>

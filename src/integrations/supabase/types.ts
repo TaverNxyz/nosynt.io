@@ -143,6 +143,48 @@ export type Database = {
         }
         Relationships: []
       }
+      subscription_plans: {
+        Row: {
+          active: boolean
+          created_at: string
+          description: string
+          features: string[]
+          id: string
+          max_commands: number
+          max_cost: number
+          name: string
+          price_monthly: number
+          price_yearly: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          description: string
+          features?: string[]
+          id?: string
+          max_commands?: number
+          max_cost?: number
+          name: string
+          price_monthly?: number
+          price_yearly?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          description?: string
+          features?: string[]
+          id?: string
+          max_commands?: number
+          max_cost?: number
+          name?: string
+          price_monthly?: number
+          price_yearly?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       system_notifications: {
         Row: {
           created_at: string
@@ -171,6 +213,39 @@ export type Database = {
           read?: boolean
           title?: string
           type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      telegram_settings: {
+        Row: {
+          auto_sync_enabled: boolean
+          bot_token: string | null
+          created_at: string
+          id: string
+          sync_successful_only: boolean
+          telegram_chat_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          auto_sync_enabled?: boolean
+          bot_token?: string | null
+          created_at?: string
+          id?: string
+          sync_successful_only?: boolean
+          telegram_chat_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          auto_sync_enabled?: boolean
+          bot_token?: string | null
+          created_at?: string
+          id?: string
+          sync_successful_only?: boolean
+          telegram_chat_id?: string | null
           updated_at?: string
           user_id?: string
         }
