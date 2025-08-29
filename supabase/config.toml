@@ -1,12 +1,1 @@
-project_id = "lohucijybvchcqqqwlmk"
-
-[api]
-enabled = true
-port = 54321
-schemas = ["public", "graphql_public"]
-
-[functions.discord-sync]
-verify_jwt = false
-
-[functions.telegram-integration]
-verify_jwt = false
+project_id = "vvywovzfhfdmrqayprfh"
