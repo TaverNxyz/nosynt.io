@@ -16,7 +16,7 @@ interface ApiKey {
   key_name: string;
   key_preview: string;
   status: 'active' | 'expired' | 'invalid';
-  last_used: string | null;
+  last_used_at: string | null;
   usage_count: number;
   usage_limit: number;
   created_at: string;

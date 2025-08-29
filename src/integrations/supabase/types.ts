@@ -107,6 +107,75 @@ export type Database = {
         }
         Relationships: []
       }
+      discord_settings: {
+        Row: {
+          auto_sync_enabled: boolean
+          created_at: string
+          discord_channel_id: string | null
+          discord_user_id: string | null
+          id: string
+          sync_successful_only: boolean
+          updated_at: string
+          user_id: string
+          webhook_url: string | null
+        }
+        Insert: {
+          auto_sync_enabled?: boolean
+          created_at?: string
+          discord_channel_id?: string | null
+          discord_user_id?: string | null
+          id?: string
+          sync_successful_only?: boolean
+          updated_at?: string
+          user_id: string
+          webhook_url?: string | null
+        }
+        Update: {
+          auto_sync_enabled?: boolean
+          created_at?: string
+          discord_channel_id?: string | null
+          discord_user_id?: string | null
+          id?: string
+          sync_successful_only?: boolean
+          updated_at?: string
+          user_id?: string
+          webhook_url?: string | null
+        }
+        Relationships: []
+      }
+      system_notifications: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          read: boolean
+          title: string
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+          read?: boolean
+          title: string
+          type?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          read?: boolean
+          title?: string
+          type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       usage_analytics: {
         Row: {
           categories_used: Json
